@@ -1,0 +1,40 @@
+<div class="box">
+
+    <div class="box-header">
+        <span class="title"><span ng-bind="node.label"></span>&nbsp;</span>
+    </div>
+
+    <div class="box-content padded btn-group-sm">
+
+
+
+        <a type="button" class="btn btn-info btn-sm"
+           ng-click="goHome()"
+           >
+           <span class="glyphicon glyphicon-share"></span> Список
+        </a>
+
+        <a type="button" class="btn btn-default btn-sm"
+           ng-disabled="!node.id"
+           ng-click="goViewNode()"
+                >
+            <span class="glyphicon glyphicon-share-alt"></span> Перейти
+        </a>
+
+        <a type="button" class="btn btn-default btn-sm dialog"
+           ng-disabled="!node.id"
+           ng-click="goEditNode()"
+                >
+            <span class="glyphicon glyphicon-pencil"></span> Редактировать
+        </a>
+
+
+    </div>
+
+
+</div>
+
+
+
+<div id="mygraph" style="width: 100%; height: 600px;">Загрузка графа...</div>
+<div id="info"></div>

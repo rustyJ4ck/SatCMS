@@ -1,0 +1,195 @@
+;
+; RU Language file (UTF8)
+; @author     Golovkin Vladimir <r00t@skillz.ru> http://www.skillz.ru
+; @copyright  SurSoft (C) 2008
+; @version    $Id: ru,v 1.12.2.3.2.4 2012/09/21 08:02:32 Vova Exp $   
+;
+
+_name           = Настройки
+
+c               = Контроллер
+m               = Модуль
+op              = Действие
+ops             = Операции
+id              = ID
+
+ip              = IP адрес
+
+empty           = Нет элементов
+
+remove          = Удалить
+add             = Добавить
+create          = Создать
+edit            = Правка
+save            = Сохранить
+cancel          = Отмена
+
+active          = Активный
+b_system        = Системный
+b_featured      = Избранный
+
+type            = Тип
+
+field           = Поле
+Field modified  = Параметр изменен
+
+thx             = Спасибо
+
+parent          = Родитель
+name            = Имя
+title           = Заголовок
+text            = Текст
+description     = Описание
+date            = Дата
+time            = Время
+till            = До
+
+price           = Цена
+quantity        = Количество
+
+created_at      = Дата создания
+updated_at      = Дата изменения
+
+personal        = Персональный
+
+email           = Эл.почта
+
+hello           = Привет
+status          = Статус
+approved        = Подтвержден
+
+loading         = Загрузка
+close           = Закрыть
+
+url             = Ссылка
+thumbnail       = Миниатюра
+
+group           = Группа
+
+undefined       = Не выбрано
+unlimited       = Все
+
+
+; confirms
+; --------
+remove_confirm  = Подтвердите удаление
+approve         = Подтвердить
+
+; Front
+; -----
+
+; yes/no will warn!
+
+y = "да"
+n = "нет"
+
+pagination      = Другие страницы
+page            = Страница
+
+prev_step       = Назад
+next_step       = Продолжить
+
+keyword         = Фраза
+search          = Поиск
+search_it       = Найти
+
+file            = Файл
+files           = Файлы
+
+video           = Видео
+thumbnail       = Миниатюра
+
+cname           = Синоним
+
+next            = Вперед
+prev            = Назад
+
+
+; editor
+; ------
+
+value           = Значение
+
+editor_config   = Настройки
+editor_texts    = Тексты для сайта
+
+core            = Настройки
+modules         = Модули
+tags            = Тэги
+content_types   = Типы контента
+logs            = Логи
+users           = Пользователи
+content2main    = Контент для фронта
+comments        = Комментарии
+comment         = Комментарий
+
+page_cache      = Кэш страниц
+
+in_menu         = В меню
+is_post         = Пост
+
+views           = Просмотров
+percents        = Проценты
+count           = Количество
+
+template        = Шаблон
+
+premod          = Премодерация
+
+post_to_short   = Слишком короткое сообщение
+
+Item modified = Запись изменена
+Item added    = Запись добавлена
+Items deleted = Записи удалены
+
+
+
+; user
+; ----
+
+user            = Пользователь
+maybe_register  = Зарегистрируйтесь
+maybe_login     = Я свой
+visitors        = Посетителей
+
+; errors
+; ------
+
+error                   = Ошибка
+error_generic           = "Произошла ошибка %s"
+controller_exception    = "Ошибка в контроллере %s"
+
+error_empty_title       = Не указан заголовок
+error_not_implemented   = "Не реализовано %s"
+
+error_404_title         = "Страница не найдена"
+error_404_not_found     = "Страница не найдена, возможно она перемещена или удалена, либо никогда не существовала..."
+
+you_are_banned          = "Ваш логин или IP адрес добавлен в черный список.<br/>Свяжитесь с администрацией для разъяснений."
+
+Access denied = Доступ запрещен
+
+; misc
+; ----
+
+test            = Тест
+image           = Изображение
+
+seo_mk          = MK
+seo_md          = MD
+seo_title       = Title
+
+;
+legal = "&copy; 2008 Головкин Владимир www.satcms.ru"
+
+[errors]
+401 = Authorized only
+404 = Not found
+500 = Generic error
+
+[mail]
+from = Отправитель
+subject = Тема
+
+[validator]
+Too short = Недопустимая минимальная длина

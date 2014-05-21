@@ -1,0 +1,1 @@
+{extends '../../../sat/editor/templates/index.tpl'}

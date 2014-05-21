@@ -1,0 +1,7 @@
+User-agent: *
+                             
+Disallow: /ext/
+Disallow: /modules/
+Disallow: /static/
+Disallow: /templates/
+Disallow: /vendor/

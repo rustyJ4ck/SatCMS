@@ -1,0 +1,42 @@
+<?php
+  
+/**
+ * @package    TwoFace
+ * @author     Golovkin Vladimir <r00t@skillz.ru> http://www.skillz.ru
+ * @copyright  SurSoft (C) 2008
+ * @version    $Id: collection.php,v 1.2 2010/07/21 17:57:16 surg30n Exp $
+ */  
+  
+
+class config_collection extends abs_collection {
+    
+       protected $key = 'name';
+
+       protected $valid_fields = array(
+          'id'            => array('type' => 'numeric')
+        , 'name'          => array('type' => 'text',        'make_seo' => true,  'size' => 64)
+        , 'title'         => array('type' => 'text',                             'size' => 127)  
+	    , 'value'	      => array('type' => 'text')
+       ); 
+       
+       /**
+       * Merge with other config
+       */
+       function merge_with(&$data) {
+        if ($this->is_empty()) return;
+        
+        foreach (($t = $this->render()) as $k => $v)
+            if (!isset($data[$k])) $data[$k] = $v['value'];
+       }
+       
+       /**
+       * Create/update param
+       */
+       function update_param($key, $value) {
+           if (empty($key)) throw new core_exception('Try insert nul config key');
+           $item = $this->get_item_by_prop('name', $key);
+           $id = $item ? $item->id : false;
+           $this->modify(array('name' => $key, 'value' => $value), $id);
+       }
+       
+}

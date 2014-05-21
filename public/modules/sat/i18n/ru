@@ -1,0 +1,21 @@
+
+_name           = Контент
+                                            
+search_too_short    = Слишком короткая фраза
+search_results      = Результаты поиска
+search_not_found    = Ничего не найдено
+
+; Comments
+
+Post comment        = Ответить
+comment_cancel      = В другой раз
+comment_post_root   = "Комментировать!"
+comments_for_post   = Комментарии пользователей
+
+comment_posted      = Комментарий добавлен
+
+comment_interval_restriction = "Подождите %d секунд прежде чем писать новое сообщение"
+comment_level_restriction    = "Вы не можете комментировать."
+
+comment_deleted     = "Комментарий удален"
+

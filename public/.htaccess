@@ -1,0 +1,53 @@
+#php_value xdebug.profiler_output_dir 'Q:/work/my/tf_satcms_test/xdebug/'
+#php_value xdebug.profiler_output_name timestamp
+#php_value xdebug.profiler_enable 1
+#php_value xdebug.auto_trace 1
+
+php_flag magic_quotes_gpc Off
+
+# Charset
+AddDefaultCharset on
+AddDefaultCharset UTF-8
+
+RewriteEngine On      
+
+# no index.php
+RewriteCond %{THE_REQUEST} ^GET\ .*/index\.(php|html)\ HTTP
+RewriteRule ^(.*)index\.(php|html)$ /$1 [R=301,L]
+
+#RewriteCond %{REQUEST_URI} ^\/$            
+#RewriteCond %{DOCUMENT_ROOT}/static/%{HTTP_HOST}/index.html -f 
+#RewriteRule .* /static/%{HTTP_HOST}/index.html [L]     
+
+# do not rewrite shit files
+RewriteCond %{REQUEST_URI} !^\/$            
+RewriteRule !(\/|\.html|\.php|robots\.txt|sitemap\.xml)$ - [L]
+              
+# skip cache for debugger, static files
+RewriteCond %{HTTP_USER_AGENT} iamdebugger
+RewriteRule ^ - [S=3] 
+
+# static 
+RewriteCond %{DOCUMENT_ROOT}/static/%{HTTP_HOST}/%{REQUEST_URI} -f
+RewriteRule ^(.*) /static/%{HTTP_HOST}/$1 [L]     
+
+RewriteCond %{DOCUMENT_ROOT}/static/%{HTTP_HOST}/%{REQUEST_URI} -d
+RewriteCond %{DOCUMENT_ROOT}/static/%{HTTP_HOST}/%{REQUEST_URI}/index.html -f 
+RewriteRule ^(.*) /static/%{HTTP_HOST}/$1 [L]          
+
+RewriteCond %{REQUEST_URI} ^\/$
+RewriteCond %{DOCUMENT_ROOT}/static/%{HTTP_HOST}/index.html -f
+RewriteRule .* /static/%{HTTP_HOST}/index.html [L]
+
+# editor
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+#RewriteRule ^editor /editor/ [L,QSA]
+RewriteRule ^editor\/(.+)\/$ /editor/?req=$1 [L,QSA]
+
+# ftw
+RewriteCond %{REQUEST_FILENAME} !\.(jpg|jpeg|gif|png|css|js|pl|txt)$
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*) index.php [L]
+

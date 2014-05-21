@@ -1,0 +1,50 @@
+{
+    "name": "sursoft/satcms",
+    "description": "satcms",
+    "keywords": ["cms", "satcms"],
+
+    "authors": [
+        {
+            "name": "Golovkin Vladimir",
+            "email": "rustyj4ck@gmail.com"
+        }
+    ],
+
+    "require": {
+        "spekkionu/wideimage": "*",
+
+        "symfony/console": "2.4.*",
+        "symfony/debug": "2.4.*",
+        "symfony/finder": "2.4.*",
+        "symfony/process": "2.4.*",
+        "filp/whoops": "1.0.10",
+        "doctrine/dbal": "2.5.*",
+
+        "firephp/firephp-core": "dev-master"
+
+},
+
+    "require-dev": {
+        "fzaninotto/faker": "1.2.*@dev"
+    },
+
+    "require-obsolete": {
+        "guzzle/guzzle": "~3.1",
+        "mrclay/minify": "*",
+        "smarty/smarty": "dev-trunk"
+    },
+
+    "autoload": {
+        "classmap": [],
+        "files": [],
+        "psr-4": {
+            "SatCMS\\": "src/"
+        }
+    },
+
+    "config": {
+        "preferred-install": "dist"
+    },
+
+    "minimum-stability": "dev"
+}

@@ -1,0 +1,104 @@
+<?php
+
+/**
+ * @package    TwoFace
+ * @author     Golovkin Vladimir <r00t@skillz.ru> http://www.skillz.ru
+ * @copyright  SurSoft (C) 2008
+ * @version    $Id: collection.php,v 1.2 2010/07/21 17:57:20 surg30n Exp $
+ */     
+
+class mail_tpl_collection extends abs_collection {
+    
+    protected $valid_fields = array(
+    
+        'id'                => array('type'=>'numeric'),
+        'name'              => array('type'=>'text'         , 'size' => '255'),                  
+        'title'             => array('type'=>'text'         , 'size' => '255'),
+        // шаблон
+        't_template'        => array('type'=>'text'         , 'no_format' => true),
+        't_title'           => array('type'=>'text'         , 'size' => '255'),
+        't_from_email'      => array('type'=>'text'         , 'size' => '127'),        
+        
+    );  
+    
+    /**
+    * send
+    */
+    function send($name, $to, $params, $flip = false) {
+        $item = $this->clear()
+            ->set_where("name = '%s'", $name)
+            ->set_limit(1)
+            ->load()
+            ->get_item();
+        
+        if (!$item) return false;
+        
+        return $item->send($to, $params, $flip);
+    }
+} 
+
+/**
+*   Элементы
+*/  
+
+class mail_tpl_item extends abs_collection_item {
+          
+    /**
+    * постим
+    */
+    
+    function send($to, $vars = array(), $flip = false) {
+        
+        if (empty($to)) {
+            return false;
+        }
+        
+        $from       = $this->t_from_email;
+        
+        if (is_string($to)) 
+            $to = (strpos($to, ','))  ? explode(',', $to) : array($to);
+        
+        $subject    = $this->t_title;
+        
+        $vars = array_merge($vars, array(
+              'date' => date('d.m.Y H:i')
+            , 'host' => $_SERVER['HTTP_HOST']
+            , 'from' => $from
+        ));
+        
+        $msg = $this->t_template;
+        
+        foreach ($vars as $k => $v) {                              /* $data[$name] */
+            $k = '%' . $k . '%';
+            $msg     = str_replace($k, $v, $msg);
+            $subject = str_replace($k, $v, $subject);
+        }
+        
+        $i = 0;
+        
+        foreach ($to as $to_email) {
+            $to_email = trim($to_email);
+            if (!empty($to_email)) {           
+                  $params =   
+                  array(
+                    'from'         => trim($from),
+                    'to'           => trim($to_email),
+                    'msg'          => $msg,
+                    'subject'      => $subject,
+                    'is_html'      => 1
+                  );
+                  
+                  if (!$i) {
+                      if (isset($vars['bcc'])) $params['bcc'] = $vars['bcc'];
+                      if (isset($vars['cc']))  $params['cc']  = $vars['cc'];
+                  }  
+                    
+                  core::lib('mailer')->email($params); 
+                  $i++;    
+            }   
+        }
+        
+    }
+    
+  }
+  

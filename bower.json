@@ -1,0 +1,68 @@
+{
+    "name": "satcms",
+    "version": "0.2.0",
+
+    "ignore": [
+        "**/.*",
+        "node_modules",
+        "bower_components",
+        "test",
+        "tests"
+    ],
+
+    "dependencies": {
+
+        "requirejs": "~2.1.9",
+        "requirejs-text": "~2.0.10",
+
+        "sugar": "latest",
+
+        "jquery":"~1.9.0",
+
+        "bootstrap": "3.x",
+        "bootbox": "latest",
+        "bootstrap-colorpicker": "latest",
+
+        "eonasdan-bootstrap-datetimepicker": "latest",
+
+        "typeahead.js": "latest",
+
+        "toastr": "latest",
+
+        "angular": "1.2.x",
+        "angular-ui-router": "0.2.x",
+        "angular-ui-select2": "latest",
+        "angular-sanitize": "latest",
+        "angular-animate": "latest",
+        "ngstorage": "~0.3.0",
+
+        "TableDND": "https://github.com/Istergul/jquery-table-multi-dnd.git",
+
+        "jquery-icheck": "latest",
+        "jquery-form": "latest",
+
+        "jquery.validation": "latest",
+        "x-editable": "latest",
+
+        "blockui": "latest",
+        "tinymce": "latest",
+        "uploadify": "latest",
+        "jquery-cookie": "latest",
+
+        "vis": "latest",
+	"github.commits.widget": "*"
+
+
+        "headjs": "latest"
+    },
+
+    "deprecated":{
+        "jquery-migrate": "~1.2.1",
+        "pnotify": "latest",
+        "jquery.uniform": "latest",
+        "bootstrap-modal": "~2.2.4",
+        "TableDnD": "latest",
+        "bootstrap-timepicker": "latest",
+        "bootstrap-datepicker": "latest"
+    }
+}

@@ -1,0 +1,5 @@
+php_flag engine 0
+
+<Files "*.php?">
+Deny From All
+</Files>

@@ -1,0 +1,228 @@
+.comments-widget {
+    background: #fcfcfc;
+}
+
+    .comments-widget > .panel-body {
+        padding: 0;
+    }
+
+.commentbox_title {
+    height:24px;background:#c7e37f;padding-left:145px;line-height:24px;font-weight:bold;font-size:120%;
+}
+
+.comment-post {
+    margin: 4px;
+    padding: 8px;
+    background-color: #EFEFEF;    
+}
+
+#comment-form-div {
+
+    opacity:0;
+    z-index: 10;
+    position: absolute;
+
+    margin-top:15px;
+
+    display: none;
+
+    /*
+    top: 50%;
+    margin-top:-200px;
+    left: -1000px;
+    */
+
+    min-width:600px;
+
+    -webkit-box-shadow: 0 2px 6px -1px rgba(0, 0, 0, 0.37);
+    -moz-box-shadow: 0 2px 6px -1px rgba(0, 0, 0, 0.37);
+    box-shadow: 0 2px 6px -1px rgba(0, 0, 0, 0.37);
+
+    -webkit-transition:opacity 500ms ease-in-out;
+    -moz-transition:opacity 500ms ease-in-out;
+    -o-transition:opacity 500ms ease-in-out;
+    transition:opacity 500ms ease-in-out;
+
+}
+
+#comment-form-div.in {
+    /*left:50%;
+    margin-left:-300px;
+    */
+    opacity:1;
+    display: block;
+}
+
+#comment-form-div input {
+    border-color: #b3b3b3;
+}
+
+#comment-form-div .buttons {
+    text-align2: center;
+    margin-top: 6px;
+}
+
+#comment-form-div .buttons input[type=button] {    
+    background: transparent;
+    border: none;
+    cursor: pointer;
+}
+
+#comment-form-div .buttons input[type=button]:hover {  
+    background:white;
+}
+
+.answer {
+    opacity: 0;
+/*
+    margin-right:6px;
+    margin-top: 1px;
+*/
+}
+
+.comment:hover .answer,
+[rel="0"].answer {
+    opacity: 1;
+}
+
+.comment-form-footer {
+    padding:15px;
+}
+
+/* .post .comment */
+.comment .answer, .answer
+, .comment .branch-expand
+{
+    cursor: pointer;
+    /*float: right;*/
+}
+
+.branch-expand {
+    opacity: .4;
+}
+
+.branch-expand.in {
+    opacity:1;
+}
+
+.comment-answer-root {
+    float:none;
+    text-align: center;
+    margin-bottom: 10px;
+    border: 0px;
+}
+    
+
+.comment {
+    min-height: 40px;
+    margin-bottom: 0px;
+    padding: 15px 15px;
+    border: 1px solid transparent;
+}
+
+    .comment p {
+        margin-bottom:0;
+    }
+
+.comment-answer-this {
+    background: rgba(255,0,0,0.05);
+}
+
+.comment-last {
+    background: rgba(0,255,0,0.05);
+}
+
+.content .sub {
+    font-size: 0.7em;
+    color: #CCCCCC;
+}
+
+.comment-next {
+    margin-left: 20px;
+    /*border-left:10px solid gray;*/
+}
+
+.comment-next-root-empty {
+    margin-left: 0px;
+}
+
+/* branches */
+.comment[data-level="0"] {
+
+    /*
+    margin-top:10px;
+    margin-bottom:10px;
+    */
+
+    border-top: 1px solid #DDD;
+}
+
+    .comment[data-level="0"]:first-child {
+        margin-top:0;
+        margin-bottom:0;
+        border-top:0;
+    }
+
+.no-comments {
+    margin: 14px 0 10px 0;
+}
+
+.comment-ava-img {
+   max-width:50px;
+   border-radius: 50%;
+}
+
+.comment-ava {
+    margin-top:5px;
+    padding:0;
+    border-radius: 50%;
+    float:left;
+    background:#CCC;
+    width:48px;
+    height:50px;
+}
+
+.comment-content {
+    margin-left:60px;
+}    
+
+.vote {width:85px; height:24px; }
+.votes {float:left; width:40px; padding:4px 0 0 0; height:20px; text-align:center; font-size:0.786em;}
+.good {color:#005d0f;}
+.bad {color:#aa001c;}
+.vote-plus {width:22px; height:24px; float:left; cursor:pointer; background:url(../images/ico-plus.png) 0 0 no-repeat;}
+.vote-minus {width:22px; height:24px; float:left; cursor:pointer; background:url(../images/ico-minus.png) 0 0 no-repeat;}
+.list-comments span {margin:0 30px 0 0;}
+
+.comment-r {font-size:1.167em; padding:10px 0 10px 0;}
+.comment-head { padding:4px; margin-bottom:6px;}
+.comment-r textarea {float:left; margin:0 20px 10px 0;}
+.comment-r input {clear:left; float:left;}
+.textarea-com {width:380px; height:80px; padding:5px; border:1px solid #aaaaaa; overflow:auto;}
+
+.wall_post_source_icon {
+  margin: 0px 0px -1px 4px;
+  display: inline-block;
+  *display: block;
+  zoom: 1;
+  background: url(/templates/inforcom/_assets/images/icons.gif) no-repeat;
+  width: 11px;
+  height: 11px;
+}
+.wall_post_source_default {
+  background-position: 0px -132px;
+}
+.wall_post_source_iphone,
+.wall_post_source_ipad {
+  background-position: 0px -109px;
+}
+.wall_post_source_android {
+  background-position: 0px -97px;
+}
+.wall_post_source_wphone,
+.wall_post_source_windows {
+  background-position: 0px -143px;
+}
+.wall_post_source_mobile {
+  background-position: 0px -121px;
+}

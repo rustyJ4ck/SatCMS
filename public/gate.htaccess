@@ -1,0 +1,41 @@
+# Charset
+AddDefaultCharset on
+AddDefaultCharset UTF-8
+
+RewriteEngine On      
+
+# no index.php
+RewriteCond %{THE_REQUEST} ^GET\ .*/index\.(php|html)\ HTTP
+RewriteRule ^(.*)index\.(php|html)$ /$1 [R=301,L]
+
+# do not rewrite shit files
+RewriteCond %{REQUEST_URI} !^\/$            
+RewriteRule !(\/|\.html|\.php|robots\.txt|sitemap\.xml)$ - [L]
+              
+# skip cache for debugger, static files
+RewriteCond %{HTTP_USER_AGENT} iamdebugger
+RewriteRule ^ - [S=4] 
+
+# static 
+RewriteCond %{REQUEST_URI} (robots\.txt|sitemap\.xml)$
+RewriteCond %{DOCUMENT_ROOT}/static/%{HTTP_HOST}/%{REQUEST_URI} -f
+RewriteRule ^(.*) /static/%{HTTP_HOST}/$1 [L]   
+
+RewriteCond %{REQUEST_URI} \.html$  
+RewriteCond %{DOCUMENT_ROOT}/static/%{HTTP_HOST}/%{REQUEST_URI} -f
+RewriteRule ^(.*) gate.php?%{HTTP_HOST}/$1 [L]     
+
+RewriteCond %{DOCUMENT_ROOT}/static/%{HTTP_HOST}/%{REQUEST_URI} -d
+RewriteCond %{DOCUMENT_ROOT}/static/%{HTTP_HOST}/%{REQUEST_URI}/index.html -f 
+RewriteRule ^(.*) gate.php?%{HTTP_HOST}/$1 [L]          
+
+RewriteCond %{REQUEST_URI} ^\/$
+RewriteCond %{DOCUMENT_ROOT}/static/%{HTTP_HOST}/index.html -f
+RewriteRule .* gate.php?%{HTTP_HOST}/index.html [L]
+
+# ftw
+RewriteCond %{REQUEST_FILENAME} !\.(jpg|jpeg|gif|png|css|js|pl|txt)$
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*) index.php [L]
+

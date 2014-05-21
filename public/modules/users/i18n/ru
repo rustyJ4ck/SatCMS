@@ -1,0 +1,137 @@
+;
+; Users langpack
+; $Id: ru,v 1.7.6.3 2012/09/12 13:01:11 Vova Exp $
+;
+
+_name      = Пользователи
+
+users    = Пользователи
+
+users_list = Список пользователей
+
+login    = Логин
+nick     = Ник
+password = Пароль
+
+user_group = Группы
+
+; Front
+; ------
+
+avatar          = Аватар
+change_avatar   = Поменять
+change_avatar_help   = "Для успешной загрузки изображения, размер файла не должен превышать 100Кб"
+no_avatar       = До сих пор не установлен
+
+
+
+user_info   = Информация о пользователе
+register    = Регистрация
+user_register = Регистрация пользователя
+user_cp     = Личный кабинет
+cp_title    = Личный кабинет
+
+user_licence    = Соглашение
+accept_licence  = Я со всем согласен
+
+has_no_account  = "Нет аккаунта?"
+lost_my_pass    = Забыл пароль
+
+restore_password   = Восстановление пароля
+
+empty_login     = Не указан логин или пароль
+fail_to_login   = "Неверный логин или пароль, либо пользователь неактивен"
+
+logout          = Выйти
+already_logged  = Вы уже в системе.
+user_logouted   = Вы вышли из системы.
+login_me        = Войти
+register_me     = Дайте мне мой аккаунт
+
+Please login = Необходима авторизация
+
+register_success  = Регистрация прошла успешно
+profile_update_ok = Профиль изменен
+
+nick_exists = Ник существует
+login_exists = Логин занят
+email_exists = Email существует
+email_bad = Неверный email 
+login_bad = Неверный логин
+password_bad = Неверный пароль
+
+; editor
+; -------
+
+password    = Пароль
+rating      = Рейтинг
+points      = Баланс
+last_login  = Посл. логин
+active      = Активен
+date_reg    = Дата регистрации
+
+bans        = Баны
+
+sessions    = Сессии
+last_update  = Последнее обновление
+
+require_auth = Для доступа к разделу необходимо авторизироваться
+                                  
+; user levels
+level           = Уровень пользователя
+level_anonymous = Гость
+level_user      = Пользователь
+level_mod       = Модератор
+level_admin     = Администратор
+
+; genders
+gender                 = Пол  
+gender_unknown         = Неопределенный
+gender_male            = Муж
+gender_female          = Жен
+
+
+; user cp
+; -------
+
+cp_profile      = Профиль
+cp_balance      = Пополнить баланс
+cp_payments     = История платежей
+cp_config       = Настройки
+cp_my_views     = Мои просмотры
+cp_my_posts     = Мои записи
+cp_post         = Публиковать
+cp_admin        = Админ. панель
+cp_vip          = VIP
+cp_avatar       = Аватар
+cp_mod          = Модерация
+
+cp_pms          = Сообщения
+
+cp_my_bugs      = Список TODO
+
+cp_post_edit    = Изменение записи
+
+;
+; payments
+; --------
+
+
+balance         = Баланс
+payment_gateway = Платежная система
+balance_refill  = Пополнение баланса
+balance_refilled= Баланс пополнен
+payment_count   = Количество
+
+;
+; titles
+; -------
+
+title_login     = "Вход в систему"
+
+;
+; errors
+; ------
+
+error_post_too_often    =   "Слишком часто обновляете!"
+

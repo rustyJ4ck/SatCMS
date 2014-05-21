@@ -1,0 +1,2 @@
+{extends 'partials/content.tpl'}
+

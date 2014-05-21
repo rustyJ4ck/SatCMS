@@ -1,0 +1,7 @@
+*
+#!templates/
+#!opcacher/
+#!system/
+!*/
+!.gitignore
+!.gitkeep

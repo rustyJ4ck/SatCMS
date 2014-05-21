@@ -1,0 +1,67 @@
+;
+; EN Language file (UTF8)
+; @author     Golovkin Vladimir <r00t@skillz.ru> http://www.skillz.ru
+; @copyright  SurSoft (C) 2008
+; @version    $Id: ru,v 1.12.2.3.2.4 2012/09/21 08:02:32 Vova Exp $
+;
+
+_name           = Settings
+
+c               = Ctrl
+m               = Module
+op              = Action
+ops             = Actions
+id              = ID
+
+ip              = IP Addr
+
+empty           = Empty
+
+remove          = Remove
+add             = Add
+create          = Create
+edit            = Edit
+save            = Save
+cancel          = Cancel
+
+active          = Active
+
+type            = Type
+
+field           = Field
+Field modified  = Field Modified
+
+thx             = Thank you
+
+parent          = Parent
+name            = Name
+title           = Title
+text            = Text
+description     = Description
+date            = Date
+time            = Time
+till            = Till
+
+price           = Price
+quantity        = Quantity
+
+date_posted     = Create date
+date_mod        = Update date
+
+personal        = Personal
+
+email           = Email
+
+hello           = Hello
+status          = Status
+approved        = Confirmed
+
+loading         = Loading
+close           = Close
+
+url             = URL
+thumbnail       = Thumbnail
+
+group           = Group
+
+undefined       = Undefined
