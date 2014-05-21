@@ -148,7 +148,7 @@ class core extends core_module /*module_orm*/ {
 
         self::time_check('core-boot');
 
-        // fix loop with get_instance
+        // bogus: fix loop with get_instance
         if (!self::$_instance) self::$_instance = $this;
 
         $initilize_after_load = ($params === true);
@@ -162,17 +162,23 @@ class core extends core_module /*module_orm*/ {
             $this->init_config(parse_ini_file($cfg_file, true));
         }
 
-        // multiconfig
-        if ($this->cfg('multidomain_config', false) && ($host = @$_SERVER['HTTP_HOST'])) {
+        // multiconfig config/domain.engine.cfg
+
+        $host = @$_SERVER['HTTP_HOST'];
+        $host = strpos($host, 'www.') === 0 ? substr($host, 4) : $host;
+
+        if ($this->cfg('multidomain_config', false) && $host) {
 
             $host = str_replace(':', '.', $host); // localhost:8002
 
-            $host_confg = loader::get_docs() . ((strpos($host, 'www.') === 0) ? substr($host, 4) : $host) . '.engine.cfg';
+            $host_config = loader::get_docs() . $host . '.engine.cfg';
 
-            if (fs::file_exists($host_confg)) {
-                $this->init_config(parse_ini_file($host_confg, true), abs_config::INIT_APPEND);
+            if (fs::file_exists($host_config)) {
+                $this->init_config(parse_ini_file($host_config, true), abs_config::INIT_APPEND);
             }
         }
+
+
 
         setlocale(LC_ALL, ($locale = $this->cfg('locale', 'ru_RU.UTF8')));
 
@@ -192,7 +198,7 @@ class core extends core_module /*module_orm*/ {
 
         $duagent = $this->cfg('debugger_agent', 'iamdebugger');
 
-        // compare only lside of agent, cause firephp or something adds its stuff to end
+        // compare only lside of agent, because firephp or something add its stuff to end
         if (isset($_SERVER['HTTP_USER_AGENT']) && substr($_SERVER['HTTP_USER_AGENT'], 0, strlen($duagent)) === $duagent
             || !empty($params['debug'])
         ) {
@@ -643,7 +649,8 @@ class core extends core_module /*module_orm*/ {
             }
         }
 
-        // site config %domain%
+        // site init %domain%
+        // config/%domain%/init.php
         $site_config      = array();
         $site_config_path = $this->cfg('site_config');
         if (!empty($site_config_path)) {
@@ -652,7 +659,8 @@ class core extends core_module /*module_orm*/ {
                 $site_config_path = ((strpos($host, 'www.') === 0) ? substr($host, 4) : $host);
             }
 
-            $mod_config_file = loader::get_docs() . $site_config_path . '/config.php';
+            $mod_config_file = loader::get_docs() . $site_config_path . '/init.php';
+
             if ($site_config_path && file_exists($mod_config_file)) {
                 $site_config = include($mod_config_file);
             }

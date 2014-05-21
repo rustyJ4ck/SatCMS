@@ -315,6 +315,15 @@ Editable
         bottom:-10px;
     }
 
+/*
+  editor
+*/
+
+body[data-editable] .editable-wysiwyg,
+body[data-editable] .editable-inline {
+    border:1px dotted rgba(207, 64, 64, 0.5);
+}
+
 /**
 * paddings
 */

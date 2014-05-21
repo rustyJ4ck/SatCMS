@@ -102,6 +102,8 @@
         }
 
         undebugSatBlocks();
+
+        $('body').attr('data-editable', null);
     }
 
     /**
@@ -112,6 +114,8 @@
         if (editorBinded) return;
 
         editorBinded = true;
+
+        $('body').attr('data-editable', 'yes');
 
         tinymce.init({
             selector: ".editable-inline",
