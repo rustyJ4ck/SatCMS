@@ -101,8 +101,16 @@ define(
 
                 console.log('-Require-deps', action.require.js);
 
+                var actions = action.require.js.slice(); //copy
+
+                // @todo check for absolute path
+                // fix for r.js
+                for (var i in actions) {
+                    actions[i] = app.urls.toBase('templates/js/' + actions[i] + '.js');
+                }
+
                 // load
-                require(action.require.js, function(){
+                require(actions, function(){
                     console.log('+Require-deps');
                     runAction();
                     // $apply for directives?

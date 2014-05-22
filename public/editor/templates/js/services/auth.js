@@ -4,7 +4,7 @@ define(['app', 'angular'], function(app, angular) {
 
     console.log('--authDirective');
 
-    app.ngService('auth', function ($http) {
+    app.ngService('auth', ['$http', function ($http) {
 
         var url = '/users/api/user/current/';
         var _user = {level:0, 'logged': false, fetched: false};
@@ -36,7 +36,7 @@ define(['app', 'angular'], function(app, angular) {
             logout: logout
         };
 
-    });
+    }]);
 
 
 });

@@ -11,7 +11,7 @@ define([
     'notify',
     'bootbox',
     'jqueryBlockUI',
-//  'jqueryCookie'
+    'jqueryCookie'
 ], function($, angular, toastr, bootbox){
 
     'use strict';
@@ -172,12 +172,15 @@ define([
                 title: "Redirecting...",
                 url: "/editor/redirect/{path:.*}",
                 template:false,
-                controller: function($state, $stateParams, $scope, $location){
+                controller:
+
+                    ['$state', '$stateParams', '$scope', '$location',
+                    function($state, $stateParams, $scope, $location){
 
                     tfApp._redirect = tfApp.urls.toBase($stateParams.path);
                     tfApp.blockUI();
 
-                }
+                }]
             });
 
             // require dependencies,
@@ -262,7 +265,8 @@ define([
 
             return angular
 
-                .module('tfApp', angularAppDeps, function ($controllerProvider, $compileProvider, $provide) {
+                .module('tfApp', angularAppDeps, ['$controllerProvider', '$compileProvider', '$provide',
+                    function ($controllerProvider, $compileProvider, $provide) {
                     angularProviders.controller = $controllerProvider;
                     angularProviders.compiler = $compileProvider;
                     angularProviders.service = $provide;
@@ -284,7 +288,7 @@ define([
                         }
                     });
 */
-                })
+                }])
 
                 .config(['$interpolateProvider', function ($interpolateProvider) {
                         $interpolateProvider.startSymbol('[[');
@@ -314,7 +318,7 @@ define([
                             loadStates($stateProvider);
                 }])
 
-                .config(function ($urlRouterProvider) {
+                .config(['$urlRouterProvider', function ($urlRouterProvider) {
                     // Here's an example of how you might allow case insensitive urls
                     $urlRouterProvider.rule(function ($injector, $location) {
                         /*
@@ -328,10 +332,10 @@ define([
                         */
                         console.log('$location.path: ' + $location.path());
                     });
-                })
+                }])
 
                 .run(
-                    [      '$http', '$rootScope', '$state', '$stateParams', '$injector', '$location', '$window',
+                    [   '$http', '$rootScope', '$state', '$stateParams', '$injector', '$location', '$window',
                         function ($http, $rootScope,   $state,   $stateParams, $injector, $location, $window) {
 
                             $rootScope.modulesToolbar = [];
@@ -652,32 +656,6 @@ define([
 
     console.log('tfApp-done', typeof tfApp);
 
-    //Block initial
-    //tfApp.blockUI();
-
     return tfApp;
-
-    /**
-     *  Init scripts
-     */
-    /*
-    $(function(){
-
-        //
-        // Global init
-        //
-
-        // ajax status
-        $('body').append('<div id="ajax_status" class="corners">Loading...</div>');
-
-        $(document).ajaxSend(function() {
-            $('#ajax_status').toggle();
-        });
-        $(document).ajaxStop(function() {
-            $('#ajax_status').fadeOut('slow');
-        });
-
-    });
-    */
 
 });

@@ -1,31 +1,41 @@
 ({
 
     paths: {
-        "text" : "../../../vendor/requirejs-text/text",
-//        tf: "",
-        angular: '../../../vendor/angular/angular',
+
+	text: "../../../vendor/requirejs-text/text", // relative to baseUrl
+
+        angular: "../../../vendor/angular/angular",
         jquery: "../../../vendor/jquery/jquery",
         bootstrap: "../../../vendor/bootstrap/dist/js/bootstrap",
-        jqueryMigrate:"../../../vendor/jquery-migrate/jquery-migrate",
-        jqueryMigrateFacade:"../../../jscripts/jquery/jquery-migrate",
-        jqueryPlugins: "../../../jscripts/jquery/plugins",
 
-        select2: "../../../vendor/select2/select2",
         angularSelect2: "../../../vendor/angular-ui-select2/src/select2",
-
         angularSanitize: "../../../vendor/angular-sanitize/angular-sanitize",
         angularRouter: "../../../vendor/angular-ui-router/release/angular-ui-router",
         angularAnimate: "../../../vendor/angular-animate/angular-animate",
 
+        angularStorage: "../../../vendor/ngstorage/ngStorage",
+
+        momentjs: "../../../vendor/moment/moment",
+        bootstrapDateTime: "../../../vendor/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min",
+
+        jqueryValidate: "../../../vendor/jquery.validation/dist/jquery.validate",
+        jqueryBlockUI: "../../../vendor/blockui/jquery.blockUI",
+        jqueryCookie: "../../../vendor/jquery-cookie/jquery.cookie",
+        jqueryTableDND: "../../../vendor/TableDND/jquery.table-multi-dnd",
+
+        select2: "../../../vendor/select2/select2",
+        tinyMCE: "../../../vendor/tinymce/js/tinymce/tinymce.jquery",
         notify:"../../../vendor/toastr/toastr",
         bootbox: "../../../vendor/bootbox/bootbox",
 
-        'jqueryBlockUI': "../../../vendor/jquery-blockui/jquery.blockUI",
+        uploadify: "../../../vendor/uploadify/jquery.uploadify",
 
-        'bootstrap-modal': "../../../vendor/bootstrap-modal/js/bootstrap-modal",
-        'bootstrap-modal-manager': "../../../vendor/bootstrap-modal/js/bootstrap-modalmanager",
+        "bootstrap-modal": "../../../vendor/bootstrap-modal/js/bootstrap-modal",
+        "bootstrap-modal-manager": "../../../vendor/bootstrap-modal/js/bootstrap-modalmanager",
 
-        'sugar': "../../../vendor/sugar/release/sugar-full.development"
+        "sugar": "../../../vendor/sugar/release/sugar-full.development",
+
+        "vis": "../../../vendor/vis/dist/vis"
 
     },
 
@@ -33,66 +43,67 @@
 
     shim: {
 
-        angular : {exports : 'angular', deps : ["jquery"]},
+        angular : {exports : "angular", deps : ["jquery"]},
 
-        jquery: {exports: 'jquery'},
+        jquery: {exports: "jquery"},
 
-        angularSelect2: ['angular', 'jquery', 'select2'],
-        select2: ['jquery'],
-        jqueryMigrate: ['jquery'],
-        jqueryPlugins: ['jqueryMigrate'],
-        angularRouter: ['angular'],
-        angularSanitize: ['angular'],
-        angularAnimate: ['angular'],
+        select2: ["jquery"],
+        jqueryCookie: ["jquery"],
+
+        angularRouter: ["angular"],
+        angularSanitize: ["angular"],
+        angularAnimate: ["angular"],
+        angularStorage: ["angular"],
+
+        bootstrapDateTime: ["momentjs"],
 
         bootstrap : {
             deps : ["jquery"]
-        }
+        },
 
-//        'tf': {'exports': 'tf'}
+        "app": ["sugar", "jquery", "bootstrap", "angular"],
+
+        "controllers/navigation": ["app"],
+        "directives/basic": ["app"],
+
     },
 
-    priority: ['angular', 'jquery', 'app'],
+    priority: ["angular", "jquery", "sugar", "bootstrap"],
 
-
-    m1ainConfigFile : "public/editor/templates/js/main.js",
     baseUrl: "public/editor/templates/js",
 
+    preserveLicenseComments: false,
+
     removeCombined: true,
+    findNestedDependencies: true,
 
-    f1indNestedDependencies: true,
+//  useStrict: true,
+//  wrap: true,
+//  wrapShim: true,
+    inlineText: false,
 
-    d1ir: "public/dist",
-    n1ame: 'path/to/almond',
+    // stubModules: ['tinyMCE'], //'text'
 
-    include: ['main'],
-    out: 'public/assets/editor/main.js',
+    d1ir: "dist",
+    n1ame: "path/to/almond",
 
-    m1odules: [
-        {
-            name: "main",
+    include: ["main"],
+    out: "public/assets/editor/main.js",
 
-            exclude: [
-            ],
+    optimize: "uglify2",
 
-            excludeOld: [
-                "backbone",
-                "backbrace",
-                "bootstrap",
-                "jquery",
-                "jqbase64",
-                "machina",
-                "monologue",
-                "monopost",
-                "neuquant",
-                "omggif",
-                "postal",
-                "diags",
-                "riveter",
-                "text",
-                "underscore"
-            ]
+    uglify2: {
+        output: {
+            beautify: false
+        },
+        compress: {
+            sequences: true,
+            global_defs: {
+                DEBUG: false
+            }
+        },
+        warnings: true,
+        mangle: false
+    },
 
-        }
-    ]
 })

@@ -10,7 +10,7 @@ define([
 
     function loadGithubComments() {
         $('#github-commits').githubInfoWidget(
-            { user: 'angular', repo: 'angular.js',
+            { user: 'rustyj4ck', repo: 'satcms',
                 branch: 'master', last: 15,
                 limitMessageTo: 255, avatarSize: 48
             }, function(elm) {
@@ -22,19 +22,20 @@ define([
 
     app.ngApp().controller('indexController',
 
+        ['$scope',
         function ($scope) {
 
             console.log('+!!+indexController');
 
             ed.bindUI(app.getViewportElement());
 
-            require(['/vendor/github.commits.widget/js/github.commits.widget.js'], function(){
+            require(['../../../../vendor/github.commits.widget/js/github.commits.widget.js'], function(){
                 loadGithubComments();
             });
 
             $scope.$emit('menuAction', {action:{title: i18n.T('Dashboard') }});
 
-        }
+        }]
 
     );
 });

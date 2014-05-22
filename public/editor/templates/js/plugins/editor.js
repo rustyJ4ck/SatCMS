@@ -811,6 +811,9 @@ define([
         $.blockUI.defaults.baseZ = 1060;
         $.blockUI.defaults.overlayCSS.opacity = 0.3;
 
+        // @todo fix r.js
+        tinyMCE.baseURL = '/vendor/tinymce/js/tinymce/';
+
         // fixme: tinymce modal focus bug
         $(document).on('focusin', function(e) {
             if ($(e.target).closest(".mce-window").length) {

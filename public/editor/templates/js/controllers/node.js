@@ -26,7 +26,11 @@ define(['angular', 'app', 'jquery', 'plugins/editor', 'bootbox'],
     /**
      * Node list filter
      */
-    app.ngController('nodeVisualController', function($scope, $stateParams, $http) {
+    app.ngController('nodeVisualController', [
+
+        '$scope', '$stateParams', '$http',
+
+        function($scope, $stateParams, $http) {
 
         var currentTree = [];
 
@@ -172,12 +176,16 @@ define(['angular', 'app', 'jquery', 'plugins/editor', 'bootbox'],
 
         return true;
 
-    });
+    }]);
 
     /**
      * New node
      */
-    app.ngController('nodeFormNewController', function($scope, $element) {
+    app.ngController('nodeFormNewController',
+
+        ['$scope', '$element',
+
+        function($scope, $element) {
 
         console.log('nodeFormNewController');
 
@@ -216,7 +224,7 @@ define(['angular', 'app', 'jquery', 'plugins/editor', 'bootbox'],
             $form.submit();
         }
 
-    });
+    }]);
 
     /**
      * Uploader

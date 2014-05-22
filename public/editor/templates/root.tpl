@@ -131,11 +131,11 @@
 </div>
 
 
+{if $config.lib_editor.optimized && !$config.debug}
+<script data-main="/assets/editor/main" src="/vendor/requirejs/require.js"></script>
+{else}
 <script data-main="/editor/templates/js/main" src="/vendor/requirejs/require.js"></script>
-
-{*
-<script data-main="/dist/main-built" src="/vendor/requirejs/require.js"></script>
-*}
+{/if}
 
 {block 'page-bottom'}
 {/block}
