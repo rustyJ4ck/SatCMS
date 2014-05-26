@@ -82,7 +82,7 @@ class collection_generator {
         foreach ($classes as $class) {
             list($module, $class) = explode('.', $class);
             $this->_objects["{$module}_{$class}"] = core::module($module)->model($class);
-            core::dprint(array("[GENERATOR] Add %s", "{$module}_{$class}"));
+            core::dprint(array("[GENERATOR] Add %s", "{$module}_{$class}"), core::E_MESSAGE);
         }
     }
     
@@ -590,25 +590,25 @@ array(12) {
 
             if ($drop) {
                 $sql = $this->drop_table($object);
-                core::dprint(__METHOD__ . ' drop table');
+                core::dprint(__METHOD__ . ' drop table', core::E_MESSAGE);
                 $this->run_queries($db, $sql);
             }
 
             $sql = $this->generate_object_sql($object);
 
-            core::dprint(__METHOD__ . ' generate object: ' . get_class($object));
+            core::dprint(__METHOD__ . ' generate object: ' . get_class($object), core::E_MESSAGE);
 
             if ($sql) {
                 $this->run_queries($db, $sql);
             } else {
-                core::dprint('..uptodate');
+                core::dprint('..uptodate', core::E_MESSAGE);
             }
             
             // indexes
             $_sql = $this->generate_object_sql_extra($object);
             if (!empty($_sql['indexes'])) {
                 foreach ($_sql['indexes'] as $sql) {
-                    core::dprint(__METHOD__ . ' indexes');
+                    core::dprint(__METHOD__ . ' indexes', core::E_MESSAGE);
                     $this->run_queries($db, $sql);
                 }
             }            

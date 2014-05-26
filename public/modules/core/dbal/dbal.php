@@ -140,6 +140,10 @@ abstract class dbal {
         return $this->sql_fetchrowset($return);
     }
 
+    /**
+     * @param $query
+     * @return mixed query result
+     */
     abstract function sql_query($query);
 
     abstract function sql_fetchrowset($qid = null);

@@ -12,6 +12,7 @@
  class db_loader {
      
      const DEFAULT_CONNECTION = 'default';
+     const MOCK_CONNECTION    = 'null';
      
      private static $dbs;
      
@@ -98,13 +99,13 @@
          
          require_once 'modules/core/dbal/dbal.php';
          
-         $engine = $config['engine'];         
-         $type   = @$config['type'];
-         
          if (!isset($key)) $key = self::DEFAULT_CONNECTION; // $engine . $type;
          
          if (isset(self::$dbs[$key])) return self::$dbs[$key];
-         
+
+         $engine = $config['engine'];
+         $type   = @$config['type'];
+
          $engine_script =  loader::DIR_MODULES . 'core/dbal/' . $engine . loader::DOT_PHP;
          
          core::dprint('[db] ' . $engine_script);

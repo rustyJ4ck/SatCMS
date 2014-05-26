@@ -29,7 +29,6 @@ class sat_blocks extends module_blocks {
         
         , 'widgets'         => array('template'  => 'widgets/default',     'title' => 'Виджеты')
 
-       // , 'news_category'   => array('class' => true)
     );
      
      
@@ -119,6 +118,10 @@ class sat_blocks extends module_blocks {
             ->set_where(isset($params->where) ? $params->where : $where)
             ->load()
             ->get_item();
+
+        if (!$item) {
+            throw new block_exception('Node not found');
+        }
                                                  
         if ($item && $deps)          $item->load_secondary();
         if ($item && $with_extrafs)  $item->get_extrafs_fields();        

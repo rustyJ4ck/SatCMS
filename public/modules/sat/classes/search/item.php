@@ -7,7 +7,7 @@
  * @version    $Id: item.php,v 1.1.2.1 2012/10/18 06:59:59 Vova Exp $
  */
  
-class search_item extends abs_collection_item {
+class sat_search_item extends abs_collection_item {
     
     protected $_results;
 

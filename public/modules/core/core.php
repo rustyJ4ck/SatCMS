@@ -251,6 +251,7 @@ class core extends core_module /*module_orm*/ {
                 $whoops = new \Whoops\Run;
                 $whoops->pushHandler(new \Whoops\Handler\PrettyPageHandler);
                 $whoops->register();
+                $this->set_cfg_var('with_debugger', true);
         }
 
         // build module
@@ -596,8 +597,17 @@ class core extends core_module /*module_orm*/ {
                 );
         });
 
-        // database setup  
-        $db_cfg = $this->cfg('database');
+        // database setup (database-`mysql`)
+        $db_cfg_key = $this->cfg('database');
+
+        if ($db_cfg_key) {
+            if (is_array($db_cfg_key)) {
+                $db_cfg = $db_cfg_key;
+            } else {
+                $db_cfg_key = 'database-' . $db_cfg_key;
+                $db_cfg = $this->cfg($db_cfg_key);
+            }
+        }
 
         if (!$db_cfg || $this->cfg('options.skip_database')) {
             $db_cfg['engine'] = 'null';
@@ -616,8 +626,7 @@ class core extends core_module /*module_orm*/ {
         date_default_timezone_set($tz ? $tz : 'Europe/Moscow');
 
         // load core config
-        $this->dyn_config = $this->class_register('config', array('render_by_key' => true))->load();
-        $this->dyn_config->merge_with($this->config);
+        $this->dyn_config = $this->model('config', array('render_by_key' => true))->load()->merge_with($this->config);
 
         // content-types
         $ctype_config = loader::get_docs() . 'ctypes.cfg';

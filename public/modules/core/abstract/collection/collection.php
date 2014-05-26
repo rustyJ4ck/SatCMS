@@ -284,7 +284,7 @@ abstract class abs_collection implements IAbs_Collection, IteratorAggregate {
 
         // pull objects
         $this->core  = core::get_instance();
-        $this->db    = db_loader::get($config['connection']?:null);
+        $this->db    = db_loader::get(@$config['connection']);
         $this->_root = $config['root'];
 
         //
@@ -2921,7 +2921,7 @@ class null_collection extends abs_collection {
     protected $fields = array('id' => array('type' => 'numeric'));
 
     function __construct() {
-        $this->db   = db_loader::get(array('engine' => 'null'));
+        $this->db   = db_loader::get(db_loader::MOCK_CONNECTION, array('engine' => 'null'));
         $this->core = core::get_instance();
         $this->prepare_fields();
     }

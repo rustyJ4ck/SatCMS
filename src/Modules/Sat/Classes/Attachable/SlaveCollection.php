@@ -26,10 +26,9 @@ class SlaveCollection extends abs_collection {
      * @return mixed
      */
     function update_pid($sid, $pid) {
-        $sql = "UPDATE %s SET sid = 0, pid = %d  WHERE sid = %d";
+        $sql = "UPDATE %s SET sid = 0, pid = %d  WHERE sid = %d"; //@todo AND ctype_id = %d
         $sql = sprintf($sql, $this->get_table(), $pid, $sid);
         $this->db->query($sql);
-
         return $this->db->sql_numrows();
     }
 
