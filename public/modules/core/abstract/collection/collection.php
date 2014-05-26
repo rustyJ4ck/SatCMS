@@ -284,7 +284,7 @@ abstract class abs_collection implements IAbs_Collection, IteratorAggregate {
 
         // pull objects
         $this->core  = core::get_instance();
-        $this->db    = core::lib('db');
+        $this->db    = db_loader::get($config['connection']?:null);
         $this->_root = $config['root'];
 
         //

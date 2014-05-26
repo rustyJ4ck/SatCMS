@@ -94,14 +94,14 @@
      *  engine - pdo
      *      type - mysql
      */
-     public static function get(array $config) {
+     public static function get($key = null, array $config = array()) {
          
          require_once 'modules/core/dbal/dbal.php';
          
          $engine = $config['engine'];         
          $type   = @$config['type'];
          
-         $key = $engine . $type;
+         if (!isset($key)) $key = self::DEFAULT_CONNECTION; // $engine . $type;
          
          if (isset(self::$dbs[$key])) return self::$dbs[$key];
          

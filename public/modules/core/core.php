@@ -604,7 +604,8 @@ class core extends core_module /*module_orm*/ {
             self::dprint('Missing database configuration section', core::E_CRIT);
         }
 
-        self::register_lib('db', $db_test = db_loader::get($db_cfg));
+        // default connection
+        self::register_lib('db', $db_test = db_loader::get(null, $db_cfg));
 
         if (!$db_test /*&& defined('TF_TEST_INFECTED')*/) {
             throw new core_exception('Database connection problem', tf_exception::CRITICAL);
