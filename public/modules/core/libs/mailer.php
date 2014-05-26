@@ -8,13 +8,11 @@
 * @author surgeon <r00t@skillz.ru>
 */
 
-require 'ext/mailer/phpmailer.php';
-
 /**
  * PHPMailer decorator
- * Class tfPhpMailer
+ * Class tf_php_mailer
  */
-class tfPhpMailer extends PHPMailer {
+class tf_php_mailer extends PHPMailer {
 
     /**
      *  Method to send mail: ("mail", "sendmail", or "smtp").
@@ -64,7 +62,7 @@ class tf_mailer {
      function email($m) {
         
        /* init with exceptions */
-       $mailer                = new tfPHPMailer(true);
+       $mailer                = new tf_php_mailer(true);
        
        $mailer->configure($this->config);
        

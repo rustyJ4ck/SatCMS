@@ -5,7 +5,7 @@
  * @copyright  SurSoft (C) 2008
  */
 
-namespace SatCMS\Modules\Core\Abstract;
+namespace SatCMS\Modules\Core\Base;
 
 abstract class Runner {
 

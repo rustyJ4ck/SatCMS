@@ -31,3 +31,20 @@ otherwise you'll "get unable to open database file" error.
 {server-root}/config/whatever/database.db
 
 That's all.
+
+
+
+
+Build Editor all-in-one bundle (optional)
+-----------------------------------------
+r.js -o build.js
+
+
+Append config/engine.cfg with:
+
+render_config_vars = "..., lib_editor"
+
+[lib_editor]
+optimized = yes
+
+

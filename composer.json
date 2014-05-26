@@ -20,6 +20,7 @@
         "filp/whoops": "1.0.10",
         "doctrine/dbal": "2.5.*",
 
+        "phpmailer/phpmailer": "dev-master",
         "firephp/firephp-core": "dev-master"
 
 },

@@ -45,9 +45,9 @@ class SatController extends editor_controller {
 
         /** @var \tf_sat $pmsat */
         $pmsat            = core::module('sat');
-        
-        $this->site_id    = core::get_params('site_id');
-        $this->site_id    = $this->site_id ? $this->site_id : core::lib('request')->all('site_id');
+
+        $this->site_id    = $this->params->get('site_id');
+        $this->site_id    = $this->site_id ? $this->site_id : $this->request->all('site_id');
                                                                       
         //$this->sites      = $pmsat->get_site_handle()->load();
 

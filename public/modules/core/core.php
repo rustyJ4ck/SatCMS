@@ -580,17 +580,20 @@ class core extends core_module /*module_orm*/ {
         // templates setup
         self::register_lib('tpl_parser', function() {
             return tpl_loader::factory(
-                core::get_instance()->cfg('lib_tpl_parser')
+                core::selfie()->cfg('lib_tpl_parser')
                 );
         });
+
+
 
         // renderer
         self::register_lib('renderer', function() {
             return
-            new tf_renderer(
-                core::get_instance()->cfg('template')
-                , core::lib('tpl_parser')
-            );
+            0 /*loader::in_shell()*/ //disable renderer in console
+                ? new \SatCMS\Modules\Core\Base\ObjectMock()
+                : new tf_renderer(
+                    core::selfie()->cfg('template'), core::lib('tpl_parser')
+                );
         });
 
         // database setup  
@@ -615,8 +618,7 @@ class core extends core_module /*module_orm*/ {
         $this->dyn_config = $this->class_register('config', array('render_by_key' => true))->load();
         $this->dyn_config->merge_with($this->config);
 
-        // ctypes
-
+        // content-types
         $ctype_config = loader::get_docs() . 'ctypes.cfg';
         $ctype_array  = (fs::file_exists($ctype_config))
             ? parse_ini_file($ctype_config, true)

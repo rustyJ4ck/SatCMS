@@ -146,8 +146,8 @@ class tf_renderer extends abs_data {
      */
     public function __construct($template, $tp) {
 
-        $this->_charset = core::get_instance()->get_cfg_var('charset', $this->_charset);
-        $this->templates = core::get_instance()->get_cfg_var('templates');
+        $this->_charset = core::get_instance()->cfg('charset', $this->_charset);
+        $this->templates = core::get_instance()->cfg('templates');
 
         $this->current = new aregistry;
         $this->return = new aregistry;
@@ -168,6 +168,11 @@ class tf_renderer extends abs_data {
     * Get parser
     */
     function get_parser() {
+
+        if ($this->tpl_parser instanceof Closure) {
+            $this->tpl_parser = $this->tpl_parser();
+        }
+
         return $this->tpl_parser;
     }
     
@@ -425,9 +430,9 @@ class tf_renderer extends abs_data {
         }
         
         if (!empty($props['template'])) {
-            $this->tpl_parser->assign('block', $props);        
+            $this->get_parser()->assign('block', $props);
             $tpl = 'blocks/' . $props['template'] . loader::DOT_TPL;
-            return $this->tpl_parser->fetch($tpl); 
+            return $this->get_parser()->fetch($tpl);
         }
         // direct rendering
         else return $data;
@@ -528,14 +533,14 @@ class tf_renderer extends abs_data {
             $tpl .= loader::DOT_TPL;
             
             // assign data        
-            $this->tpl_parser->assign($this->get_data());
+            $this->get_parser()->assign($this->get_data());
 
             core::dprint('[RENDER] using ' . $tpl . ' with ' . $this->get_main_template() . ' [' . $this->template_url . ']');        
     
         
             // in ajax dies silently, if no template found
             try {
-                $this->_buffer = $this->tpl_parser->fetch($tpl);   
+                $this->_buffer = $this->get_parser()->fetch($tpl);
             }
             //@fixme not portable parser
             catch (SmartyException $e) {
