@@ -155,11 +155,17 @@ class core extends core_module /*module_orm*/ {
 
         if (empty($params) && !is_array($params)) $params = array();
 
-        $cfg_file = loader::get_docs() . 'engine.cfg';
+        $cfg_file = @$params['config-file'] ?: 'engine';
+        $cfg_file = loader::get_docs() . $cfg_file . '.cfg';
 
         if (fs::file_exists($cfg_file)) {
             // echo('[error] Configuration file not found'); 
             $this->init_config(parse_ini_file($cfg_file, true));
+        }
+
+        // override core-config
+        if (!empty($params['config'])) {
+            $this->config = array_merge($this->config, $params['config']);
         }
 
         // multiconfig config/domain.engine.cfg
@@ -234,7 +240,7 @@ class core extends core_module /*module_orm*/ {
 
             if (!loader::in_shell()) {
                 self::$_debug_level = false;
-                ini_set('display_errors', 'off');
+                //ini_set('display_errors', 'off');
             } else {
                 // enable debug messages in shell
                 self::set_debug(
@@ -328,8 +334,9 @@ class core extends core_module /*module_orm*/ {
 
     /**
      * All libs in the bulk
+     * @return core_libs
      */
-    public static function get_libs() {
+    public static function libs() {
         return self::$libs;
     }
 
@@ -446,7 +453,7 @@ class core extends core_module /*module_orm*/ {
     public static function register_lib($id, $lib, $config = null) {
 
         return
-            self::get_libs()
+            self::libs()
                 ->configure($id, $config
                         ? $config
                         : self::get_instance()->cfg('lib_' . $id, array())
@@ -546,8 +553,8 @@ class core extends core_module /*module_orm*/ {
         // shutdown_after
         $this->init(91);
 
-        if ($db = self::lib('db')) {
-            $db->sql_close();
+        if ($this->db) {
+            $this->db->close();
         }
 
         $time = self::time_check('core-boot', true);
@@ -561,6 +568,37 @@ class core extends core_module /*module_orm*/ {
         }
 
         $this->halt();
+    }
+
+    /**
+     * DB Setup
+     * @param $id
+     * @throws core_exception
+     */
+    function configure_database($id) {
+
+        if ($id) {
+            if (is_array($id)) {
+                $cfg = $id;
+            } else {
+                $id = 'database-' . $id;
+                $cfg = $this->cfg($id);
+            }
+        }
+
+        if (!$cfg || $this->cfg('options.skip_database')) {
+            $cfg['engine'] = 'null';
+            self::dprint('Missing database configuration section', core::E_CRIT);
+        }
+
+        $connection = db_loader::set(null, $cfg);
+
+        if (!$connection) {
+            throw new core_exception('Database connection problem', tf_exception::CRITICAL);
+        }
+
+        // default connection
+        self::register_lib('db', $connection);
     }
 
     /**
@@ -585,8 +623,6 @@ class core extends core_module /*module_orm*/ {
                 );
         });
 
-
-
         // renderer
         self::register_lib('renderer', function() {
             return
@@ -598,28 +634,7 @@ class core extends core_module /*module_orm*/ {
         });
 
         // database setup (database-`mysql`)
-        $db_cfg_key = $this->cfg('database');
-
-        if ($db_cfg_key) {
-            if (is_array($db_cfg_key)) {
-                $db_cfg = $db_cfg_key;
-            } else {
-                $db_cfg_key = 'database-' . $db_cfg_key;
-                $db_cfg = $this->cfg($db_cfg_key);
-            }
-        }
-
-        if (!$db_cfg || $this->cfg('options.skip_database')) {
-            $db_cfg['engine'] = 'null';
-            self::dprint('Missing database configuration section', core::E_CRIT);
-        }
-
-        // default connection
-        self::register_lib('db', $db_test = db_loader::get(null, $db_cfg));
-
-        if (!$db_test /*&& defined('TF_TEST_INFECTED')*/) {
-            throw new core_exception('Database connection problem', tf_exception::CRITICAL);
-        }
+        $this->configure_database($this->cfg('database'));
 
         // set default timezone
         $tz = $this->cfg('default_timezone');
@@ -703,17 +718,11 @@ class core extends core_module /*module_orm*/ {
                 throw new core_exception(i18n::T('you_are_banned'), tf_exception::CRITICAL);
         }
 
-        // register auth
-        if ($musers = $this->module('users'))
-            self::register_lib('auth', new tf_auth(
-                $musers,
-                loader::in_shell()
-            ));
+        self::register_lib('auth', new tf_auth(loader::in_shell()))->start_session();
 
         if (self::in_editor()) {
             // editor kickstart
             $this->lib('editor');
-            //self::register_lib('editor', new tf_editor());
         }
 
         register_shutdown_function(array($this, 'halt'));
@@ -800,19 +809,12 @@ class core extends core_module /*module_orm*/ {
 
         }
 
-        /*
-        catch (controller_exception $e) {
-            self::dprint('[CONTROLLER] no template?');
-            $this->shutdown_critical($e->getMessage());
-        }
-        */
-
-        /*
-
         // Whoops?
         // Catch for non-debug clients
 
-        catch (Exception $e) {
+
+        /*
+        catch (tf_exception $e) {
 
             $this->renderer->disable_output(1);
 
@@ -828,9 +830,7 @@ class core extends core_module /*module_orm*/ {
             }
 
         }
-
         */
-
 
     }
 
@@ -856,7 +856,7 @@ class core extends core_module /*module_orm*/ {
 
         $request = $url ? $url : urldecode($_SERVER['REQUEST_URI']);
 
-        self::modules()->event('route_before', array('url' => &$request));
+        self::event('dispatch_before', array('url' => &$request));
 
         $skip_site_check = false;
 
@@ -967,9 +967,13 @@ class core extends core_module /*module_orm*/ {
         // nothing routed?
         $router_module = $router_module ? $router_module : self::$modules->get_router();
 
-        if (!$router_module) throw new router_exception('No router module found');
+        if (!$router_module) {
+            throw new router_exception('No router module found');
+        }
 
         $router = $router_module->get_router();
+
+        self::event('route_before', $router);
 
         if ($router) {
             self::dprint('[ROUTER] using ' . $router_module->get_name());
@@ -1396,7 +1400,7 @@ class core extends core_module /*module_orm*/ {
 
         if (!isset(self::$_debug_config[$level])) $level = self::E_TRACE;
 
-        $msg = self::$_debug_config[$level]['name'] . '# ' . $msg;
+        $msg = str_pad(self::$_debug_config[$level]['name'], 6) . '| ' . $msg;
 
         $msg = array('text' => sprintf("%6.4f %s", self::ticks(), $msg));
         $msg = array_merge($msg, self::$_debug_config[$level]);

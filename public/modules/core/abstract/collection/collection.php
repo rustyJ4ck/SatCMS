@@ -1568,12 +1568,13 @@ abstract class abs_collection implements IAbs_Collection, IteratorAggregate {
     }
 
     /**
+     * SQLITE: non ascii strings does not validate
      * Check field unique
      * Makes query to db for each check
      * @param string field vf_name
      * @param mixed value
      * @param mixed skip this id
-     * @return bool
+     * @return bool true if unique
      */
     function check_unique_value($name, $value, $id = false) {
 
@@ -1584,15 +1585,22 @@ abstract class abs_collection implements IAbs_Collection, IteratorAggregate {
         $vf      = $this->get_field($name);
         $is_text = ($vf['type'] == 'text');
 
-        if ($is_text) $value = strings::strtoupper($value);
+        if ($is_text) $value = strings::strtolower($value);
 
         $value = $this->format_field_sql($name, $value);
 
         $where_ = $id ? ("id <> " . (int)$id . " AND ") : '';
 
-        $sql = "SELECT id FROM " . $this->get_table() . " WHERE " . $where_ . ($is_text ? "UCASE({$name})" : $name) . " " . ($is_text ? '=' : '=') . " {$value}";
+        // sqlite: no UCASE, but LOWER
+        $sql = "SELECT count(*) as count FROM " . $this->get_table()
+            . " WHERE " . $where_ . ($is_text ? "LOWER({$name})" : $name)
+            . " " . ($is_text ? '=' : '=') . " {$value}";
 
-        return (0 == $this->db->sql_numrows($this->db->query($sql)));
+        $result = $this->db->fetch_row(
+            $this->db->query($sql)
+        );
+
+        return !$result['count'];
     }
 
     /**

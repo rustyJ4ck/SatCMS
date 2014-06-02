@@ -47,7 +47,7 @@ class tf_exception extends exception {
 
                 // log if logger available
                 if ($this->logable && class_exists('core', 0)
-                    && ($libs = core::get_libs()) && $libs->is_registered('logger')
+                    && ($libs = core::libs()) && $libs->is_registered('logger')
                     && ($logger = core::lib('logger'))
                 ) {
                     $this->log_id = $logger->error($title, $err_no, $this->getTraceAsString());

@@ -229,6 +229,15 @@ class tf_request extends singleton {
     function post($name = null, $default = null) {
         return $name ? (isset($this->_post[$name])?$this->_post[$name]:$default) : $this->_post;
     }
+
+    /**
+     * Check if something posted
+     * @param null $name
+     * @return bool
+     */
+    function has_post($name = null) {
+        return ($name) ? array_key_exists($name, $this->_post) : !empty($this->_post);
+    }
     
     /**
     * Get FILES
@@ -283,4 +292,25 @@ class tf_request extends singleton {
     function all($name = null, $default = null) {
         return $name ? (isset($this->_all[$name])?$this->_all[$name]:$default) : $this->_all;     
     }
+
+    /**
+     * Check token
+     * @return bool
+     */
+    public function forged() {
+
+        $token = $this->postget(tf_auth::CSRF_TOKEN);
+
+        // nginx can remove this header
+        $token = $token ?: @$_SERVER['HTTP_SC_CSRF_TOKEN'];
+
+        //Request::header('X-CSRF-Token');
+        //apache_request_headers();
+
+        //dd($_SERVER, core::lib('auth')->token());
+
+        return $token !== core::lib('auth')->token();
+    }
+
+
 }

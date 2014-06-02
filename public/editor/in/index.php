@@ -1,5 +1,22 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<?php
+
+/**
+ * Login gate
+ */
+
+require '../../modules/core/loader.php';
+
+    loader::bootstrap();
+    core::get_instance(true);
+
+    if (core::lib('auth')->logged_in()) {
+        return functions::redirect('../');
+    }
+
+    $token = '<input type="hidden" name="x_token" value="' . core::lib('auth')->token() . '" />';
+?>
+<!DOCTYPE html>
+<html>
 
 <head>
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
@@ -106,6 +123,8 @@ var _site_url = "/";
            onfocus="this.value = '';"
            /> <br/>
     </div>
+
+    <?=$token?>
 
     <input type="hidden" name="redirect" value="/editor/"/>
     <input type="submit" class="btn btn-primary btn-lg" value="Войти" />

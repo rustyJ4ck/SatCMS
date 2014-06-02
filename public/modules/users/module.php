@@ -15,10 +15,7 @@ class tf_users extends core_module {
     
     private $users;
     
-    
-    private $auth;
-    
-    /** 
+    /**
     * anonymous user 
     */
     private $anonymous;
@@ -40,11 +37,7 @@ class tf_users extends core_module {
     */
     function construct_after() {
         core::dprint('[users] construct', core::E_DEBUG0);
-
-        // load module stuff  
-        // need for module('auth')
-        
-        $this->users = $this->class_register('users', array('no_extra' => true, 'no_preload' => true) /*, array('no_preload' => true)*/);        
+        $this->users = $this->model('users');
         $this->anonymous = new anonymous_user($this->users);
         
     }
@@ -57,6 +50,29 @@ class tf_users extends core_module {
     /** @return acl_collection          */  function get_acl_handle()           {  return $this->class_register('acl');                }    
     /** @return users_payments_collection*/ function get_users_payments_handle(){  return $this->class_register('users_payments');     }
 
+    /** @param sessions_item $session */
+    function on_auth_session($session) {
+
+        // fix session with no token
+        if (!$session->token) {
+            $session->update_token();
+        }
+    }
+
+    /**
+     * Check csrf
+     * @throws router_exception
+     */
+    function on_route_before() {
+      $this->check_forged();
+    }
+
+    function check_forged() {
+        if ($this->request->has_post() && $this->request->forged()) {
+            throw new controller_exception('Forged request', 401);
+        }
+    }
+
     function with_acls() {
         return $this->cfg('acls', 0);
     }
@@ -66,8 +82,9 @@ class tf_users extends core_module {
     */
     function init0() {
         core::dprint('[users] init0');
+
         // link
-        $this->auth = core::lib('auth');
+        // $this->auth = core::lib('auth');
         
         $return = parent::init0();
         $this->_cp_links = array();
@@ -228,7 +245,6 @@ class tf_users extends core_module {
     
     /**
     * Get user logged in system
-    * @todo unMock
     */
     function get_current_user() {
         return $this->auth->get_user();

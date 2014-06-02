@@ -18,7 +18,9 @@ class sessions_collection extends abs_collection {
     private $_cleanup_sessions_max = 500;
     private $_cleanup_interval = 604800;   // ttl=1 x week
     
-    private   $_session_key = '';
+    private $_session_key = '';
+
+    const TOKEN_LENGTH = 16;
                                
     protected $fields = array(
           'id'              => array('type'     => 'numeric')
@@ -27,6 +29,7 @@ class sessions_collection extends abs_collection {
         , 'last_update'     => array('type'     => 'unixtime',  'default' => 'now')
         , 'skey'            => array('type'     => 'text', 'size' => 32)
         , 'sid'             => array('type'     => 'text', 'size' => 32)
+        , 'token'           => array('type'     => 'text', 'size' => 16)
         , 'sdata'           => array('type'     => 'text', 'no_format' => true)         // serialized
     );
     
@@ -62,6 +65,7 @@ class sessions_collection extends abs_collection {
         $item->id  = false;
         $item->uid = false;
         $item->uip = false;
+        $item->token = $this->make_token();
         $this->append($item, -1);
         return $item;
     }
@@ -76,15 +80,20 @@ class sessions_collection extends abs_collection {
         
         $id = $this->create(
             array(
-                'uid' => $uid
-              , 'uip' => $uip
-              , 'sid' => $sid
+                'uid'   => $uid
+              , 'uip'   => $uip
+              , 'sid'   => $sid
+              , 'token' => $this->make_token()
             )
         );
 
         return $this->get_item_by_id($id);
     }
-    
+
+    function make_token() {
+        return functions::url_hash(null, self::TOKEN_LENGTH);
+    }
+
     /**
     * Get current session (by sid)
     * @param string sid
@@ -119,7 +128,7 @@ class sessions_collection extends abs_collection {
                 $key .= $blocks[$i] . '.';
             }
         }
-        return bin2hex(md5($key, true));
+        return functions::hash($key);
     }
     
     function get_session_key() {

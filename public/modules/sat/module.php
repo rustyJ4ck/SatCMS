@@ -77,7 +77,7 @@ TPL
 
             // fake site
             $site = $this->get_site_handle()->alloc(array(
-                'id'        => 666,
+                'id'        => 0,
                 'domain'    => $this->core->get_main_domain(),
                 'title'     => 'Unknown site',
                 'active'    => true,

@@ -265,12 +265,19 @@ abstract class abs_collection_item extends abs_data implements IAbs_Collection_I
      * @param $id
      * @return mixed
      */
-    function add_behavior($id) {
-        list($module, $behavior) = explode('.', $id);
-        $class_fqcn = '\\SatCMS\\Modules\\' . ucfirst($module) . '\\Classes\\Behaviors\\' . ucfirst($behavior);
-        $id = strtolower($id);
-        $this->behaviors[$id] = new $class_fqcn;
+    function add_behavior($id, $behavior = null) {
+
+        if (!$behavior) {
+            list($module, $behavior) = explode('.', $id);
+            $class_fqcn = '\\SatCMS\\Modules\\' . ucfirst($module) . '\\Classes\\Behaviors\\' . ucfirst($behavior);
+            // @todo test this
+            // $id = strtolower($id);
+            $behavior = new $class_fqcn;
+        }
+
+        $this->behaviors[$id] = $behavior ;
         $this->behaviors[$id]->set_model($this);
+
         return $this->behaviors[$id];
     }
 
@@ -282,6 +289,10 @@ abstract class abs_collection_item extends abs_data implements IAbs_Collection_I
         return $this->behaviors->is_set($id);
     }
 
+    /**
+     * @param $id
+     * @return mixed
+     */
     function behavior($id) {
         return $this->behaviors->get($id);
     }
@@ -933,7 +944,6 @@ abstract class abs_collection_item extends abs_data implements IAbs_Collection_I
         $this->save_before();
 
         $res = false;
-        $is_new = false;
 
         $vfs = $this->fields();
 
@@ -947,7 +957,6 @@ abstract class abs_collection_item extends abs_data implements IAbs_Collection_I
          */
         if (!empty($this->id) && !$this->is_allocated()) {
             // modify
-            $sql = '';
             $sql = "UPDATE " . ($low_priority ? 'LOW_PRIORITY ' : '') . $this->config->table . " SET";
 
             foreach ($vfs as $k => $v) {
@@ -970,9 +979,6 @@ abstract class abs_collection_item extends abs_data implements IAbs_Collection_I
          * Insert
          */
         else {
-
-            $is_new = true;
-
             // check for position
             $this->assign_position();
 
@@ -1246,6 +1252,7 @@ abstract class abs_collection_item extends abs_data implements IAbs_Collection_I
 
     /**
      * Set/get delayed insert flag
+     * Sqlite does not support DELAYED queries
      */
     public function is_delayed() {
         return $this->get_container()->is_delayed();

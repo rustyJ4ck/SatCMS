@@ -6,7 +6,7 @@ define(['app', 'angular', 'bootbox'],
 
     console.log('--gridDirective', typeof app);
 
-    app.ngDirective('gridWidget',  function($localStorage) {
+    app.ngDirective('gridWidget',  ['$localStorage', function($localStorage) {
 
         /** gridID */
         var id;
@@ -362,6 +362,6 @@ define(['app', 'angular', 'bootbox'],
             }
         };
 
-    });
+    }]);
 
 });

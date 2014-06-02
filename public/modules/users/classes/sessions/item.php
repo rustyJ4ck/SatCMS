@@ -9,6 +9,7 @@
 
 /**
  * Class sessions_item
+ *
  * @property int id
  * @property int uip
  * @property int uid
@@ -17,11 +18,13 @@
  * @property int last_update
  * @property string uip_string
  * @property string last_update_string
+ * @property string token
  */
 class sessions_item extends abs_collection_item {
 
     /**
-     * Change session data thru this var. @see self::get_sdata()
+     * Change session data
+     * @see get_storage
      * @var aregistry
      */
     protected $storage;
@@ -91,19 +94,25 @@ class sessions_item extends abs_collection_item {
     
     /**
     * Update uid
+    * Login user
+    * @return $this
     */
     function update_uid($uid) {
         $this->uid = $uid;
-        $this->update_fields("uid"); 
+        $this->token = $this->container->make_token();
+        $this->update_fields('uid', 'token');
+        return $this;
     }
-    
-    /*
-    function render_before() {
-        $this->uip = long2ip($this->uip);       
-        $this->last_update_ = time() - (int)$this->last_update;
+
+    /**
+     * Update token
+     * @return $this
+     */
+    function update_token() {
+        $this->token = $this->container->make_token();
+        $this->update_fields('token');
+        return $this;
     }
-    */
-    
 
     function get_expire_time() {
         return $this->last_update + $this->get_container()->get_expire_time();

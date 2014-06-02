@@ -83,38 +83,16 @@ class users_collection extends abs_collection {
             return $id; //$this->_genders[$id];
         }
         
-        /**
-        * Check field unique 
-        * Makes query to db for each check
-        * @return bool
-        */
-        function check_unique_field($name, $value, $uid = false) {
-            if (empty($value)) return false;
-            
-            $vf = $this->get_field($name);
-            $is_text = ($vf['type'] == 'text');
-            
-            if ($is_text) { $value = strings::strtoupper($value);
-            }
-            
-            $value = $this->format_field_sql($name, $value);
-            
-            $where_ = $uid ? ("id <> " . (int)$uid . " AND ") : '';
-            
-            $sql = "SELECT id FROM " . $this->get_table() . " WHERE " . $where_ . ($is_text ? "UCASE({$name})" : $name) . " " . ($is_text ? '=' : '=') . " {$value}";
-            return (0 == $this->db->sql_numrows($this->db->sql_query($sql)));               
-        }
-        
         function check_unique_nick($d, $uid = false) {
-            return $this->check_unique_field('nick', $d, $uid);
+            return $this->check_unique_value('nick', $d, $uid);
         }
                 
         function check_unique_login($d, $uid = false) {
-            return $this->check_unique_field('login', $d, $uid);
+            return $this->check_unique_value('login', $d, $uid);
         }
         
         function check_unique_email($d, $uid = false) {
-            return $this->check_unique_field('email', $d, $uid);
+            return $this->check_unique_value('email', $d, $uid);
         }
         
         /**
@@ -124,11 +102,13 @@ class users_collection extends abs_collection {
         */
         function register_new_user($data, $level = 'user') {
 
+            // @todo validator
             if (!core::lib('validator')->is_email($data['email'])) throw new validator_exception('email_bad');
             if (!preg_match('/^[a-z_0-9]+$/i', $data['login']))    throw new validator_exception('login_bad');
             if (empty($data['password']))                          throw new validator_exception('password_bad');
                         
-            if (!$this->check_unique_nick ($data['nick']))         throw new validator_exception('nick_exists');
+            // if (!$this->check_unique_nick ($data['nick']))         throw new validator_exception('nick_exists');
+
             if (!$this->check_unique_login($data['login']))        throw new validator_exception('login_exists');
             if (!$this->check_unique_email($data['email']))        throw new validator_exception('email_exists');
             
@@ -150,7 +130,7 @@ class users_collection extends abs_collection {
         */
         function check_payd_users() {
             $time = time();
-            $this->db->sql_query('UPDATE ' . $this->get_table() . ' SET payd_user = 0, payd_till = 0 WHERE payd_user AND payd_till < ' . $time);
+            $this->db->query('UPDATE ' . $this->get_table() . ' SET payd_user = 0, payd_till = 0 WHERE payd_user AND payd_till < ' . $time);
         }
         
         function get_url_id_field() {

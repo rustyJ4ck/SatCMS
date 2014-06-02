@@ -292,11 +292,16 @@ Editable
 */
 
 #contact-form {
-    position:absolute;
-    width:100%;
+    position:fixed;
+
+    width:877px;
+
     bottom:0px;
+
     padding-right:30px;
+
     height:35px;
+
     overflow:hidden;
 
     -webkit-transition:all 500ms linear;
@@ -310,9 +315,21 @@ Editable
         height: 360px;
     }
 
+    /*
     #contact-form:hover {
         height:390px;
         bottom:-10px;
+    }
+    */
+
+    #contact-form.c-visible {
+        height:370px;
+        opacity:1;
+    }
+
+    #contact-form.c-hidden {
+        height:35px;
+        opacity:0.6;
     }
 
 /*

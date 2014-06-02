@@ -77,7 +77,8 @@
     removeCombined: true,
     findNestedDependencies: true,
 
-//  useStrict: true,
+    useStrict: true,
+
 //  wrap: true,
 //  wrapShim: true,
     inlineText: false,
@@ -98,12 +99,21 @@
         },
         compress: {
             sequences: true,
+            dead_code: true,
+            join_vars: true,
+            drop_console: true,
+
             global_defs: {
                 DEBUG: false
             }
         },
         warnings: true,
-        mangle: false
-    },
+
+        // @fixme angular don't like this (cost 300+Kb)
+        mangle: false,
+        //{
+        //    except: ['angular']
+        //}
+    }
 
 })

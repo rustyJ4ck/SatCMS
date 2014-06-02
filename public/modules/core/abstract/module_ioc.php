@@ -7,6 +7,17 @@
  * @version    $Id: module_ioc.php,v 1.8.2.4 2013/05/15 07:19:31 Vova Exp $
  */
 
+/**
+* Hint Libs
+* @property tf_auth             auth
+* @property tf_request          request
+* @property tf_renderer         renderer
+* @property tf_logger           logger
+* @property Smarty3             $tpl_parser
+* @property dbal                $db
+* @property tf_editor           $editor
+* @property Debug_HackerConsole_Main             $console
+*/
 class module_ioc {
 
     public $dependencies = array();
@@ -26,13 +37,28 @@ class module_ioc {
     }
 
     /**
+     * Get lib (IOC)
+     * $module->renderer etc.
+     * @param $key
+     */
+    function __get($key) {
+
+        if (isset($this->dependencies[$key])) {
+            return $this->resolve_dependency($key);
+        }
+
+        // fallback to libs
+        return core::lib($key);
+    }
+
+    /**
      * @param $name
      * @return mixed
      * @throws core_exception
      */
     public function resolve_dependency($name) {
 
-        core::dprint(array('..ioc-resolve %s %s', $name, (isset($this->dependencies[$name]['instance'])?'+':'-')));
+        core::dprint(array('..ioc-resolve %s %s', $name, (isset($this->dependencies[$name]['instance'])?'+':'-')), core::E_DEBUG3);
 
         if (isset($this->dependencies[$name]) && !isset($this->dependencies[$name]['instance'])) {
 

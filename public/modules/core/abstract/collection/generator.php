@@ -90,7 +90,13 @@ class collection_generator {
         $this->_objects = array();
         return $this;
     }
-    
+
+    function append_objects($objects) {
+        foreach ($objects as $o) {
+            $this->_objects[] = $o;
+        }
+    }
+
     function append_object($o, $model = null) {
         if ($model)
         $this->_objects[$model] = $o;

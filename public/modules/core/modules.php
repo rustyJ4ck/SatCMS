@@ -254,10 +254,11 @@ class core_modules extends registry {
     /**
     * Run event on every module
     */
-    public function event($name, $parms = null) {        
+    public function event($name, $params = null) {
         if ($this->is_empty()) return;
+        /** @var $m core_module */
         foreach ($this as $m) {
-            $m->on_event($name, $parms);
+            $m->trigger($name, $params);
         }
     }
     

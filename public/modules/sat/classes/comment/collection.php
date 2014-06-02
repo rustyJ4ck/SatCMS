@@ -109,8 +109,7 @@ class sat_comment_collection extends abs_collection {
     */
     function get_last_time($pid, $uid) {
         $sql = "SELECT created_at FROM " . $this->get_table() . " WHERE pid = {$pid} AND user_id = {$uid} ORDER BY created_at DESC LIMIT 1";
-        $res = $this->db->sql_query($sql);
-        $row = $this->db->sql_fetchrow($res);
+        $row = $this->db->fetchrow($this->db->query($sql));
         return @intval($row['created_at']);
     }
     

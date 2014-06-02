@@ -17,10 +17,13 @@
 class sat_comment_item extends abs_collection_item {
 
     protected static $_parents_cache = array();
+
     /** @var  rates_collection */
     protected $_rates;
-    /** @var  user_item */
+
+    /** @var  users_item */
     protected $_user;
+
     /** @var  abs_collection_item */
     protected $_parent;
 
@@ -142,18 +145,12 @@ class sat_comment_item extends abs_collection_item {
         return $this->_parent;
     }
 
-    /**
-     */
     function modify_after() {
-        core::get_instance()->event('comment', $this);
+        core::event('comment_update', $this);
     }
 
-    /**
-     */
     function remove_after() {
-        $p = $this->get_parent();
-        if ($p && method_exists($p, 'comment_removed')) $p->comment_removed($this);
-        core::get_instance()->event('comment_remove', $this);
+        core::event('comment_remove', $this);
     }
 
     function virtual_parent($type) {
@@ -168,8 +165,6 @@ class sat_comment_item extends abs_collection_item {
                 : i18n::T('deleted');
 
         }
-
-
     }
 
     /**

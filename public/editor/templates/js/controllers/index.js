@@ -10,9 +10,13 @@ define([
 
     function loadGithubComments() {
         $('#github-commits').githubInfoWidget(
-            { user: 'rustyj4ck', repo: 'satcms',
-                branch: 'master', last: 15,
-                limitMessageTo: 255, avatarSize: 48
+            {
+                user: 'rustyj4ck',
+                repo: 'satcms',
+                branch: 'develop',
+                last: 15,
+                limitMessageTo: 255,
+                avatarSize: 48
             }, function(elm) {
                 elm.find('a').attr('target', '_blank');
                 $('.github-commits-list .github-user > a').addClass('label label-info');

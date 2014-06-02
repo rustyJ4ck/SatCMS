@@ -7,7 +7,6 @@ use SatCMS\Modules\Core\Abstract\Runner as CommandRunner;
 */
 
 use loader, core;
-use Symfony\Component\Console\Command\Command as CommandRunner;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -15,17 +14,40 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 use Symfony\Component\Finder\Finder;
 
-class InstallCommand extends CommandRunner {
+class InstallCommand extends BaseCommand {
 
-    /** @var  core */
-    private $_core;
+    protected $name = 'core:install';
+    protected $description = 'Install database, create default site and superuser';
 
-    protected function configure() {
-        $this->setName('core:install')
-            ->setDescription('Fresh install');
+    /**
+     * @param $input
+     * @param $output
+     */
+    function migrate($input, $output) {
+
+        $models = Helpers\ModelEnumerator::find();
+
+        $generator = \abs_collection::get_generator();
+
+        /** @var \SplFileInfo  $file */
+        foreach ($models as $model) {
+
+            $generator->append_object(
+                $this->core()->model($model), $model
+            );
+
+            $output->writeln('...' . $model);
+
+        }
+
+        $output->writeln($generator->update_table_structure(true));
     }
 
-    function migrate($output) {
+    /**
+     * @param $input
+     * @param $output
+     */
+    function migrateDeprecated($input, $output) {
 
         $root = loader::get_public() . loader::DIR_MODULES . '*/classes';
         $finder = new Finder();
@@ -40,13 +62,13 @@ class InstallCommand extends CommandRunner {
 
                 if ('core' == $matches['module'] || core::modules()->is_registered($matches['module'])) {
 
-                $model = $matches['module'] . '.' . $matches['model'];
+                    $model = $matches['module'] . '.' . $matches['model'];
 
-                $generator->append_object(
-                    $this->_core->model($model), $model
-                );
+                    $generator->append_object(
+                        $this->core()->model($model), $model
+                    );
 
-                $output->writeln('...' . $model);
+                    $output->writeln('...' . $model);
 
             }
         }
@@ -75,7 +97,7 @@ class InstallCommand extends CommandRunner {
             'admin' . rand(666, 999)
         );
 
-        core::module('users')->get_users_handle()->register_new_user(array(
+        $user = core::module('users')->get_users_handle()->register_new_user(array(
               'nick'     => 'Admin'
             , 'login'    => $login
             , 'email'    => 'admin@localhost.local'
@@ -97,6 +119,7 @@ class InstallCommand extends CommandRunner {
             'active' => true
         ));
 
+        return $user;
     }
 
     /**
@@ -108,14 +131,15 @@ class InstallCommand extends CommandRunner {
      */
     protected function execute(InputInterface $input, OutputInterface $output) {
 
-        $this->_core = \core::get_instance(true);
+        $this->core();
+        $this->prepare_db($input->getOption('database'));
 
         $dialog = $this->getHelperSet()->get('dialog');
 
         $output->writeln('<info>Database configuration:</info>');
         $output->writeln('');
 
-        $output->writeln(var_export($this->_core->db->get_config(), 1));
+        $output->writeln(var_export($this->core()->db->get_config(), 1));
 
         $output->writeln('');
         $output->writeln('<fg=cyan>In case of sqlite you must `touch path/to/database` by yourself</fg=cyan>');
@@ -129,8 +153,12 @@ class InstallCommand extends CommandRunner {
             return;
         }
 
-        $this->migrate($output);
-        $this->create_admin($input, $output);
+        $this->migrate($input, $output);
+
+        $user = $this->create_admin($input, $output);
+
+        // run install tasks for modules
+        core::modules()->event('install', $user);
 
         $output->writeln('All done.');
 

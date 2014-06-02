@@ -41,7 +41,7 @@ define([
     /**
      * tfApp
      */
-    var tfApp = (function(){
+    var tfApp = (function(config){
 
         var startState = 'dashboard';
 
@@ -55,7 +55,6 @@ define([
             'ngSanitize',
             'ngAnimate',
             'ngStorage'
-
         ];
 
         var angularState;
@@ -349,6 +348,7 @@ define([
 
                             $http.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
                             $http.defaults.headers.post["Content-Type"] = "application/x-www-form-urlencoded";
+                            $http.defaults.headers.post["SC-CSRF-TOKEN"] =  config.token;
 
                             //$rootScope.hello = '@ZXCV@';
 
@@ -516,6 +516,8 @@ define([
             plugins: plugins,
             urls: urls,
 
+            config: config,
+
             ngApp: getAngularApp,
             ngState: getAngularState,
             ngAuth: ngAuth,
@@ -652,7 +654,7 @@ define([
 
         }
 
-    })();
+    })(config);
 
     console.log('tfApp-done', typeof tfApp);
 

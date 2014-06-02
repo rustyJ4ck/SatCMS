@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Core
+ * Editor APP
  * 
  * @package    SatCMS
  * @author     Golovkin Vladimir <r00t@skillz.ru> http://www.skillz.ru
@@ -9,10 +9,6 @@
  * @version    $Id: editor.php,v 1.2.6.5 2012/12/13 13:30:07 Vova Exp $
  */
 
- /**
- * Editor stuff
- */
-    
  class tf_editor {
      
     private $_disable_sef = false;
@@ -147,6 +143,7 @@
     function dispatch($path, ident_vars $params) {
 
         if (empty($path)) return;
+
         $path = explode('/', $path);
         
         $module     = array_shift($path);
@@ -156,7 +153,7 @@
         $controller = array_shift($path);
         
         if (isset($controller)) $params->c = $controller;
-        
+
         $post = core::lib('request')->post();
         
         if (!empty($path)) {

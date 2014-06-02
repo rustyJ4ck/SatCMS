@@ -141,10 +141,13 @@ class BaseAttachs extends \model_behavior {
 
         $this->attachs->load();
 
+        $this->load_attachs_after();
+
         return $this->attachs;
     }
 
     function load_attachs_before() {}
+    function load_attachs_after() {}
 
     /**
      * Get data

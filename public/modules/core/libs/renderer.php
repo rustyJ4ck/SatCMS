@@ -466,6 +466,8 @@ class tf_renderer extends abs_data {
         $cfg['debug']        = core::is_debug();
         $cfg['version']      = core::$version;
         $cfg['in_ajax']      = loader::in_ajax();
+
+        $cfg['token']        = $core->auth->token();
         
         if ($rc = $core->get_renderable_config()) {
             $cfg = array_merge($cfg, $rc);

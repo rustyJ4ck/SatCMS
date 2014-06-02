@@ -2,7 +2,7 @@
 
 namespace SatCMS\Modules\Sat\Classes\Attachable;
 
-use abs_collection_item;
+use core, abs_collection_item;
 
 class MasterItem extends abs_collection_item {
 
@@ -11,18 +11,23 @@ class MasterItem extends abs_collection_item {
      */
     protected $container;
 
+    /*
     function remove_after() {
-
     }
+    */
 
     function modify_after($data) {
 
-        if ($data['attach_sid']) {
+        if (!empty($data['attach_sid'])) {
 
+            /** @var SlaveCollection $collection */
             foreach ($this->container->attachables as $collection) {
                 $collection->update_pid($data['attach_sid'], $this->id);
-                //update_pid($sid, $pid)
             }
+
+        } {
+
+            core::dprint('No attach-sid assigned in ' . get_class($this), core::E_ERROR);
 
         }
 

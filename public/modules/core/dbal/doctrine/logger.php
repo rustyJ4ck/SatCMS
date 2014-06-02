@@ -2,7 +2,7 @@
 
 namespace SatCMS\Modules\Core\Dbal\Doctrine;
 
-use \core;
+use core;
 
 class Logger implements \Doctrine\DBAL\Logging\SQLLogger
 {
@@ -25,7 +25,7 @@ class Logger implements \Doctrine\DBAL\Logging\SQLLogger
     {
         if (class_exists('\core', 0)) {
             $time = microtime(1) - $this->_time;            
-            \core::dprint(array('%s -- %.5f', $this->_sql, $time), \core::E_SQL);
+            core::dprint(array('%s -- %.5f', $this->_sql, $time), core::E_SQL);
         }
     }
 }

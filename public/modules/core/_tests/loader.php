@@ -15,7 +15,10 @@ register_shutdown_function('test_done');
 require dirname(__FILE__) . "/../loader.php";
 
 $BOOT_OPTIONS = array(
-    loader::OPTION_TESTING => true
+    loader::OPTION_TESTING => true,
+    loader::OPTION_CORE_PARAMS => array(
+        'config' => array('database' => 'test')
+    )
 );
 
 loader::bootstrap($BOOT_OPTIONS);
@@ -30,7 +33,7 @@ if (loader::is_windows() && loader::in_shell()) {
 }
 
 /**
- * Simple tests api:
+ * Tests api:
  *
  * test_head(title)
  * test_print(var, var, ...)
@@ -38,7 +41,7 @@ if (loader::is_windows() && loader::in_shell()) {
  * test_assert($assert, $title)
  * test_except(closure, $title)
  *
- * test_done - autocall on shutdown
+ * test_done - called on shutdown
  */
 
 /**
@@ -140,6 +143,10 @@ function test_done() {
     exit($fails?1:0);
 }
 
+/**
+ * Test helper
+ * Class test_assertions
+ */
 class test_assertions {
 
     const OK = 'OK';

@@ -99,7 +99,7 @@ class sat_node_controller extends SatController {
         $this->_update_tree(false);
     }
     
-    function action_drop_all_after($ids) {
+    function action_drop_all_after(/*$ids*/) {
         $this->_update_tree($this->params->pid);
     }
     

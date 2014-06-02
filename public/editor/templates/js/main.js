@@ -64,7 +64,7 @@ require.config({
 
         angular : {exports : 'angular', deps : ["jquery"]},
 
-        jquery: {exports: 'jquery'},
+        jquery: {exports: 'jQuery'},
 
     //    angularSelect2: ['angular', 'jquery', 'select2'],
         select2: ['jquery'],

@@ -117,7 +117,7 @@ class module_controller {
     * _file         - raw file
     * 
     */
-    function run($route, $params) {
+    function run($route, $params = null) {
         
         $this->_action    = $route['action'];
         $this->_params    = new aregistry($params);

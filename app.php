@@ -36,7 +36,10 @@ foreach ($finder as $file) {
 }
 
 foreach ($commands as $command) {
-    $application->add(new $command);
+    $check = new ReflectionClass($command);
+    if ($check && !$check->isAbstract()) {
+        $application->add(new $command);
+    }
 }
 
 $application->run();

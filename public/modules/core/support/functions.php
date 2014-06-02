@@ -25,14 +25,23 @@ class functions {
      * @param $post
      * @return string
      */
-    static function url_hash($url = null, $base = 36) {
+    static function url_hash($url = null, $length = null) {
 
-        if (!isset($url)) {
-            $url = microtime(true);
+        $base = 36;
+
+        if (!$url) {
+            $url = uniqid(rand(), true);
+            // openssl_random_pseudo_bytes(32)
         }
 
         $crc = sprintf('%u', crc32($url));
-        return base_convert($crc, 10, $base);
+        $hash = base_convert($crc, 10, $base);
+
+        if ($length) {
+            $hash = substr($hash, -1 * $length);
+        }
+
+        return $hash;
     }
     
     /**

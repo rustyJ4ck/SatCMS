@@ -2,10 +2,6 @@
 
 namespace SatCMS\Modules\Core\Commands;
 
-/*
-use SatCMS\Modules\Core\Abstract\Runner as CommandRunner;
-*/
-
 use \core;
 use Symfony\Component\Console\Command\Command as CommandRunner;
 use Symfony\Component\Console\Input\InputArgument;
@@ -13,20 +9,23 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class GeneratorCommand extends CommandRunner {
+class GeneratorCommand extends BaseCommand {
 
     protected function configure() {
+
+        parent::configure();
+
         $this->setName('core:generator')
             ->setDescription('Generator (DB)')
 
             ->addArgument(
-                'action', InputArgument::REQUIRED, 'Command to run, e.g. render/update/create'
+                'action', InputArgument::REQUIRED, 'Command to run, `render/update/create/...`'
             )
 
             ->addArgument(
                 'models',
                 InputArgument::IS_ARRAY,
-                'models list'
+                'Models list `sat.site users.sessions` or `*` for migrating all'
             )
         ;
     }
@@ -42,7 +41,8 @@ class GeneratorCommand extends CommandRunner {
 
 //require('../_tests/loader.php');
 
-        $core = \core::get_instance(true);
+        $core = $this->core();
+        $this->prepare_db($input->getOption('database'));
 
         $action = $input->getArgument('action');
 
@@ -54,6 +54,10 @@ class GeneratorCommand extends CommandRunner {
 
         if (empty($ids)) {
             throw new \tf_exception("empty ID\n");
+        }
+
+        if ($ids[0] == '*') {
+            $ids = Helpers\ModelEnumerator::find();
         }
 
         /*

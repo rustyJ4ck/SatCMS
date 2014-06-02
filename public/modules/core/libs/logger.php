@@ -108,7 +108,7 @@ class tf_logger extends singleton {
     }
     
     /**
-      'file' => string 'C:\web\_site\two-face.ru\htdocs\modules\core\abstract\collection_item.php' (length=73)
+      'file' => string 'C:\web\site\two-face.ru\htdocs\modules\core\abstract\collection_item.php' (length=73)
       'line' => int 576
       'function' => string '__construct' (length=11)
       'class' => string 'tf_exception' (length=12)

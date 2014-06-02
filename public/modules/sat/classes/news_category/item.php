@@ -17,7 +17,7 @@ class sat_news_category_item extends abs_collection_item {
     */
     function make_urls() {
      
-        $url = core::module('sat')->get_router()->make_url(
+        $url = core::module('sat')->get_router()->add_url_domain(
             '/'
             . $this->container->child_model
             .'/'

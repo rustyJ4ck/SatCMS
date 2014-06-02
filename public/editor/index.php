@@ -8,7 +8,7 @@
  * @version    $Id: index.php,v 1.3.2.2.4.6 2012/10/25 09:57:45 Vova Exp $
  */
 
-// multifileuploader ua check hack (fix)
+// @fixme multifileuploader ua check fix
 if (!empty($_SERVER['HTTP_USER_AGENT']) &&
     $_SERVER['HTTP_USER_AGENT'] == 'Shockwave Flash' && isset($_POST['_ua'])) {
     $_SERVER['HTTP_USER_AGENT'] = $_POST['_ua'];        
@@ -31,12 +31,10 @@ functions::headers_no_cache();
 $editor = core::lib('editor');
 
 if (!core::lib('auth')->logged_in()) {
-    
     core::dprint('Please login!');
     $editor->on_exception('Not logged in');
-    functions::redirect('/login.html');
+    functions::redirect('/editor/in/');
     return;
-    
 } 
 
 $core = core::selfie();
@@ -52,9 +50,16 @@ if (strpos($core->request->uri(), '/editor/redirect') === 0) {
    $path = '/editor/core/redirect/';
 }
 
+try {
+    core::module('users')->check_forged();
+}
+catch (controller_exception $e) {
+    $editor->on_exception($e->getMessage(), $e);
+}
+
 // parse request path
 $editor->dispatch($path, core::get_params());
-                     
+
 $module = core::get_params()->m;
 $module = $module ? $module : 'core';
 

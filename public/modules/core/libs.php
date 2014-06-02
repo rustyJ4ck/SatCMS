@@ -11,7 +11,6 @@
 /**
  *  Core libs registry
  */
-
 class core_libs extends registry {
 
     private $configs  = array();
@@ -24,6 +23,10 @@ class core_libs extends registry {
         return $this;
     }
 
+    /**
+     * @param string $id
+     * @param core_libs $this
+     */
     function set($id, $lib = null) {
 
         if ($lib && is_object($lib) && !($lib instanceof Closure)) {

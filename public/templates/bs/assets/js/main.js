@@ -153,23 +153,17 @@
             });
 
 
-        /*
-
-         // ADD SLIDEDOWN ANIMATION TO DROPDOWN //
-         $('.dropdown').on('show.bs.dropdown', function(e){
-         $(this).find('.dropdown-menu').first().stop(true, true).fadeIn(300);
-         });
-
-         // ADD SLIDEUP ANIMATION TO DROPDOWN //
-         $('.dropdown').on('hide.bs.dropdown', function(e){
-         $(this).find('.dropdown-menu').first().stop(true, true).fadeOut(300);
-         });
-
+        /**
+         * Contact form
          */
-
         $('#contact-form').on('mouseenter', function(){
 
             var $this = $(this);
+
+            if ($this.hasClass('c-visible')) {
+                return false;
+            }
+
             if (!$this.data('loaded')) {
                 $(this).find('.panel-body').load(
                     '/templates/bs/partials/contact-form.html?1',
@@ -180,8 +174,38 @@
                 );
             }
 
+            $('#contact-form').removeClass('c-hidden').addClass('c-visible');
+
+        })
+
+        .on('mouseleave', function(e){
+
+           var triggered = 0;
+
+           var $target = $(e.target);
+           var validElm = $target.hasClass('panel-body') || $target.hasClass('panel') || $target.hasClass('panel-heading');
+
+           if (!triggered && validElm) {
+               triggered = 1;
+               setTimeout(function(){
+                   $('#contact-form').addClass('c-hidden').removeClass('c-visible');
+                   setTimeout(function(){triggered = 0;}, 600);
+               }, 500);
+           }
+           else {
+               return false;
+           }
+
         });
 
+        // ready scripts
+        if (site.ready.length) {
+            for (var i in site.ready) {
+                site.ready[i].call();
+            }
+        }
+
+        // Initial ui setup
         tf.bindUI($body);
 
     }

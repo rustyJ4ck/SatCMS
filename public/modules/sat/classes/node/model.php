@@ -25,7 +25,7 @@ return array(
             , 'title'            => array('type' => 'text' , 'size' => 255)
             , 'url'              => array('type' => 'text',  'size' => 255
                 , 'make_seo' => array('key' => 'title', 'strict' => 1)
-                , 'space' => array('pid'))
+                , 'space' => array('site_id', 'pid'))
             
             , 'description'      => array('type' => 'text', 'no_format' => true)
             , 'text'             => array('type' => 'text', 'no_format' => true)

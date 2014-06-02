@@ -44,6 +44,8 @@ var site = {
   domain: "{$current.site.domain}",
   scripts: [],
   styles: [],
+  ready: [],
+  token: '{$config.token}',
   editable: false
 };
 </script>

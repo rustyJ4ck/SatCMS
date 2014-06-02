@@ -2,7 +2,6 @@
  
 /**
 * @package TwoFace
-* @version $Id: module.php,v 1.14.2.3.2.9 2013/01/30 06:53:20 Vova Exp $
 * @copyright (c) 2007 4style
 * @author surgeon <r00t@skillz.ru>
 */  
@@ -10,17 +9,18 @@
 /**
 * Module class
 *
-* @property module_controller   controller
-* @property module_router       router
-* @property module_blocks       blocks
+* @property module_controller           $controller
+* @property module_router               $router
+* @property module_blocks               $blocks
 *
-* @property tf_request          request
-* @property tf_renderer         renderer
-* @property tf_logger           logger
-* @property Smarty3             $tpl_parser
-* @property dbal                $db
-* @property tf_editor           $editor
-* @property Debug_HackerConsole_Main             $console
+* @property tf_auth                     $auth
+* @property tf_request                  $request
+* @property tf_renderer                 $renderer
+* @property tf_logger                   $logger
+* @property Smarty3                     $tpl_parser
+* @property dbal                        $db
+* @property tf_editor                   $editor
+* @property Debug_HackerConsole_Main    $console
 */
 abstract class core_module extends module_orm {
 
@@ -34,26 +34,16 @@ abstract class core_module extends module_orm {
     
     /** @var tf_manager */            
     protected $manager;
-    
-    /** 
-    * blocks 
-    * Loaded automatically from module/blocks.php
-    * @see self::run_block()
-    * @var module_blocks
-    */
-    // protected $blocks;
-    
-    /** @var module_router */                //  protected $router;
-    /** routes */                             protected $routes;
-    /** @var front_controller */             // protected $controller;
-    
-    /** Корневая директория модуля */         public $root_dir;  
-    /** Корень моделей */                     public $classes_chroot; 
-    /** module name */                        public $name;
-    /** URL модуля */                         public $base_url;      
-    
-    /** set if object is current router */    private $_is_router = false;
-    
+
+    /** routes */           protected $routes;
+
+    /** Module root dir */  public $root_dir;
+    /** Models root */      public $classes_chroot;
+    /** Module name */      public $name;
+    /** module URL */       public $base_url;
+
+    /** current router */   private $_is_router = false;
+
     /**
     * Filter. Set up in router/controller for loading bulk of items
     * modified for their needs.
@@ -73,13 +63,7 @@ abstract class core_module extends module_orm {
     * if empty tag is used
     */
     protected $editor_default_action; 
-    
-    /**
-    * Classes autoload in init0()
-    * array['class'] => 'param'
-    */
-    protected $preload_classes = array();
-    
+
     /** module aliases */
     protected $_aliases = array();
 
@@ -103,6 +87,8 @@ abstract class core_module extends module_orm {
             'router'     => array('class' => '', 'instance' => null, 'require' => false, 'fallback' => 'module_router'),
             'blocks'     => array('class' => '', 'instance' => null, 'require' => false, 'required' => false),
 
+            /*
+             //renderer already defined in core::libs
             'renderer'   => array(
                 'class' => function () { return core::lib('renderer'); }
                 , 'instance' => null, 'require' => false
@@ -116,6 +102,7 @@ abstract class core_module extends module_orm {
                 , 'instance' => null
                 , 'require' => false
             ),
+            */
         );
 
     }
@@ -214,14 +201,6 @@ abstract class core_module extends module_orm {
     function get_core() {
         return ($this instanceOf core) ? $this : $this->core;
     }
-    
-    /**
-    * Register autoload classes
-    * (loaded in @see init0)
-    */
-    function register_autoload($class, $params) {
-        $preload_classes[$class] = $params;
-    }                                         
 
     /** 
     * get module name (tag) 
@@ -279,14 +258,7 @@ abstract class core_module extends module_orm {
     function get_base_url() {
         return $this->base_url;
     }
-    
-    /**
-    * Установить сообщение для модуля
-    * в админ панели
-    */      
-    public function message($msg, $clr=false) {
-        
-    }
+
     
     /**
     * Set filter configuration
@@ -621,7 +593,6 @@ abstract class core_module extends module_orm {
         */
     }
 
-
     /**
      * Get lib (IOC)
      * $module->renderer etc.
@@ -635,7 +606,8 @@ abstract class core_module extends module_orm {
 
         return core::lib($key);
     }
-    
+
+
     /**
     * i18n alias
     */
@@ -653,21 +625,20 @@ abstract class core_module extends module_orm {
     
     /**
     * On Event handler
-    * Call on_{event} method with $parms
+    * Call on_{event} method with $params
     * 
     * @param string event name
     * @param array params
+    * @return mixed result
     */
-    public function on_event($name, $parms) {
+    public function trigger($name, $params) {
         $method = 'on_' . $name;
 
-        if (is_callable(array($this, $method))) {
-            call_user_func(
-                  array($this, $method)
-                , $parms
-            );
-        }
-    } 
+        return (is_callable(array($this, $method)))
+            ? call_user_func(array($this, $method), $params)
+            : false
+            ;
+    }
     
     
     /**
