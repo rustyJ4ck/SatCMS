@@ -34,6 +34,7 @@
     {$form.notify = $form.grid}
 {/if}
 
+{$page = "&start=`$req.start`"}
 
 {*include 'widgets/model/sidebar.tpl'*}
 
@@ -81,7 +82,7 @@
           data-grid="{$form.grid}"
 
           {if !$form.dialog}
-              data-success-url="{$config.base_url}"
+              data-success-url="{$config.base_url}{$actionUrlExtra}{$page}"
           {else}
               data-success-dismiss="true"
               {if !$form.notify} {*grid must register listner*}
@@ -112,10 +113,22 @@
                 <ul class="box-toolbar">
                     <li class="btn-group-sm">
 
-                        {* header buttons, if in dialog *}
+                        {* header buttons, non dialog *}
                         {block "form-buttons"}
-                        <input type="submit" class="btn btn-success btn-xs" name="form-submit" value="Сохранить" />
-                        <a class="btn btn-danger" data-dismiss="modal" href="{$config.base_url}">Отмена</a>
+
+                            <input type="submit" class="btn btn-success btn-xs" name="form-submit-save" value="Сохранить"
+                                   onclick="$(this).nextAll('[name=form-submit]').val('save');"
+                                    />
+
+                            {if $model.id}
+                                <input type="submit" class="btn btn-primary" name="form-submit-apply" value="Применить" data-continue="true"
+                                       onclick="$(this).nextAll('[name=form-submit]').val('apply');"
+                                    />
+                            {/if}
+
+                            <input type="hidden" name="form-submit" value=""/>
+
+                            <a class="btn btn-danger" data-dismiss="modal" href="{$config.base_url}{$actionUrlExtra}{$page}">Отмена</a>
                         {/block}
 
                     </li>
@@ -128,22 +141,23 @@
 
 
 
-            {* Form *}
-            {block name="form"}
-            {/block}
+    {* Form *}
+    {block name="form"}
+    {/block}
 
-            {* Form controls / non dialog *}
-            {block name="form-controls"}
+    {* Form controls / dialog *}
+    {block name="form-controls"}
 
-                <div class="form-bottom">
-                    {if $form.dialog && $form.controls !== 0}
-                        <input type="submit" class="btn btn-success" name="form-submit" value="Сохранить" />
-                        <a class="btn btn-danger" data-dismiss="modal" href="{$config.base_url}">Отмена</a>
-                    {/if}
-                    {$smarty.block.child}
-                </div>
+        <div class="form-bottom">
+            {if $form.dialog && $form.controls !== 0}
+                <input type="submit" class="btn btn-success" name="form-submit" value="Сохранить" />
+                <a class="btn btn-danger" data-dismiss="modal" href="{$config.base_url}{$actionUrlExtra}{$page}">Отмена</a>
+            {/if}
 
-            {/block}
+            {$smarty.block.child}
+        </div>
+
+    {/block}
 
 
     {if !$form.dialog}
@@ -165,7 +179,8 @@
     <input type="hidden" name="m" value="{$req.m}"/>
     <input type="hidden" name="id" value="{$req.id}"/>
 
-{*<input type="submit" class="btn btn-success" name="form-submit" value="Сохранить" />*}
+    {* pagination back position *}
+    <input type="hidden" name="start" value="{$req.start}"/>
 
 </form>
 

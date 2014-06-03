@@ -71,32 +71,16 @@
 
             <select class="select2" name="template" style="width:150px;">
                 <option value="0">По-умолчанию</option>
-                {foreach item=list key=list_k from=$subtemplates}
-                    <option value="{$list_k}"
-                            {if $list_k == $model.template}selected="selected"{/if}>{if $list.title}{$list.title}{else}{$list}{/if}</option>
+                {foreach $controller.subtemplates as $tkey => $template}
+                    <option value="{$tkey}"
+                            {if $tkey == $model.template}selected="selected"{/if}>
+                        {if $template.title}{$template.title}{else}{$tkey}{/if}
+                    </option>
                 {/foreach}
             </select>
 
         </div>
     </div>
-
-    {* <!-- depricated -->
-     <div class="form-block">
-        <label>Шаблон для подразделов</label>
-        <div>
-
-            <select name="child_template" style="width:150px;">
-            <option value="0">По-умолчанию</option>
-            {foreach item=list key=list_k from=$subtemplates}
-                <option value="{$list_k}"
-                {if $list_k == $model.child_template}selected="selected"{/if}>{if $list.title}{$list.title}{else}{$list}{/if}</option>
-            {/foreach}
-            </select>
-
-        </div>
-    </div>
-    *}
-
 
     <div class="form-block">
         <label>Кол-во на странице</label>

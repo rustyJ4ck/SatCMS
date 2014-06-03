@@ -19,22 +19,18 @@ use SatCMS\Modules\Sat\Editor\Controllers\SatController;
  */
 class sat_node_controller extends SatController {
 
-    private $_site;
-    
     protected $title = 'Контент';
     
-    protected $_limit = 25;    
+    protected $_limit = 20;
     protected $_where = 'site_id = %d AND pid = %d';
     
     /** @var sat_node_collection */
     protected $collection;
-    
-    //protected $_where = 'site_id = %d';   
-    
+
     function construct_after() {
 
         $this->params->pid = 0 + $this->request->postget('pid', $this->params->pid);
-        
+
         if (!$this->site) {
             throw new editor_exception('Сайт не выбран');
             return;
@@ -48,11 +44,8 @@ class sat_node_controller extends SatController {
                     : false)
                 ->get_templates();
 
-        $this->renderer->set_data(
-            'subtemplates'
-            , $psat_templates 
-        );
-        
+        $this->response->subtemplates = $psat_templates;
+
         $this->_where = sprintf($this->_where
             , (int)$this->get_site_id()
             , (int)$this->params->pid);
@@ -78,13 +71,19 @@ class sat_node_controller extends SatController {
     */
     protected function _update_tree($pid = null) {
 
+        // rebuild tree
         $this->context->update_tree(
             $this->get_site_id()
             , false //disable full sync
         );    
         
-        // sync parent
-        if (!empty($pid)) $this->collection->sync_children_count($this->get_site_id(), $pid);
+        // sync parent `c_count`
+        if (!empty($pid)) {
+            $this->collection->sync_children_count(
+                $this->get_site_id(),
+                $pid
+            );
+        }
     }
     
     function action_change_field_after() {
@@ -142,7 +141,8 @@ class sat_node_controller extends SatController {
     }
      
     function action_before() {
-        // render tree    
+
+        // render tree
         $tree = $this->context->get_current_site_tree();
         $this->renderer->set_data('tree', $tree);
         
@@ -151,7 +151,6 @@ class sat_node_controller extends SatController {
 
         // nav-chain
         if ($nav_id) {
-
            $this->context->get_node_handle()->get_parents($nav_id)
              ->prepend($this->context->get_root_node())
              ->append($this->context->get_node($nav_id))

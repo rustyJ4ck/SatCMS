@@ -94,7 +94,7 @@ class core extends core_module /*module_orm*/ {
     const NAME = 'TFEngine';
 
     /** core version */
-    public static $version = "004";
+    public static $version = "0.0.5";
 
     /** debug level */
     private static $_debug_level = 0;
@@ -240,7 +240,8 @@ class core extends core_module /*module_orm*/ {
 
             if (!loader::in_shell()) {
                 self::$_debug_level = false;
-                //ini_set('display_errors', 'off');
+                //@todo fix blank page on errors without debug enabled
+                ini_set('display_errors', 'off');
             } else {
                 // enable debug messages in shell
                 self::set_debug(

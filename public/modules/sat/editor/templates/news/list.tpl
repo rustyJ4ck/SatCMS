@@ -36,12 +36,22 @@
         <div class="form-group col-xs-3">
             <label class="control-label col-xs-3">Категория</label>
             <div class="col-xs-9">
+
+                {control type="select"
+                    class="filter filter-persist"
+                    value=$req.pid
+                    name="pid"
+                    src=$controller.categories
+                }
+
+                {*
                 <select name="pid" value="" n1g-bind="filters.pid" class="filter filter-persist" style="width:200px">
                     <option value="0">{'undefined'|i18n}</option>
                     {foreach $controller.categories as $cat}
                         <option value="{$cat.id}" {if $req.pid == $cat.id}selected="selected"{/if}>{$cat.title}</option>
                     {/foreach}
                 </select>
+                *}
             </div>
         </div>
 

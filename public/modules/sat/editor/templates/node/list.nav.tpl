@@ -32,8 +32,12 @@
                         </li>
 
 
+                    {* @fixme page count > 30 break dropdown  *}
+
+                    {$i = 0}
                     {foreach $current.site.tree as $subitem}
-                        {if $item.id == $subitem.pid}
+                        {if $item.id == $subitem.pid && (!$model.id || $subitem.id >= $model.id)}
+                        {if  $i++ > 25}{break}{/if}
                         <li>
                             <a>
 

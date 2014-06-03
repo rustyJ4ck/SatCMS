@@ -41,6 +41,8 @@
 <section {if !$inGrid}class="compilable"{/if}><div ng-controller="{$list.controller}">
 {/if}
 
+{$page = "&start=`$req.start`"}
+
 {block 'list-top' hide}
 {/block}
 
@@ -198,7 +200,7 @@
                         {if $params.edit !== 0}
                         <a type="button" class="btn btn-default btn-xs glyphicon glyphicon-pencil"
                            data-title="{$btnEdit.dialogTitle|default:"Правка элемента"}"
-                           href="index.php?m={$req.m}&c={$req.c}&do={$req.do}&op=edit&id={$item.id}&embed=yes{$actionUrlExtra}"
+                           href="index.php?m={$req.m}&c={$req.c}&do={$req.do}&op=edit&id={$item.id}&embed=yes{$actionUrlExtra}{$page}"
                            {if $btnEdit.dialog}dialog="{$btnEdit.dialog}"{/if}
                                 >
                         </a>

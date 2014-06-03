@@ -3,6 +3,8 @@
 {block 'params'}
     {$title = "Правка страницы &laquo;`$model.title`&raquo;"}
     {$sidebarTitle = 'Attachments'}
+    {$actionUrlExtra = "&pid=`$req.pid`"}
+    {$page = "&start=`$req.start`"}
 {/block}
 
 
@@ -160,4 +162,8 @@
 
 
 
+{/block}
+
+{block 'form-bottom' append}
+    <input type="hidden" name="pid" value="{if $model.pid}{$model.pid}{else}{$req.pid}{/if}"/>
 {/block}

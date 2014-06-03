@@ -12,6 +12,9 @@ include params="{new:true, title:'title'}" model=$tpl_data
 
 *}
 
+{block 'filter-params'}
+{/block}
+
 {if !$inGrid}
   {if $params}{$params = $params|to_array}{/if}
   {if $btnNew}{$btnNew = $btnNew|to_array}{/if}

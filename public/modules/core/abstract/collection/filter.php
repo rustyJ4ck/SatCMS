@@ -733,14 +733,14 @@ class collection_filter {
         */
     }
 
-    private $on_load_callback;
+    private $on_apply_callback;
 
     /**
      * @param callable $callback onload(function($collection){})
      * @return $this
      */
-    function on_load(Closure $callback) {
-        $this->on_load_callback = $callback;
+    function on_apply(Closure $callback) {
+        $this->on_apply_callback = $callback;
         return $this;
     }
 
@@ -762,9 +762,9 @@ class collection_filter {
         $this->collection->load();
 
         // Run callback
-        if ($this->on_load_callback instanceof Closure) {
-            call_user_func($this->on_load_callback, $this->collection);
-            $this->on_load_callback = null;
+        if ($this->on_apply_callback instanceof Closure) {
+            call_user_func($this->on_apply_callback, $this->collection);
+            $this->on_apply_callback = null;
         }
 
         // generate_pagination

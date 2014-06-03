@@ -35,6 +35,7 @@ define(['jquery', 'app', 'jqueryValidate', 'tinyMCE'],
                 }
 
                 form.find('[data-disable-on-submit]').prop('disabled', true);
+
             }
 
             , success: function(data, statusText, xhr, form){
@@ -201,6 +202,14 @@ define(['jquery', 'app', 'jqueryValidate', 'tinyMCE'],
 
                 console.log('-form-submit.success', data);
 
+                // response.redirect
+                if (data.redirect !== undefined && data.redirect) {
+                    app.go(data.redirect, true);
+                    app.message('data.redirect: ' + data.redirect);
+                    return;
+                }
+
+                // successUrl
                 if (form.data('successUrl')) {
                     app.go(form.data('successUrl'), true);
                     app.message('successUrl: ' + form.data('successUrl'));
