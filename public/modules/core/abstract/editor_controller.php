@@ -55,6 +55,10 @@ abstract class editor_controller extends abs_config /*implements IEditor_control
     protected $grid_filters;
 
     protected $is_submitted = false;
+
+    /** @var string save|apply  */
+    protected $submit_type;
+
     protected $postdata;
 
     /** main template: index */
@@ -70,6 +74,7 @@ abstract class editor_controller extends abs_config /*implements IEditor_control
     private $_message = '';
     private $_status = true;
     private $_message_data;
+    private $_redirect;
 
     private $_in_ajax;
 
@@ -160,7 +165,10 @@ abstract class editor_controller extends abs_config /*implements IEditor_control
         $this->is_submited = (bool)$this->request->post(self::SUBMIT_CONTROL);
 
         // op=modify old compat
-        if ($this->is_submited) $this->params->op = 'modify';
+        if ($this->is_submited) {
+            $this->params->op = 'modify';
+            $this->submit_type = $this->request->post(self::SUBMIT_CONTROL);
+        }
 
         // post-init
         $this->construct_after();
@@ -223,6 +231,23 @@ abstract class editor_controller extends abs_config /*implements IEditor_control
         } else {
             $this->mode = $this->params->op;
         }
+    }
+
+    /**
+     * @param $item
+     * @return string
+     */
+    function get_edit_url(abs_collection_item $item, $extra = '') {
+        return $this->context->editor->make_url(
+            '?m=' . $this->params->m .
+            '&c=' . $this->params->c .
+            '&op=edit' .
+            '&id=' . $item->id .
+            '&pid=' . $this->params->pid .
+            ($extra ? ('&' . $extra) : '') .
+            '&start=' . $this->params->start
+            , true
+        );
     }
 
     /**
@@ -570,10 +595,18 @@ abstract class editor_controller extends abs_config /*implements IEditor_control
         */
     }
 
+    /**
+     * @param $status
+     */
     function set_result($status) {
         $this->_status = $status;
     }
 
+    /**
+     * @param $msg
+     * @param null $status
+     * @return $this
+     */
     function set_message($msg, $status = null) {
         $this->_message = $msg;
         if (isset($status)) $this->_status = $status;
@@ -581,6 +614,19 @@ abstract class editor_controller extends abs_config /*implements IEditor_control
         return $this;
     }
 
+    /**
+     * @param $redirect
+     * @return $this
+     */
+    function set_redirect($redirect) {
+        $this->_redirect = $redirect;
+        return $this;
+    }
+
+    /**
+     * @param $data
+     * @return $this
+     */
     function set_message_data($data) {
         $this->_message_data = $data;
         return $this;
@@ -597,15 +643,26 @@ abstract class editor_controller extends abs_config /*implements IEditor_control
      * @param null $data
      */
     function ajax_answer($status = null, $message = null, $data = null) {
-
-        $this->context->get_core()->ajax_answer(array(
-              'status'   => isset($status) ? $status : $this->_status
-            , 'message'  => isset($message) ? $message : $this->_message
-            , 'data'     => isset($data) ? $data : $this->_message_data
-        ));
+        $this->context->core->ajax_answer($this->_get_response($status, $message, $data));
     }
 
     private $_ajax_answer_data;
+
+    private function _get_response($status = null, $message = null, $data = null) {
+
+        $response = array(
+            'status'     => isset($status)  ? $status   : $this->_status
+            , 'message'  => isset($message) ? $message  : $this->_message
+            , 'data'     => isset($data)    ? $data     : $this->_message_data
+        );
+
+        if ($this->_redirect) {
+            $response['redirect'] = $this->_redirect;
+        }
+
+        return $response;
+
+    }
 
     /**
      * delayed ajax
@@ -763,12 +820,30 @@ abstract class editor_controller extends abs_config /*implements IEditor_control
             if (is_callable(array($this, 'action_modify_after')))
                 $this->action_modify_after($id);
 
-            if (!$this->is_message_set())
+            if (!$this->is_message_set()) {
+
+                $newbie = $this->collection->get_last_item();
+
+                $data = $newbie ? array() : $newbie->render();
+
+                if (core::is_debug()) {
+                    $data['_sql'] = $this->collection->connection()->get_last_query();
+                }
+
+                // return to form
+                if ($this->submit_type == 'apply') {
+                    $this->set_redirect($this->get_edit_url($newbie));
+                }
+
+                // redirect `apply`
+                //$data['redirect'] = $newbie->get_urls
+
                 $this->set_message(
                     !$id ? i18n::T('Action failed')
-                         : i18n::T($this->params->id ? 'Item modified' : 'Item added'), $id)
-                    ->set_message_data($id ? $this->collection->get_item_by_id($id)->render()
-                        : array_merge($this->get_postdata(), core::is_debug()?array('_sql' => $this->collection->connection()->get_last_query()):array()));
+                         : i18n::T($this->params->id ? 'Item modified' : 'Item added'), $id
+                    )->set_message_data($data)
+                    ;
+            }
         }
     }
 

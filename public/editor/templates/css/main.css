@@ -916,6 +916,10 @@ option { color: black; }
 
 input + label { border-bottom:1px dotted lightgray; cursor: pointer;}
 
+.editable-input-width {
+    min-width:300px;
+}
+
 /* form */
 
 .btn-group-sm > .btn {

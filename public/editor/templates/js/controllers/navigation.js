@@ -44,6 +44,21 @@ define(['angular', 'app', 'jquery'], function(angular, app, $) {
 
                             if ($scope.siteID) {
                                 $rootScope.site =  data.find({'id': parseInt($scope.siteID)});
+
+                                // wrong cookie?
+                                if (!$rootScope.site) {
+                                    $rootScope.site = data.first();
+
+                                    if (!$rootScope.site) {
+                                        app.message('Wrong site ID in navigation::loadSites');
+                                    } else {
+                                        // fix cookie
+                                        $.cookie('site_id', $rootScope.site.id, {expires:356, path:'/editor/'});
+                                    }
+                                }
+                            }
+
+                            if ($rootScope.site) {
                                 $rootScope.site.active = true;
                             }
 

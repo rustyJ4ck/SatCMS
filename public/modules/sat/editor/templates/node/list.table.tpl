@@ -77,7 +77,7 @@
             </td>
 
             <td>
-                <a  class="btn btn-xs btn-warning btn-node-link"
+                <a  class="btn btn-xs btn-dlg-link btn-warning"
                         target="_site"
                         href="{$item.urls.full}">ссылка</a>
             </td>
@@ -128,13 +128,13 @@
             <td class="btn-group-xs" >
 
                 <a type="button" class="btn btn-default btn-sm glyphicon glyphicon-pencil"
-                   href="index.php?m={$req.m}&c={$req.c}&do={$req.do}&op=edit&id={$item.id}&pid={$item.pid}"
+                   href="index.php?m={$req.m}&c={$req.c}&do={$req.do}&op=edit&id={$item.id}&pid={$item.pid}{$page}"
                    d1ialog="{ldelim}width:540,height:380{rdelim}"
                         >
                 </a>
 
                 <a type="button" class="btn btn-default btn-sm a-delete glyphicon glyphicon-trash"
-                   data-href="index.php?m={$req.m}&c={$req.c}&do={$req.do}&op=drop&id={$item.id}">
+                   data-href="index.php?m={$req.m}&c={$req.c}&do={$req.do}&op=drop&id={$item.id}&pid={$item.pid}">
                 </a>
 
                 {*
@@ -184,30 +184,6 @@
 <div class="table-footer">
 
     {* pagination *}
-    {include "partials/pagination.tpl"}
+    {include "partials/pagination.tpl" pagination=$return.list.pagination}
 
 </div>
-
-<script>
-
-    require(['bootbox'], function(bootbox){
-
-        $('#table-nodes').find('.btn-node-link').on('click', function(e){
-            e.preventDefault();
-            var $this = $(this);
-            var url = $(this).attr('href');
-
-            bootbox.confirm("Перейти по ссылке <a href='" + url + "'>" + url + "</a>" , function(result) {
-                if (result) {
-                    window.location.href = url;
-                }
-            });
-
-            return false;
-        });
-
-
-
-    });
-
-</script>

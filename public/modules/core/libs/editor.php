@@ -182,8 +182,8 @@
     /**
     * Normalize url
     * 
-    * @param string $url
-    * @param mixed $sef
+    * @param string $url baseUrl
+    * @param mixed $sef make-sluggable
     */
     function make_url($url, $sef = false) {
 

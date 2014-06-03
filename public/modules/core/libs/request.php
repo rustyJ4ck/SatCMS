@@ -10,8 +10,25 @@
 
 /**
 * Identification vars
+* @property string m Module
+* @property string c Section
+* @property string op Operation
+* @property string do Do
+* @property string id ID
+* @property string pid parentID
+* @property string gid groupID
+* @property string start Page
 */                   
 class ident_vars extends aregistry {
+
+    const IDENT_MODULE      = 'm';
+    const IDENT_CONTROLLER  = 'c';
+    const IDENT_ACTION      = 'op';
+    const IDENT_ID         = 'id';
+    const IDENT_PID        = 'pid';
+    const IDENT_GID        = 'gid';
+    const IDENT_DO         = 'do';
+    const IDENT_START      = 'start';
 
     /**
      * Normalize
@@ -41,26 +58,14 @@ class ident_vars extends aregistry {
 
 /**
 * Request
-* @todo validate and normilize here
-*/           
+*/
 class tf_request extends singleton {
 /** 
-    * @static ident vars (registry)
-    * usage thru @see self::get_params()
+    * @var ident_vars registry
+    * usage @see self::get_params()
     */
     private static $_ident_vars;
-    
-    // ident tags
-    
-    /** m */        const IDENT_MODULE        = 'm';
-    /** c */        const IDENT_CONTROLLER    = 'c';
-    /** op */       const IDENT_ACTION        = 'op';
-    /** id */       const IDENT_ID            = 'id';
-    /** pid */      const IDENT_PID           = 'pid';  // parent id
-    /** pid */      const IDENT_GID           = 'gid';  // group id
-    /** do */       const IDENT_DO            = 'do';
-    /** start */    const IDENT_START         = 'start';
-                
+
     /**
     * All user contributed data
     */
@@ -304,10 +309,8 @@ class tf_request extends singleton {
         // nginx can remove this header
         $token = $token ?: @$_SERVER['HTTP_SC_CSRF_TOKEN'];
 
-        //Request::header('X-CSRF-Token');
-        //apache_request_headers();
-
-        //dd($_SERVER, core::lib('auth')->token());
+        // Request::header('X-CSRF-Token');
+        // apache_request_headers();
 
         return $token !== core::lib('auth')->token();
     }

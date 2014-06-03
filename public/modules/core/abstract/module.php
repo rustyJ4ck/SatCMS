@@ -4,8 +4,8 @@
 * @package TwoFace
 * @copyright (c) 2007 4style
 * @author surgeon <r00t@skillz.ru>
-*/  
-  
+*/
+
 /**
 * Module class
 *
@@ -30,10 +30,10 @@ abstract class core_module extends module_orm {
     protected $ctypes;
 
     /** @var core core reference */    
-    protected $core;
+    public $core;
     
-    /** @var tf_manager */            
-    protected $manager;
+    /** @var tf_manager moved to ioc */
+    // protected $manager;
 
     /** routes */           protected $routes;
 
@@ -241,8 +241,8 @@ abstract class core_module extends module_orm {
     * Get editor base url 
     */
     public function get_editor_base_url() {
-        return ('?' . tf_request::IDENT_MODULE     . '=' . $this->name
-              . '&' . tf_request::IDENT_CONTROLLER . '=' . core::get_params(tf_request::IDENT_CONTROLLER));
+        return ('?' . ident_vars::IDENT_MODULE . '=' . $this->name
+              . '&' . ident_vars::IDENT_CONTROLLER . '=' . core::get_params(ident_vars::IDENT_CONTROLLER));
     }
     
     /**

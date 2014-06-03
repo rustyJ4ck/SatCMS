@@ -17,7 +17,7 @@ class FileConsole {
     private $_buffer = array();
 
     function __construct($params) {
-        $file = 'console-' . (@$params['log'] ?: date('Y-m-d')) . '.log';
+        $file = 'console-' . (date(@$params['log'] ?: 'Y-m-d')) . '.log';
         $this->_file = \loader::get_temp($file);
         $this->_uid = substr(\functions::hash(microtime(true)), -5);
         $this->_head();

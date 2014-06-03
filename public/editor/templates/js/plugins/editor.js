@@ -211,7 +211,9 @@ define([
 
             success: function(response, newValue) {
                 app.message(response.message, !response.status);
-            }
+            },
+
+            inputclass: 'editable-input-width'
 
         });
 
@@ -226,7 +228,24 @@ define([
             $this.popover(options);
         });
 
-         /**
+        // .btn-link with confirmation
+
+        root.find('.btn-dlg-link').on('click', function(e){
+            e.preventDefault();
+            var $this = $(this);
+            var url = $(this).attr('href');
+
+            bootbox.confirm("Перейти по ссылке <a href='" + url + "'>" + url + "</a>" , function(result) {
+                if (result) {
+                    window.location.href = url;
+                }
+            });
+
+            return false;
+        });
+
+
+        /**
          * attrs
          *
          * rel = id
