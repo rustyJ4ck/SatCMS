@@ -71,7 +71,7 @@
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="btn btn-warning btn-xs">{$user.nick}</span> <b class="caret"></b></a>
 
                 <ul class="dropdown-menu">
-                    <li><a href="/" target="">Go to site</a></li>
+                    <li><a href="/" target="_self">Go to site</a></li>
                     <li class="divider"></li>
                     <li><a ng-click1="logout()" href="/users/logout/" target="_self">Logout</a></li>
                 </ul>

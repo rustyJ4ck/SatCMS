@@ -67,7 +67,7 @@ $is_main = $core->request->uri() == '/editor/' ? 1 : 0;
 
 $mod_level = $user->get_container()->get_level_by_name('mod');
 
-// so userish
+// user level too low
 if ($user->level < $mod_level) {
     $core->ajax_answer('Not allowed', 1);
 }

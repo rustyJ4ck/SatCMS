@@ -176,12 +176,15 @@ class tf_auth {
 
             if ($this->user) {
                 $this->_logged_in = true;
-
-                return;
-            } else throw new auth_exception('No User for UID ' . $uid);
+            } else {
+                throw new auth_exception('No User for UID ' . $uid);
+            }
+        } else {
+            $this->user = core::module('users')->get_anonymous_user();
+            $this->_logged_in = false;
         }
 
-        $this->user = core::module('users')->get_anonymous_user();
+        return $this;
     }
 
     /**
@@ -202,6 +205,11 @@ class tf_auth {
      * Find/Create session
      */
     private function get_session() {
+
+        // mocked
+        if ($this->session) {
+            return $this->session;
+        }
 
         $session_id = isset($_COOKIE[$this->_cookie_name]) ? $_COOKIE[$this->_cookie_name] : false;
 

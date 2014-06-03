@@ -46,7 +46,7 @@
     $('body').append(
         '<div id="site-editable-panel" class="btn-group btn-group-xs">' +
             '<a id="site-enable-inline" class="btn btn-danger">Режим правки</a>' +
-            '<a href="/editor/" class="btn btn-info">CPanel</a>' +
+            '<a href="/editor/" class="btn btn-info">AdminCP</a>' +
             '' +
             '' +
             '' +

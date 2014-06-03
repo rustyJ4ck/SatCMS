@@ -241,7 +241,7 @@ class tf_request extends singleton {
      * @return bool
      */
     function has_post($name = null) {
-        return ($name) ? array_key_exists($name, $this->_post) : !empty($this->_post);
+        return ($name) ? array_key_exists($name, $this->_post) : ($_SERVER['REQUEST_METHOD'] === 'POST');
     }
     
     /**
