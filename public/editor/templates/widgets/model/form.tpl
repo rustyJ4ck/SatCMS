@@ -120,12 +120,11 @@
                                    onclick="$(this).nextAll('[name=form-submit]').val('save');"
                                     />
 
-                            {if $model.id}
+                            {*if $model.id*}
                                 <input type="submit" class="btn btn-primary" name="form-submit-apply" value="Применить" data-continue="true"
                                        onclick="$(this).nextAll('[name=form-submit]').val('apply');"
                                     />
-                            {/if}
-
+                            
                             <input type="hidden" name="form-submit" value=""/>
 
                             <a class="btn btn-danger" data-dismiss="modal" href="{$config.base_url}{$actionUrlExtra}{$page}">Отмена</a>
