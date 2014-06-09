@@ -21,6 +21,8 @@
 * @property dbal                        $db
 * @property tf_editor                   $editor
 * @property Debug_HackerConsole_Main    $console
+*
+* @property core                        $core
 */
 abstract class core_module extends module_orm {
 
@@ -29,9 +31,6 @@ abstract class core_module extends module_orm {
      */
     protected $ctypes;
 
-    /** @var core core reference */    
-    public $core;
-    
     /** @var tf_manager moved to ioc */
     // protected $manager;
 
@@ -103,7 +102,12 @@ abstract class core_module extends module_orm {
                 , 'require' => false
             ),
             */
-        );
+
+            'core'  => array(
+                'class' => function() { return core::selfie(); }
+            )
+
+         );
 
     }
 

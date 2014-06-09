@@ -1,7 +1,7 @@
 SatCMS
 ======
 
-Multisite CMS: Bootstrap3, jQuery, AngularJS, PHP, mySQL
+Multisite CMS: Bootstrap3, jQuery, RequireJS, AngularJS, PHP, mySQL, SQLite
 
 http://satcms.ru/
 

@@ -72,10 +72,10 @@ define([
                     $item.data('href')
                 )
                 .success(function(data) {
-                    app.message(data.message !== undefined ? data.message : "Удаление подтверждено");
+                    app.message(data.message !== undefined ? data.message : "Удаление подтверждено", !data.status);
                 })
                 .fail(function(data) {
-                    app.message(data.message !== undefined ? data.message : "Удаление неподтверждено", 1);
+                    app.message(data.message !== undefined ? data.message : "Ошибка при удалении", 1);
                 })
                 ;
             }
