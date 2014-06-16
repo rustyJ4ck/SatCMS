@@ -20,7 +20,7 @@ class contacts_qa_view_action extends controller_action {
             throw new controller_exception('Bad id');
         }
         
-        $pitem = $this->_controller->get_context()->get_qa_question_handle()
+        $pitem = $this->controller->get_context()->get_qa_question_handle()
             ->append_where_vf('url', $id)
             ->set_limit(1)
             ->load()
@@ -33,7 +33,7 @@ class contacts_qa_view_action extends controller_action {
           
         $this->renderer->set_return('item', $pitem->render());  
                                   
-        $this->_controller->set_title_params($pitem->title);
+        $this->controller->set_title_params($pitem->title);
         
     }           
     

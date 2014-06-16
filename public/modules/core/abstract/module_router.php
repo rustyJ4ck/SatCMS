@@ -5,12 +5,13 @@
 * @version $Id: module_router.php,v 1.7.2.1.4.7 2012/12/11 18:00:17 j4ck Exp $
 * @copyright (c) 2007 4style
 * @author surgeon <r00t@skillz.ru>
-*/  
-  
+*/
+
 /**
-* Module router
-* @package core      
-*/  
+ * Module router
+ * @property tf_auth                     $auth
+ * @property core                        $core
+ */
 class module_router {
     
     const HTTP_PROTOCOL = 'http://';
@@ -19,10 +20,7 @@ class module_router {
     
     /** @var core_module */
     protected $context;
-    
-    /** @var tf_request */
-    protected $request;
-    
+
     /** @var array routes */
     protected $_routes;
     
@@ -41,7 +39,6 @@ class module_router {
     */
     function __construct($context) {
         $this->context = $context;
-        $this->request = core::lib('request');
     }
     
     /**
@@ -62,7 +59,7 @@ class module_router {
     */
     function trim_static_ext(&$val) {
         // @fixme move 'static_ext' into class
-        $sx = core::get_instance()->get_cfg_var('static_ext');
+        $sx = $this->core->cfg('static_ext');
         $sx_len = strlen($sx);
         if ($sx === substr($val, -1 * $sx_len, $sx_len)) {
             $val = substr($val, 0, -1 * $sx_len);
@@ -103,8 +100,9 @@ class module_router {
         
         $this->_uri = implode('/', $parts);
         
-		if (is_callable(array($this, 'route_before'))) 
+		if (is_callable(array($this, 'route_before'))) {
             $this->route_before($parts);
+        }
         
         core::dprint(array('[route] %s using defaut router, mod: %s' 
             , $this->_uri
@@ -160,7 +158,7 @@ class module_router {
                 }
 
                 if (isset($route['auth']['level'])) {
-                    if ($route['auth']['level'] > core::lib('auth')->get_user()->level) {
+                    if ($route['auth']['level'] > $this->auth->get_user()->level) {
                         throw new router_exception('Access denied. Code.A6298');
                     }
                 }
@@ -169,9 +167,11 @@ class module_router {
                               
                 $this->_route = $route;
 
-                $this->context->get_controller()->run($route, $params);
+                $response = $this->context->get_controller()->run($route, $params);
+
   				$this->run_filters();
-                return true;   
+
+                return $response;
             }                  
             
             // restore uri, loop again?
@@ -341,7 +341,7 @@ class module_router {
     */
     function make_url($url) {
         return $this->get_protocol() 
-           . core::get_instance()->get_main_domain(true) 
+           . $this->core->get_main_domain(true)
            . (strpos($url, '/') !== 0 ? '/' : '')
            . $url;
     }
@@ -350,13 +350,16 @@ class module_router {
     * Make url with context    
     */     
     function normalize_url(&$url) {
-        $core = core::get_instance();
-        $base = $core->get_base_url();
+        $base = $this->core->get_base_url();
         $url = $base . $url;
     }
-    
 
-    
+    /**
+     * Query context (IOC)
+     */
+    function __get($key) {
+        return $this->context->$key;
+    }
 }
 
 /**

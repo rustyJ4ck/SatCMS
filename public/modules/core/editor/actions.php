@@ -11,8 +11,8 @@
 
 return
 array(
-   'config'         => array( 'url' => '?m=core&c=config'    , 'title' => /*$this->translate(*/'Переменные', 'default' => true)
- , 'logs'           => array( 'url' => '?m=core&c=logs', 'title' => $this->translate('logs')) 
+   'config'         => array( 'url' => '?m=core&c=config'    , 'title' => 'Переменные', 'default' => true)
+ , 'logs'           => array( 'url' => '?m=core&c=logs', 'title' => 'logs')
  
  //, ''
  , 'mail_tpl'       => array( 'url' => '?m=core&c=mail_tpl',     'title' => 'Шаблоны писем')

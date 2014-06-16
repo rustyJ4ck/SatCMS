@@ -6,7 +6,7 @@
  * @copyright  SurSoft (C) 2008
  */
 
-use SatCMS\Modules\Sat\Editor\Controllers\SatController;
+use SatCMS\Sat\Editor\Controllers\SatController;
 
 class test_article_category_controller extends SatController {
 

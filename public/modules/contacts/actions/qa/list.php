@@ -17,10 +17,10 @@ class contacts_qa_list_action extends controller_action {
     function run() {
         
         $site_id = core::module('sat')->get_current_site_id();
-        $page = ($pf = $this->_controller->get_router()->get_filter('pagination')) ? $pf->get_start() : 0;
+        $page = ($pf = $this->controller->get_router()->get_filter('pagination')) ? $pf->get_start() : 0;
            
         /** @var \tf\core\collection_filter*/ 
-        $f = $this->_controller->get_context()->get_qa_question_handle()
+        $f = $this->controller->get_context()->get_qa_question_handle()
             ->get_filter('/contacts/qa/')
                 ->set_config(array(
                   'where_sql'        => "site_id = {$site_id} AND active"                  

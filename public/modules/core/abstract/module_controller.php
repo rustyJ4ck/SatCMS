@@ -5,23 +5,21 @@
  * @author     Golovkin Vladimir <r00t@skillz.ru> http://www.skillz.ru
  * @copyright  SurSoft (C) 2008
  * @version    $Id: module_controller.php,v 1.8.2.4.2.14 2013/05/15 07:19:31 Vova Exp $
- */            
+ */
 
- /**
+/**
  * Module controller
- * @package core
+ *
+ * @property module_router               $router
+ * @property module_blocks               $blocks
+ *
+ * @property tf_auth                     $auth
+ * @property tf_request                  $request
+ * @property tf_renderer                 $renderer
+ *
+ * @property core                        $core
  */
 class module_controller {  
-    
-    /**
-    * Renderer pointer
-    * Access renderer thru this @see self::get_renderer()
-    * @var tf_renderer
-    */
-    protected $renderer;
-    
-    /** @var module_router */
-    protected $router;
     
     /**
     * Req parts
@@ -56,21 +54,14 @@ class module_controller {
     */
     private $action_name   = '';    
     private $section_name  = '';   
-    
-    /** @var tf_request */
-    protected $request;
-    
+
     
     /**
     * Construct
     * @param core_module
-    * @param tf_renderer
     */
     public function __construct($context) {
         $this->context = $context;
-        $this->renderer = $context->renderer;
-        $this->request = $context->request;
-        $this->router = $context->get_router();
         $this->construct_after();
     }
     
@@ -94,7 +85,7 @@ class module_controller {
     * @return users_item 
     */
     public function get_user() {
-        return core::lib('auth')->get_user();
+        return $this->auth->get_user();
     }  
     
     /**
@@ -137,19 +128,23 @@ class module_controller {
         if (!empty($this->_section)) {
             $this->run_section($this->_section, $route, $params);
         }
+
+        $response = null;
         
         // run action
 
         if ($route['type'] == 'inline') {
             // closure
-            call_user_func($this->_action, $this);
+            $response = call_user_func($this->_action, $this);
         } else
         if ($route['type'] == 'method') {
             // method in controller.file
             if (!empty($this->_action)) {
                 $method = 'action_' . /*(!empty($route['section']) ? ($route['section'] . '_') : '') .*/ $this->_action;
-                if (!method_exists($this, $method)) throw new router_exception('Action method not found ' . $this->_action . ' | ' . $method);
-                call_user_func(array($this, $method));
+                if (!method_exists($this, $method)) {
+                    throw new router_exception('Action method not found ' . $this->_action . ' | ' . $method);
+                }
+                $response = call_user_func(array($this, $method));
             }
         }
         else
@@ -160,14 +155,20 @@ class module_controller {
               
             $_action = array('action' => $this->_action, 'file' => $class_file);            
             if (isset($route['_file'])) $_action['_file'] = $route['_file'];
-            
-            $this->run_file_action($_action);
+
+            $response = $this->run_file_action($_action);
+        }
+
+        if ($response && $response instanceof \Symfony\Component\HttpFoundation\Response) {
+            return $response;
         }
         
         core::dprint(array("controller::run(%s) type: %s", $this->action_name, $route['type']));
         
         // set title
-        if (!empty($this->_title))  $this->renderer->set_page_title($this->_title);
+        if (!empty($this->_title)) {
+            $this->renderer->set_page_title($this->_title);
+        }
 
         // set body template
         $this->renderer->set_main_template($this->get_template());   
@@ -230,7 +231,7 @@ class module_controller {
         fs::req($file);
         
         $class = $action . '_action';
-        $class = core::get_instance()->modules()->ns($this->context->get_name(), $class);
+        $class = $this->core->modules()->ns($this->context->get_name(), $class);
         
         core::dprint(array("[CONTROLLER::RUN_FILE] %s from %s", $class, $file));
         
@@ -239,7 +240,8 @@ class module_controller {
         if (empty($params)) $params = $this->_params;
         
         $action = new $class($this, $params);
-        $action->run();        
+
+        return $action->run();
     }
     
     /**
@@ -407,7 +409,11 @@ class module_controller {
         $action = (empty($_action) && isset($_POST['action'])) ? $_POST['action'] : $_action;
         
         $action = preg_replace('/[^a-z_]/', '', $action);
-        if (empty($action)) return;                      
+
+        if (empty($action)) {
+            core::dprint('Empty action');
+            return;
+        }
         
         if (is_callable(array($this, $action))) {
             call_user_func(array($this, $action));
@@ -432,7 +438,7 @@ class module_controller {
     /**
     * get req parts
     * 
-    * Must be set by callin @see self::set_req in self::run()
+    * @see set_req() in @see run()
     * 
     * @param string id of param or false if all object needed 
     */
@@ -465,19 +471,30 @@ class module_controller {
     function get_current_item()             { return $this->_current_item;  }
 
     function get_request() { return $this->request; }
+
+    /**
+     * Query context (IOC)
+     */
+    function __get($key) {
+        return $this->context->$key;
+    }
+
     
 }
+
 /**
-* External action class
-*/
+ * External action class
+ *
+ * @property tf_auth                     $auth
+ * @property tf_request                  $request
+ * @property tf_renderer                 $renderer
+ */
 abstract class controller_action {
 
     /** @var module_controller */
-    protected $_controller;
+    protected $controller;
 
     /** @var array external params */   protected $_params;    
-    /** @var tf_renderer */             protected $renderer;    
-    /** @var tf_request */              protected $request;
     /** @var core_module */             protected $context;
 
     /**
@@ -485,10 +502,8 @@ abstract class controller_action {
      * @param null $params
      */
     function __construct($p, $params = null) {
-        $this->_controller = $p;
+        $this->controller = $p;
         $this->_params = $params;
-        $this->renderer = $p->get_renderer();
-        $this->request  = $p->get_request();
         $this->context  = $p->get_context();
 
         $this->construct_after();
@@ -507,7 +522,7 @@ abstract class controller_action {
     * Title to renderer
     */
     function set_title($t, $a = true) {
-        $this->_controller->set_title($t, $a);
+        $this->controller->set_title($t, $a);
     }
 
     /**
@@ -529,5 +544,12 @@ abstract class controller_action {
     * Called by controller
     */
     abstract function run();
+
+    /**
+     * Query context (IOC)
+     */
+    function __get($key) {
+        return $this->context->$key;
+    }
 }
 

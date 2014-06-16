@@ -7,7 +7,7 @@
  * @version    $Id: collection.php,v 1.1.2.3 2011/03/30 15:49:20 surg30n Exp $
  */
 
-use SatCMS\Modules\Sat\Classes\Attachable\SlaveCollection as AttachableCollection;
+use SatCMS\Sat\Classes\Attachable\SlaveCollection as AttachableCollection;
 
 /**
  * Class sat_node_image_collection

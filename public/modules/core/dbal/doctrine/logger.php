@@ -1,6 +1,6 @@
 <?php
 
-namespace SatCMS\Modules\Core\Dbal\Doctrine;
+namespace SatCMS\Core\Dbal\Doctrine;
 
 use core;
 

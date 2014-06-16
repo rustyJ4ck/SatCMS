@@ -51,7 +51,7 @@ class acl_collection extends acl_collection_abstract {
         foreach ($actions as $name => $operations) {
 
             $object = array(
-                  'title' => i18n::T(array($name, '_name'))
+                  'title' => $module->i18n->T(array($name, '_name'))
                 , 'name'  => $name
                 , 'items'   => array(array('id' => 0, 'title' => '*'))
             );

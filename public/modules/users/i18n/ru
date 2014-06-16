@@ -90,39 +90,6 @@ gender_unknown         = Неопределенный
 gender_male            = Муж
 gender_female          = Жен
 
-
-; user cp
-; -------
-
-cp_profile      = Профиль
-cp_balance      = Пополнить баланс
-cp_payments     = История платежей
-cp_config       = Настройки
-cp_my_views     = Мои просмотры
-cp_my_posts     = Мои записи
-cp_post         = Публиковать
-cp_admin        = Админ. панель
-cp_vip          = VIP
-cp_avatar       = Аватар
-cp_mod          = Модерация
-
-cp_pms          = Сообщения
-
-cp_my_bugs      = Список TODO
-
-cp_post_edit    = Изменение записи
-
-;
-; payments
-; --------
-
-
-balance         = Баланс
-payment_gateway = Платежная система
-balance_refill  = Пополнение баланса
-balance_refilled= Баланс пополнен
-payment_count   = Количество
-
 ;
 ; titles
 ; -------
@@ -134,4 +101,42 @@ title_login     = "Вход в систему"
 ; ------
 
 error_post_too_often    =   "Слишком часто обновляете!"
+
+
+; user cp
+; -------
+
+[cp]
+
+profile      = Профиль
+balance      = Пополнить баланс
+payments     = История платежей
+config       = Настройки
+my_views     = Мои просмотры
+my_posts     = Мои записи
+post         = Публиковать
+admin        = Админ. панель
+vip          = VIP
+avatar       = Аватар
+mod          = Модерация
+
+pms          = Сообщения
+
+my_bugs      = Список TODO
+
+post_edit    = Изменение записи
+
+;
+; payments
+; --------
+
+[payment]
+
+balance         = Баланс
+gateway = Платежная система
+balance_refill  = Пополнение баланса
+balance_refilled= Баланс пополнен
+count   = Количество
+
+
 

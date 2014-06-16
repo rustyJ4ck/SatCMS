@@ -25,8 +25,10 @@ class sat_router extends module_router  {
     */
     function route($parts) {
 
-        // Try abse routes
-        if (parent::route($parts)) return true;
+        // Try default routes
+        if (false !== ($response = parent::route($parts))) {
+            return $response;
+        }
 
         $uri = implode('/', $parts);
 

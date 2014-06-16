@@ -9,8 +9,8 @@
         
        return
             array(
-                  'users'           => array('url' => '?m=users&c=users'      , 'title' => $this->translate('users'))
-                , 'user_group'      => array('url' => '?m=users&c=user_group'       , 'title' => $this->translate('user_group'))
+                  'users'           => array('url' => '?m=users&c=users'      , 'title' => 'users')
+                , 'user_group'      => array('url' => '?m=users&c=user_group'       , 'title' => 'user_group')
 
                 // , 'acl'            => array('url' => '?m=users&c=acl'   , 'title' => 'Acls')
                 // , 'sessions'     => array('url' => '?m=users&c=sessions'   , 'title' => $this->translate('sessions'))

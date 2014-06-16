@@ -46,11 +46,11 @@ class sat_search_query_action extends controller_action {
         
         // redirect to search results       
         
-        $url = $this->_controller->get_context()->get_router()->make_url('/search/' . $id . '/');
+        $url = $this->controller->get_context()->get_router()->make_url('/search/' . $id . '/');
         
         if (loader::in_ajax()) {
             
-            $this->_controller->set_null_template();            
+            $this->controller->set_null_template();
             $this->renderer
                 ->set_ajax_message($this->_found ?
                     sprintf('По вашему запросу найдено %d записей', $this->_found)
@@ -75,12 +75,12 @@ class sat_search_query_action extends controller_action {
         
         $id = false;
         
-        $psearchs = $this->_controller->get_context()->get_search_handle();
-        $psearch_results = $this->_controller->get_context()->get_search_result_handle();
+        $psearchs = $this->controller->get_context()->get_search_handle();
+        $psearch_results = $this->controller->get_context()->get_search_result_handle();
         
         $core = core::get_instance(); 
         
-        $site_id = $this->_controller->get_context()->get_current_site_id();
+        $site_id = $this->controller->get_context()->get_current_site_id();
         
         // check key exists
         
@@ -138,7 +138,7 @@ class sat_search_query_action extends controller_action {
             // create search history item
             $id = $psearchs->create(
                 array(
-                      'uid'       => $this->_controller->get_user()->id
+                      'uid'       => $this->controller->get_user()->id
                     , 'keyword'   => $key
                     , 'c_count'   => $this->_found
                     , 'site_id'   => $site_id

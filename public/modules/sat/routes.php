@@ -31,7 +31,7 @@ return array(
     ),
 
     'news/list' => array(
-        'regex'       => '@^news(/(?P<category>[^/.]+))?$@' //(/page/(?P<page>\d+))?
+        'regex'       => '@^news(/(?P<category>[^/.]+))?$@'
         , 'type'      => 'class'
         , 'title'     => 'Новости'
         , 'filters'   =>  array('pagination')

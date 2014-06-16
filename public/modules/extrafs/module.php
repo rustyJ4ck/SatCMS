@@ -31,8 +31,8 @@ class tf_extrafs extends core_module {
     }
 
     /*
-       1. SatCMS\Modules\ExtraFS\Classes\Behaviors\Fields::load_secondary_after
-       2. SatCMS\Modules\ExtraFS\Classes\Behaviors\Fields::get
+       1. SatCMS\ExtraFS\Classes\Behaviors\Fields::load_secondary_after
+       2. SatCMS\ExtraFS\Classes\Behaviors\Fields::get
        3. tf_extrafs::get_groups_w_fields
     */
 

@@ -322,7 +322,7 @@ abstract class core_module extends module_orm {
     */       
     function init0() {
         
-        $this->get_core()->import_langwords($this->name);
+        $this->i18n->import_words($this->name);
 
         // include exception  for module
         // do not load core exception twice (when compressed core used)
@@ -509,7 +509,7 @@ abstract class core_module extends module_orm {
                     }
 
                     if (!isset($action['title']) && is_string($key)) {
-                        $action['title'] = i18n::T($this->get_name() . '.' . $key);
+                        $action['title'] = $this->T($key);
                     }
                 }
             }
@@ -611,20 +611,11 @@ abstract class core_module extends module_orm {
         return core::lib($key);
     }
 
-
     /**
-    * i18n alias
+    * i18n alias with module ns
     */
     function T($id, $params = null) {
-        return $this->translate($id, $params);
-    }   
-    
-    /**
-    * Translate
-    * @param mixed $id
-    */
-    public function translate($id, $params = null) {
-        return $this->get_core()->get_langword(array($this->get_name(), $id), $params);
+        return $this->i18n->T(array($this->get_name(), $id), $params);
     }
     
     /**

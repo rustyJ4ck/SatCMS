@@ -27,7 +27,7 @@ class sat_search_suggest_action extends controller_action {
             return;
         }
         
-        $pmod = $this->_controller->get_context();
+        $pmod = $this->controller->get_context();
         $ph = $pmod->get_search_handle()
                    ->set_working_fields('keyword')
                    ->set_limit(10);

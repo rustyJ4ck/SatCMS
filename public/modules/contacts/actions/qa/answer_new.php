@@ -21,13 +21,13 @@ class contacts_qa_answer_new_action extends controller_action {
             
             $_post = $this->request->get_post();
             
-            $parent  = $this->_controller->get_context()->get_qa_question_handle()->load_only_id($pid);                                     
+            $parent  = $this->controller->get_context()->get_qa_question_handle()->load_only_id($pid);
             
             if (!$parent) {
                 throw new controller_exception('Bad parent');
             }
             
-            $pres  = $this->_controller->get_context()->get_qa_answer_handle();                                     
+            $pres  = $this->controller->get_context()->get_qa_answer_handle();
             
             /** @var tf_auth */
             $auth = core::lib('auth');

@@ -269,10 +269,8 @@ abstract class abs_collection_item extends abs_data implements IAbs_Collection_I
 
         if (!$behavior) {
             list($module, $behavior) = explode('.', $id);
-            $class_fqcn = '\\SatCMS\\Modules\\' . ucfirst($module) . '\\Classes\\Behaviors\\' . ucfirst($behavior);
-            // @todo test this
-            // $id = strtolower($id);
-            $behavior = new $class_fqcn;
+            $class_fqcn = '\\SatCMS\\' . ucfirst($module) . '\\Classes\\Behaviors\\' . ucfirst($behavior);
+             $behavior = new $class_fqcn;
         }
 
         $this->behaviors[$id] = $behavior ;

@@ -22,7 +22,7 @@ class core_controller extends module_controller {
 
         $this->renderer
             ->set_ajax_answer(
-                $this->context->get_core()->get_langwords()
+                $this->context->i18n->get_words()
             )
             ->ajax_flush();
     }
@@ -38,7 +38,7 @@ class core_controller extends module_controller {
         $menu = array();
 
         // dies on get_editor_actions
-        $menu ['core'] = core::get_instance()->get_editor_actions();
+        $menu['core'] = $this->core->get_editor_actions();
 
         foreach (core::modules() as $module) {
             $menu [$module->get_name()]= $module->get_editor_actions();
@@ -68,16 +68,20 @@ class core_controller extends module_controller {
 
                 $menuNormalized []= array(
                     'id' => $key,
-                    'title' => i18n::T(array($key,'_name')),
+                    'title' => $this->core->i18n->T(array($key, '_name')),
                     'actions' => $submenuNormalized
                 );
 
             }
         }
 
-        $this->renderer
+        return JsonResponse::make($menuNormalized);
+
+        /*
+            $this->renderer
             ->set_ajax_answer($menuNormalized)
             ->ajax_flush();
+        */
 
 
 

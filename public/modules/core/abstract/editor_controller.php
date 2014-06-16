@@ -8,24 +8,18 @@
  */
 
 /**
- * Editor controller interface
- */
-interface IEditor_controller {
-}
-
-/**
  * Editor controller
+ *
+ * @property tf_auth                     $auth
+ * @property tf_request                  $request
+ * @property tf_renderer                 $renderer
+ *
+ * @property core                        $core
  */
-abstract class editor_controller extends abs_config /*implements IEditor_controller*/ {
+abstract class editor_controller extends abs_config  {
 
     /** @var core_module */
     protected $context;
-
-    /** @var tf_request */
-    protected $request;
-
-    /** @var tf_renderer */
-    protected $renderer;
 
     /** @var ident_vars */
     protected $params;
@@ -101,8 +95,6 @@ abstract class editor_controller extends abs_config /*implements IEditor_control
         $this->_in_ajax = loader::in_ajax();
 
         $this->context  = $module;
-        $this->request  = core::lib('request');
-        $this->renderer = core::lib('renderer');
 
         $this->params   = $this->request->get_ident();
         $this->postdata = $this->request->filespost();
@@ -487,9 +479,8 @@ abstract class editor_controller extends abs_config /*implements IEditor_control
                 );
             }
             else {
-                $core = core::get_instance();
-                $core->set_raw_message($this->_message, false);
-                $core->set_message_data(false, !$this->_status);
+                $this->core->set_raw_message($this->_message, false);
+                $this->core->set_message_data(false, !$this->_status);
             }
         }
     }
@@ -962,5 +953,12 @@ abstract class editor_controller extends abs_config /*implements IEditor_control
         }
 
         throw new core_exception('Editor controller __called method: ' . $method);
+    }
+
+    /**
+     * Query context (IOC)
+     */
+    function __get($key) {
+        return $this->context->$key;
     }
 }

@@ -62,8 +62,7 @@ class core extends core_module /*module_orm*/ {
      */
     private static $modules;
 
-    /** Языковые переменные */
-    private $langwords = array();
+
 
     /** autoload in init0 */
     protected $preload_classes = array();
@@ -146,6 +145,9 @@ class core extends core_module /*module_orm*/ {
      */
     public function __construct($params = array()) {
 
+        // query counter
+        core::ticks();
+
         self::time_check('core-boot');
 
         // bogus: fix loop with get_instance
@@ -184,7 +186,7 @@ class core extends core_module /*module_orm*/ {
             }
         }
 
-
+        $this->class_aliases($this->cfg('aliases'));
 
         setlocale(LC_ALL, ($locale = $this->cfg('locale', 'ru_RU.UTF8')));
 
@@ -216,7 +218,7 @@ class core extends core_module /*module_orm*/ {
             );
 
             if (!self::is_debug()) {
-                self::register_lib('console', new SatCMS\Modules\Core\Console\FakeConsole);
+                self::register_lib('console', new SatCMS\Core\Console\FakeConsole);
             }
             else
             if (array_key_exists('console', self::$system_libs)) {
@@ -266,6 +268,16 @@ class core extends core_module /*module_orm*/ {
 
         if ($initilize_after_load) {
             $this->init();
+        }
+    }
+
+    /**
+     * Make class aliases
+     * @param $aliases
+     */
+    function class_aliases($aliases) {
+        foreach ($aliases as $alias => $orig) {
+            class_alias($orig, $alias);
         }
     }
 
@@ -482,12 +494,13 @@ class core extends core_module /*module_orm*/ {
     function halt() {
         if (!$this->_halted) {
             $this->_halted = true;
-            $this->init(10);
+            $this->init(core_modules::INIT_HALT);
         }
         exit();
     }
 
     /**
+     * @deprecated use MessageResponse|JsonResponse
      * Call instant ajax answer (raw result)
      * @param mixed data
      */
@@ -506,20 +519,19 @@ class core extends core_module /*module_orm*/ {
      *
      * calls renderer::output
      */
-    public function shutdown() {
+    public function shutdown($output = true) {
 
         if (!$this->_from_cache) {
 
-            // send headers if any
-            $this->check_last_modified();
-
             // shutdown
-            $this->init(9);
+            $this->init(core_modules::INIT_SHUTDOWN_BEFORE);
 
             // in critical errors we have no valid renderer
 
+            if ($output && (/** @var tf_renderer $r */ $r = self::lib('renderer'))) {
 
-            if (/** @var tf_renderer $r */ $r = self::lib('renderer')) {
+                // send headers if any
+                $this->check_last_modified();
 
                 if (loader::in_ajax()) {
 
@@ -552,20 +564,23 @@ class core extends core_module /*module_orm*/ {
         } // cache
 
         // shutdown_after
-        $this->init(91);
+        $this->init(core_modules::INIT_SHUTDOWN_AFTER);
 
-        if ($this->db) {
-            $this->db->close();
-        }
+        //do this in destructor
+        //if ($this->db) {
+        //    $this->db->close();
+        //}
 
         $time = self::time_check('core-boot', true);
 
-        if (self::is_debug()) {
-            self::cprint('core shutdown : ' . ($this->_from_cache ? 'CACHE : ' : '') . $time . ' ms, mem : ' . memory_get_usage());
-        }
+        if ($output) {
+            if (self::is_debug()) {
+                self::cprint('core shutdown : ' . ($this->_from_cache ? 'CACHE : ' : '') . $time . ' ms, mem : ' . memory_get_usage());
+            }
 
-        if (!loader::in_ajax()) {
-            echo "\n\n<!--\n\tPowered by : " . self::NAME . "\n\tTime elapsed : " . $time . "\n-->\n";
+            if (!loader::in_ajax()) {
+                echo "\n\n<!--\n\tPowered by : " . self::NAME . "\n\tTime elapsed : " . $time . "\n-->\n";
+            }
         }
 
         $this->halt();
@@ -628,7 +643,7 @@ class core extends core_module /*module_orm*/ {
         self::register_lib('renderer', function() {
             return
             0 /*loader::in_shell()*/ //disable renderer in console
-                ? new \SatCMS\Modules\Core\Base\ObjectMock()
+                ? new \SatCMS\Core\Base\ObjectMock()
                 : new tf_renderer(
                     core::selfie()->cfg('template'), core::lib('tpl_parser')
                 );
@@ -716,7 +731,7 @@ class core extends core_module /*module_orm*/ {
             && ($_uri = $_SERVER['REQUEST_URI']) && !empty($_uri)
         ) {
             if ($this->get_bans_handle()->check_spam($_uri))
-                throw new core_exception(i18n::T('you_are_banned'), tf_exception::CRITICAL);
+                throw new core_exception($this->i18n->T('you_are_banned'), tf_exception::CRITICAL);
         }
 
         self::register_lib('auth', new tf_auth(loader::in_shell()))->start_session();
@@ -737,18 +752,10 @@ class core extends core_module /*module_orm*/ {
      * Void Main
      */
     function main() {
-        $this->run();
-        $this->shutdown();
-    }
 
-    // -----------------------------------------
-
-    /**
-     * Run module
-     */
-    function run() {
-
-        // Watch for cache 
+        // Watch for cache
+        // @todo legacy code cleanup
+        /*
         if (($cacher = $this->lib('page_cacher')) && $cacher->is_enabled()) {
 
             $_url   = $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
@@ -769,12 +776,13 @@ class core extends core_module /*module_orm*/ {
             }
         }
         // Output cached content and return if any
+        */
 
         // route request
 
         try {
 
-            $this->dispatch();
+            $response = $this->dispatch();
 
         } catch (controller_exception $e) {
 
@@ -806,8 +814,15 @@ class core extends core_module /*module_orm*/ {
             self::dprint('[ERROR] Shutdown ' . __METHOD__);
 
             // down
-            $this->shutdown();
+            // $this->shutdown();
 
+        }
+
+        $output = true;
+
+        if ($response instanceof Symfony\Component\HttpFoundation\Response) {
+            $response->send();
+            $output = false;
         }
 
         // Whoops?
@@ -832,6 +847,9 @@ class core extends core_module /*module_orm*/ {
 
         }
         */
+
+
+        $this->shutdown($output);
 
     }
 
@@ -972,6 +990,8 @@ class core extends core_module /*module_orm*/ {
             throw new router_exception('No router module found');
         }
 
+        $response = false;
+
         $router = $router_module->get_router();
 
         self::event('route_before', $router);
@@ -979,11 +999,11 @@ class core extends core_module /*module_orm*/ {
         if ($router) {
             self::dprint('[ROUTER] using ' . $router_module->get_name());
 
-            $result = $router->route(
+            $response = $router->route(
                 $request_array
             );
 
-            if (!$result) {
+            if (false === $response) {
                 throw new router_exception('Requested page doesnt exists');
             }
 
@@ -997,6 +1017,7 @@ class core extends core_module /*module_orm*/ {
             throw new router_exception('No router available for ' . ($router_module ? $router_module->get_name() : ''), 0);
         }
 
+        return $response;
     }
 
     /**
@@ -1096,94 +1117,6 @@ class core extends core_module /*module_orm*/ {
             $module = self::module($module);
             if (is_callable(array($module, 'on_crontab'))) $module->on_crontab();
         }
-    }
-
-    /**
-     * Parse module langwords into one
-     * huge array. Used in templates later.
-     * Module lang start with m_
-     * [lang.var]
-     */
-    public function import_langwords($module) {
-
-        $lang      = $this->cfg('lang');
-        $lang_file = loader::get_public(loader::DIR_MODULES) . $module . '/' . loader::DIR_LANGS . $lang;
-
-        if (fs::file_exists($lang_file)) {
-
-            $temp = parse_ini_file($lang_file, true);
-            //self::dprint('..language ' . $lang_file . " (x" . count($temp) . ")", core::E_DEBUG1);
-
-            if ('core' == $module)
-                $this->langwords = array_merge_recursive($this->langwords, $temp);
-            else
-                $this->langwords['_' . $module] = $temp;
-        }
-    }
-
-    /**
-     * i18n
-     * called from render
-     * @todo refactor!
-     */
-    function get_langwords() {
-        return $this->langwords;
-    }
-
-    /**
-     * i18n
-     *
-     * _T(...) raw text
-     *
-     * mod\section.string
-     * mod.section.string
-     *     section.string
-     *
-     * for translate, use module-based ::translate
-     * @param string|array if array passed ['module', 'cont'], otherwise mod=core
-     */
-    function get_langword($id, $params = null) {
-
-        $mod      = false;
-        $first_id = $id;
-
-        // raw text _T(...)
-        if (is_string($id) && preg_match('/^_T\((.*)\)$/', $id, $t)) {
-            return $t[1];
-        }
-
-        $sid = false;
-
-        if (is_array($id)) {
-            $mod = $id[0];
-            $sid = isset($id[2]) ? $id[1] : false;
-            $id  = $sid ? $id[2] : $id[1];
-        }
-
-        if (($t = strpos($id, '\\')) || (substr_count($id, '.') >= 2 && ($t = strpos($id, '.')))) {
-            $mod = substr($id, 0, $t);
-            $id  = substr($id, $t + 1);
-        }
-
-        if ($t = strpos($id, '.')) {
-            $sid = substr($id, 0, $t);
-            $id  = substr($id, $t + 1);
-        }
-
-        $return = ($mod && $mod != 'core')
-            ? ($sid ? @$this->langwords['_' . $mod][$sid][$id] : @$this->langwords['_' . $mod][$id])
-            : ($sid ? @$this->langwords[$sid][$id] : @$this->langwords[$id]);
-
-
-        if (!$return) {
-            core::dprint(
-                array('[translate] %s, undefined : %s :: %s :: %s',
-                    (is_array($first_id) ? 'array' : print_r($first_id, 1)), $mod, $sid, $id
-                ), core::E_NOTICE);
-            $return = $id;
-        }
-
-        return $return;
     }
 
     /**
@@ -1462,10 +1395,12 @@ class core extends core_module /*module_orm*/ {
     /**
      * @return ms from script start
      */
-    private static $_ticks = null;
+    private static $_ticks;
 
     public static function ticks() {
-        if (self::$_ticks === null) self::$_ticks = self::timer();
+        if (!isset(self::$_ticks)) {
+            self::$_ticks = self::timer();
+        }
 
         return self::timer(self::$_ticks);
     }
@@ -1490,7 +1425,7 @@ class core extends core_module /*module_orm*/ {
 
         @header(' ', true, $code);
 
-        $error = i18n::T('errors.' . $code);
+        $error = $this->i18n->T('errors.' . $code);
 
         $template = loader::in_ajax() ? 'partials/error' : 'error';
 
@@ -1785,21 +1720,6 @@ class core extends core_module /*module_orm*/ {
 
 }
 
-// query counter
-core::ticks();
 
 
-/**
- * i18n shortcut
- */
-class i18n {
 
-    /**
-     * i18n translate
-     * automaticaly pass module
-     * call to core::get_langword($id, $mod)
-     */
-    static function T($id, $params = null) {
-        return core::get_instance()->get_langword($id, $params);
-    }
-}

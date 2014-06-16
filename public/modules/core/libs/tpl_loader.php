@@ -155,7 +155,11 @@ class tpl_loader {
         */
         
     }
-    
+
+    /**
+     * @param bool $new
+     * @return Smarty3
+     */
     static function get_parser($new = false) {
         return $new ? self::$parser : clone self::$parser;
     }    

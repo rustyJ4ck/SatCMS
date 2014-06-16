@@ -20,7 +20,7 @@ $node = $nodes->get_last_item();
 
 // attach
 
-/** @var SatCMS\Modules\Sat\Classes\Behaviors\ImageAttachs $imagesBehavior */
+/** @var SatCMS\Sat\Classes\Behaviors\ImageAttachs $imagesBehavior */
 $imagesBehavior = $node->behavior('Sat.ImageAttachs');
 
 $imageAttachs = $imagesBehavior->get_attachs();
@@ -42,7 +42,7 @@ class testBehavior extends model_behavior {
 
 $node->add_behavior('test.behavior', new testBehavior);
 
-/** @var SatCMS\Modules\Sat\Classes\Behaviors\Commentable $commentsBehavior */
+/** @var SatCMS\Sat\Classes\Behaviors\Commentable $commentsBehavior */
 $commentsBehavior = $node->behavior('Sat.Commentable');
 
 $commentAttachs = $commentsBehavior->get_attachs();

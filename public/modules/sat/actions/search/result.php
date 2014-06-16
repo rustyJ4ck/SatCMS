@@ -22,12 +22,12 @@ class sat_search_result_action extends controller_action {
         
         // @todo move pagination to filters?
         if (!$page) {
-            $page = ($pf = $this->_controller->get_router()->get_filter('pagination')) ? $pf->get_start() : 0;
+            $page = ($pf = $this->controller->get_router()->get_filter('pagination')) ? $pf->get_start() : 0;
         }
            
         // load by id 
-        $searchs = $this->_controller->get_context()->get_search_handle();
-        $search_results = $this->_controller->get_context()->get_search_result_handle();
+        $searchs = $this->controller->get_context()->get_search_handle();
+        $search_results = $this->controller->get_context()->get_search_result_handle();
         
         $item = $searchs->get_by_id($id);
         

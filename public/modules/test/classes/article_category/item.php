@@ -7,7 +7,7 @@
  * @version    $Id: item.php,v 1.1.4.2 2013/10/22 08:46:12 Vova Exp $
  */
 
-use SatCMS\Modules\Sat\Classes\NewsArticle\CategoryItem;
+use SatCMS\Sat\Classes\NewsArticle\CategoryItem;
 
 class test_article_category_item extends CategoryItem {
 }

@@ -9,7 +9,7 @@
  
 class_exists('core', 0) or die('Invisuxcruensseasrjit');
 
-use SatCMS\Modules\Sat\Editor\Controllers\SatController;
+use SatCMS\Sat\Editor\Controllers\SatController;
   
 class extrafs_field_controller extends SatController {
     

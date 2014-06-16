@@ -94,7 +94,7 @@ class users_controller extends module_controller {
     function bans() {
         $data = $this->get_context()->render_bans_list();
         $this->get_renderer()->set_filtered_list('bans', $data); 
-        $this->get_renderer()->set_page_title($this->get_context()->translate('bans'));
+        $this->get_renderer()->set_page_title($this->get_context()->T('bans'));
         $this->set_template('bans_list');  
     }
     
@@ -104,7 +104,7 @@ class users_controller extends module_controller {
     public function users() {
         $data = $this->get_context()->render_users_list();
         $this->get_renderer()->set_filtered_list('users', $data);
-        $this->get_renderer()->set_page_title($this->get_context()->translate('users_list'));
+        $this->get_renderer()->set_page_title($this->get_context()->T('users_list'));
         $this->set_template('users/list');        
     }    
     
@@ -158,7 +158,7 @@ class users_controller extends module_controller {
                 $this->set_null_template();
                 core::lib('renderer')->set_ajax_answer(array(
                       'status'  => false
-                    , 'message' => $this->get_context()->translate('already_logged')
+                    , 'message' => $this->get_context()->T('already_logged')
                 ));
                 return;        
         }
@@ -168,7 +168,7 @@ class users_controller extends module_controller {
                 $this->set_null_template();
                 core::lib('renderer')->set_ajax_answer(array(
                       'status'  => false
-                    , 'message' => $this->get_context()->translate('empty_login')
+                    , 'message' => $this->get_context()->T('empty_login')
                 ));
                 return;
         }
@@ -197,7 +197,7 @@ class users_controller extends module_controller {
         else {
                 $status = false;
                 $this->set_null_template();
-                $message = $this->get_context()->translate('fail_to_login');
+                $message = $this->get_context()->T('fail_to_login');
         }
                
         core::lib('renderer')->set_ajax_answer(array(
@@ -239,7 +239,7 @@ class users_controller extends module_controller {
     public function profile($r) {
 
         $user = $this->get_context()->get_user($r->user, 'id');
-        core::lib('renderer')->set_main_title($this->get_context()->translate('user_info'));
+        core::lib('renderer')->set_main_title($this->get_context()->T('user_info'));
         
         // user not found, throw some shit about
         if ($user->id == 0) {
@@ -271,7 +271,7 @@ class users_controller extends module_controller {
             }
             catch (validator_exception $e) {
                     $error = $e->getMessage();
-                    $error = $this->get_context()->translate($error);
+                    $error = $this->get_context()->T($error);
             }                                     
             
 
@@ -382,10 +382,10 @@ class users_controller extends module_controller {
             }
                 catch (validator_exception $e) {
                     $error = $e->getMessage();
-                    $error = $this->get_context()->translate($error);
+                    $error = $this->get_context()->T($error);
             } 
          
-            $message = ($error !== false) ? $error : $this->get_context()->translate('profile_update_ok');
+            $message = ($error !== false) ? $error : $this->get_context()->T('profile_update_ok');
 
             if (loader::in_ajax()) {
                 $this->set_null_template();

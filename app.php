@@ -20,7 +20,7 @@ loader::bootstrap($BOOT_OPTIONS);
 
 $application = new Application();
 
-$root = __DIR__ . '/src/Modules/*/Commands';
+$root = __DIR__ . '/src/*/Commands';
 
 $finder = new Finder();
 $finder->files()->in($root)->name('*.php')->depth('== 0');
@@ -31,7 +31,7 @@ $commands = [];
 foreach ($finder as $file) {
     // ... do something
     preg_match('@(?<mod>\w+)[\\\/]Commands[\\\/](?<cmd>\w+)\.php$@', $file->getPathname(), $matches);
-    $commands []= 'SatCMS\\Modules\\' . ucfirst($matches['mod'])
+    $commands []= 'SatCMS\\' . ucfirst($matches['mod'])
         . '\\Commands\\' . ucfirst($matches['cmd']); // . 'Command';
 }
 

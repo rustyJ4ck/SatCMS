@@ -103,7 +103,7 @@ class tf_users extends core_module {
         if ($this->auth->logged_in()) {
             $admin = ('admin' == $this->get_current_user()->get_level());
             if ($admin)
-                $this->_cp_links['admin'] =  array('title' => $this->translate('cp_admin')      , 'url' => '/editor/');  
+                $this->_cp_links['admin'] =  array('title' => $this->T('cp_admin')      , 'url' => '/editor/');
                 
             /*
             if ($this->get_current_user()->level >= 50)

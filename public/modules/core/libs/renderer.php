@@ -56,7 +56,7 @@ require "modules/core/libs/renderer/layout.php";
  *      section         - section (sets via controller::set_section_name)
  *      uri             - $_SERVER['REQUEST_URI']
  * 
- * [lang]            - array with current langwords
+ * [lang]            - array with current lang-words
  */
  
 class tf_renderer extends abs_data {
@@ -450,7 +450,7 @@ class tf_renderer extends abs_data {
 
         // lang constants {$lang._module.value}
         // @deprecated, use smarty i18n modifier
-        $this->set_data('lang', $core->get_langwords());
+        $this->set_data('lang', $core->i18n->get_words());
         
 		foreach ($this->import_cfg as $key) {
             if (false !== ($test = $core->cfg($key)))
@@ -663,7 +663,9 @@ class tf_renderer extends abs_data {
     *   string - assign new one
     */
     function ajax_flush($tpl = false) {
-        if (isset($tpl)) $this->set_main_template($tpl);
+        if (isset($tpl)) {
+            $this->set_main_template($tpl);
+        }
         $this->output_ajax();
         core::get_instance()->halt();
     }
@@ -674,13 +676,6 @@ class tf_renderer extends abs_data {
     * called from @see core::shutdown
     */
     public function output_ajax($is_return = false) {
-
-        /*
-        //disabled in core
-        if ($console = core::lib('console')) {
-            $console->disable();
-        }
-        */
 
         $this->output_begin(
             array('in_ajax' => true)
@@ -735,15 +730,17 @@ class tf_renderer extends abs_data {
         elseif (empty($tpl)) {
 
             // allow prepared json
-            echo self::AJAX_JSON == $this->ajax_answer['type']
+            echo (self::AJAX_JSON == $this->ajax_answer['type']
                 ? (is_string($this->ajax_answer['data']) ? $this->ajax_answer['data'] : functions::json_encode($this->ajax_answer['data']))
-                : @$this->ajax_answer['data']['data'];
+                : @$this->ajax_answer['data']['data']);
 
         }
         else {
             // plain output
             $this->output_end($tpl);
         }
+
+
     }
         
     /**

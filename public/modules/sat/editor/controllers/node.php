@@ -11,7 +11,7 @@
  
 class_exists('core', 0) or die('Invisuxcruensseasrjit');
 
-use SatCMS\Modules\Sat\Editor\Controllers\SatController;
+use SatCMS\Sat\Editor\Controllers\SatController;
 
 /**
  * Class sat_node_controller

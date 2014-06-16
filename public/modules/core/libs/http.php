@@ -13,8 +13,8 @@ class http_exception extends tf_exception {
 }
 
 /*
- * http.php
- * $Id: http.php,v 1.2.6.1 2012/05/17 08:58:18 Vova Exp $
+ * HttpClient|WhyNotGuzzle?
+ * @author http://www.phpclasses.org/httpclient
  * 
  * Per request:
  *  follow_redirect = 1;

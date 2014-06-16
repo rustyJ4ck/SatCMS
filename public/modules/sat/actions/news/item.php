@@ -26,7 +26,7 @@ class sat_news_item_action extends controller_action {
     function run() {
 
         /** @var tf_sat $module */
-        $module     =  $this->_controller->get_context();
+        $module     =  $this->context;
         
         $id         = $this->get_param('id');
         $category   = $this->get_param('category');
@@ -67,9 +67,8 @@ class sat_news_item_action extends controller_action {
             throw new controller_exception(i18n::T('sat\\No such news'));
         }
 
-        // $u->load_secondary();
-
         /*
+        $u->load_secondary();
         $u->get_similar();  
         $u->get_attach_images();
         $u->get_comments()->load_secondary();
@@ -79,27 +78,7 @@ class sat_news_item_action extends controller_action {
         $this->renderer->return->news_item = $u->render();
         $this->renderer->set_page_title($u->title);
         
-        $this->_controller->set_current_item($u);
-        
-        // see also 
-        
-        // [fav] @refactor dups
-        /*
-        if (!$this->_controller->get_user()->is_anonymous()) { 
-            $hfavs = core::module('content')->get_fav_handle(); 
-            $fav_group = $hfavs->get_fav_desc(1);
-            $is_favorite = $hfavs->check_fav($u->id, $this->_controller->get_user()->get_id(), $fav_group['id']);
-            
-            $tpl_fav = array(
-                'gid'       => $fav_group['id']
-                , 'id'        => $u->id
-                , 'active'    => $is_favorite
-            );        
-            
-            $this->renderer->set_current('fav', $tpl_fav);     
-        }
-        */
-        // [/fav]
+        $this->controller->set_current_item($u);
 
     }
     

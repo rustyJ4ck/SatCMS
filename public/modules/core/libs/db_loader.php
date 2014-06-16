@@ -48,7 +48,7 @@ class db_loader {
             self::$dbs[$id] = $conn;
         } else {
             $d_config = new \Doctrine\DBAL\Configuration();
-            $d_config->setSQLLogger(new \SatCMS\Modules\Core\Dbal\Doctrine\Logger);
+            $d_config->setSQLLogger(new \SatCMS\Core\Dbal\Doctrine\Logger);
 
             /*
              *    'dbname'    => @$config['database']

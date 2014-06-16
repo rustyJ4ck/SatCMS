@@ -27,5 +27,5 @@ function smarty_modifier_i18n($id, $prefix = '', $params = null)
         $id = $prefix . '.' . $id;
     }
 
-    return i18n::T($id, $params);
+    return core::lib('i18n')->T($id, $params);
 }

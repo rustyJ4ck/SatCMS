@@ -1,6 +1,7 @@
 <?php
   
 /**
+* Used by sat-import
 * @package TwoFace
 * @version $Id: iconv.php,v 1.1.2.1 2010/08/03 06:21:04 Vladimir Exp $
 * @copyright (c) 2007 4style

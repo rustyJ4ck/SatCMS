@@ -32,13 +32,13 @@ class sat_news_list_action extends controller_action {
     function run() {
 
         /** @var tf_sat $module */
-        $module   =  $this->_controller->get_context();
+        $module   =  $this->context;
 
         $hcat     = null;
-        // $page     = (int)$this->get_param('page');
+
         $category = $this->get_param('category');
 
-        $pager = $this->context->get_router()->get_filter('pagination');
+        $pager = $this->router->get_filter('pagination');
         $page = $pager ? $pager->get_start() : 0;
 
         // catID
@@ -57,7 +57,6 @@ class sat_news_list_action extends controller_action {
         }
 
         $cn = $module->get_news_handle()->set_order('created_at DESC');
-        // $cn->config->set('render_secondary', 1);
 
         /** @var collection_filter*/
         $data = $cn

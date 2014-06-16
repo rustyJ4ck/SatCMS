@@ -26,7 +26,12 @@ class core_modules extends registry {
     
     private $_site_config;
 
-    
+    // init constants
+    const INIT_INITIAL = 0;
+    const INIT_SHUTDOWN_BEFORE = 90;
+    const INIT_SHUTDOWN_AFTER = 90;
+    const INIT_HALT = 10;
+
     /**
     * Construct 
     */

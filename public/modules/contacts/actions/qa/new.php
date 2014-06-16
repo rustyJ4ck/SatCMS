@@ -20,7 +20,7 @@ class contacts_qa_new_action extends controller_action {
         if ($this->request->post('form_submit') == 'yes') {
             
             $_post = $this->request->get_post();
-            $pres  = $this->_controller->get_context()->get_qa_question_handle();                                     
+            $pres  = $this->controller->get_context()->get_qa_question_handle();
             
             /** @var tf_auth */
             $auth = core::lib('auth');

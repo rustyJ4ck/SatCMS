@@ -222,21 +222,48 @@ class functions {
         header ('Pragma: no-cache');
     }
 
+    /**
+     * Report encode errors in console
+     * @param $data
+     * @param null $params
+     * @return string
+     */
+    private static function _json_encode($data, $params = null) {
+
+        $result = json_encode($data, $params);
+
+        if (json_last_error()) {
+            core::dprint(array(
+                '_json_error: %d %s', json_last_error(), (function_exists('json_last_error_msg') ? json_last_error_msg() : '')
+            ));
+        }
+
+        return $result;
+
+    }
 
     /**
-     * Fix UTF escaping in php<5.4
+     * Fix escaping in php<5.4
      *
      * @param mixed $arr
      */
     static function json_encode($arr) {
 
-        // @todo fix this
         if (!is_array($arr)) {
-            return json_encode($arr);
+            return self::_json_encode($arr);
         }
 
+        // php55: Malformed UTF-8 characters, possibly incorrectly encoded
+        /*
+        if (version_compare(phpversion(), '5.5.0', '>=')) {
+            array_walk_recursive($arr, function (&$item, $key) {
+                if (is_string($item)) $item = @iconv('UTF-8', 'UTF-8//IGNORE', $item);
+            });
+        }
+        */
+
         if (version_compare(phpversion(), '5.4.0', '>=')) {
-            return json_encode($arr, JSON_UNESCAPED_UNICODE);
+            return self::_json_encode($arr, JSON_UNESCAPED_UNICODE);
         }
 
         // convmap since 0x80 char codes so it takes all multibyte codes (above ASCII 127).
@@ -245,7 +272,7 @@ class functions {
             if (is_string($item)) $item = mb_encode_numericentity($item, array (0x80, 0xffff, 0, 0xffff), 'UTF-8');
         });
 
-        return mb_decode_numericentity(json_encode($arr), array (0x80, 0xffff, 0, 0xffff), 'UTF-8');
+        return mb_decode_numericentity(self::_json_encode($arr), array (0x80, 0xffff, 0, 0xffff), 'UTF-8');
     }
 
     /** fix conflict with __call */

@@ -10,8 +10,8 @@
 
 return 
 array(
-                'profile'           => array('title' => $this->translate('cp_profile')   , 'url' => '/users/cp/profile/')
-              , 'avatar'            => array('title' => $this->translate('cp_avatar')    , 'url' => '/users/cp/avatar/')                              
+                'profile'           => array('title' => 'cp_profile'   , 'url' => '/users/cp/profile/')
+              , 'avatar'            => array('title' => 'cp_avatar'    , 'url' => '/users/cp/avatar/')
 
 /*
               , 'company/my'        => array('title' => 'РљРѕРјРїР°РЅРёСЏ'               , 'url' => '/users/cp/company/')                              
