@@ -61,7 +61,7 @@ class tf_auth {
 
         $this->_cookie_domain = '.' . @$_SERVER['HTTP_HOST'];
         $this->_cookie_httponly = $core->cfg('auth.cookie_httponly', false);
-        $this->_autologin_UID = $this->mod_users->cfg('autologin_UID', 0);
+        $this->_autologin_UID = $this->mod_users->config->get('autologin_UID', 0);
         $this->_disable_auth = $disable_auth;
 
         if ($this->is_crawler()) {
@@ -310,15 +310,61 @@ class tf_auth {
     }
 
     /**
+     * @param $login
+     * @return bool
+     */
+    function login_attempt($login) {
+
+        $this->_clean_attempts();
+
+        $attempts = //ordered by ID DESC
+        $this->mod_users->model('login_attempt')
+            ->where('login', $login)
+            ->where('uip', $this->get_user_ip(true))
+            ->set_limit(10)
+            ->load();
+
+        if ($attempts->count() > $this->mod_users->config->get('login_attempts', 5)) {
+            // banned for login this acc
+            $last = array_shift($attempts->get_items());
+            $time = ceil((15*60 + $last->created_at - time()) / 60);
+            throw new auth_exception('Temporary banned with this login for: ' . $time . ' min');
+            return false;
+        }
+
+        return true;
+    }
+
+    private function _clean_attempts() {
+        $this->mod_users->model('login_attempt')->where('created_at', time() - 15*60, '<')->remove_all_fast();
+    }
+
+    /**
+     * @param $login
+     */
+    function login_failed($login) {
+        $this->mod_users->model('login_attempt')->create(array(
+             'login' => $login,
+             'uip'   => $this->get_user_ip(true)
+        ));
+
+        core::event('login_failed', $login);
+    }
+
+    /**
      * Try to login
      * @return bool
      */
     public function login($login, $password, $keep = false) {
-        $user = $this->users->clear()
-            ->set_where("login = '%s' AND password = '%s' AND active", $login, $password)
-            ->set_limit(1)
-            ->load()
-            ->get_item();
+
+        $this->login_attempt($login);
+
+        $user = $this->users
+            ->clear()
+            ->where("login", $login)
+            ->where("password", $password)
+            ->where("active", true)
+            ->load_first();
 
         if ($user) {
             // we are in system
@@ -328,6 +374,8 @@ class tf_auth {
             core::event('login', $user);
 
             return true;
+        } else {
+            $this->login_failed($login);
         }
 
         return false;

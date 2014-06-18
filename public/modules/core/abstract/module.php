@@ -120,6 +120,8 @@ abstract class core_module extends module_orm {
     public function __construct($root_dir = null, $params = null) {    
         
         if (empty($root_dir)) throw new module_exception('empty root, register ' . get_class($this));
+
+        $this->_init_config();
         
         $this->root_dir         = $root_dir;
         $this->classes_chroot   = $root_dir . 'classes/';
@@ -149,7 +151,7 @@ abstract class core_module extends module_orm {
         }    
 
         // append config|create
-        $this->init_config($params, true);
+        $this->config->merge($params);
 
         $this->ioc = new module_ioc($this->IOC_initialize(), $this);
 
@@ -159,6 +161,12 @@ abstract class core_module extends module_orm {
     }
     
     function construct_after() {}
+
+    protected function _init_config($data = null) {
+        if (!isset($this->config)) {
+            $this->config = new aregistry($data);
+        }
+    }
 
     /**
      *  $ctypes []= array(
@@ -680,5 +688,4 @@ abstract class core_module extends module_orm {
 
         return $item;
     }    
-        
 }

@@ -43,8 +43,9 @@ empty_login     = Не указан логин или пароль
 fail_to_login   = "Неверный логин или пароль, либо пользователь неактивен"
 
 logout          = Выйти
-already_logged  = Вы уже в системе.
-user_logouted   = Вы вышли из системы.
+already_logged  = Вы уже в системе
+logged_out      = Вы вышли из системы
+not_logged_in   = Вы не авторизированы
 login_me        = Войти
 register_me     = Дайте мне мой аккаунт
 

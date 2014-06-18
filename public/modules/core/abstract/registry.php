@@ -18,7 +18,7 @@ class registry implements IteratorAggregate, ArrayAccess, Countable {
     protected $_registry;
     
     public function __construct($array = array()) {
-        $this->_registry = $array;
+        $this->_registry = $array ?: array();
     }
     
     /* Required definition of interface IteratorAggregate */
@@ -234,42 +234,3 @@ class registry implements IteratorAggregate, ArrayAccess, Countable {
 
 
 
-/**
- * Class ARegistry
- * @package TF\Core\Base
- * Support array.nested.keys
- */
-class aregistry extends Registry {
-
-    function is_set($key) {
-
-        if (!isset($this->_registry[$key])) {
-
-            if (strpos($key, '.') === false) {
-                return false;
-            }
-
-            if (is_null(array_get($this->_registry, $key, null))) {
-                return false;
-            }
-
-        }
-
-        return true;
-    }
-
-    function set($key, $val = null) {
-        if (strpos($key, '.') === false)
-            $this->_registry[$key] = $val;
-        else
-            array_set($this->_registry, $key, $val);
-        return $this;
-    }
-
-    function get($key, $default = null) {
-        return array_key_exists($key, $this->_registry)
-            ? $this->_registry[$key]
-            : array_get($this->_registry, $key, $default);
-    }
-
-}

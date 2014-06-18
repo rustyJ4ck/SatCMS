@@ -15,7 +15,7 @@ return array(
 
     'response/ok' => array(
         'action' => function(){
-                return Response::make('hello', 404);
+                return Response::create('hello', 404);
         }
     ),
 
@@ -26,7 +26,7 @@ return array(
                 /** @var tf_sat $sat */
                 $sat = core::module('sat');
 
-                return JsonResponse::make(['привет', 'пока'], 200);
+                return JsonResponse::create(['привет', 'пока'], 200);
 
             }
     ),

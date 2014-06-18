@@ -9,8 +9,13 @@
      
 class tf_contacts extends core_module {
 
-     /** @return contacts_form_collection */       function get_form_handle()                { return $this->class_register('form', array('with_module_prefix' => true)); }    
-     /** @return contacts_qa_question_collection */       function get_qa_question_handle()  { return $this->class_register('qa_question', array('with_module_prefix' => true)); }    
-     /** @return contacts_qa_answer_collection */       function get_qa_answer_handle()       { return $this->class_register('qa_answer', array('with_module_prefix' => true)); }    
+     /** @return contacts_form_collection */
+    function get_form_handle()                { return $this->model('form'); }
+
+     /** @return contacts_qa_question_collection */
+    function get_qa_question_handle()  { return $this->model('qa_question'); }
+
+     /** @return contacts_qa_answer_collection */
+    function get_qa_answer_handle()       { return $this->model('qa_answer'); }
     
 }

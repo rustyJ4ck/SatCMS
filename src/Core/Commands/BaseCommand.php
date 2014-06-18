@@ -22,7 +22,8 @@ abstract class BaseCommand extends CommandRunner {
 
         $this->setName($this->name)
             ->setDescription($this->description)
-            ->addOption('database', null, InputOption::VALUE_OPTIONAL, 'database environment (default/test/sqlite/...)')
+            ->addOption('database', null, InputOption::VALUE_OPTIONAL, 'database=... (default/test/sqlite/...)')
+            ->addOption('env', null, InputOption::VALUE_OPTIONAL, 'environment (default/test/sqlite/...)')
             ->addOption('dry-run',  null, InputOption::VALUE_OPTIONAL, 'dry run', false)
         ;
 
@@ -33,6 +34,10 @@ abstract class BaseCommand extends CommandRunner {
      */
     function core() {
         return \core::get_instance(true);
+    }
+
+    function env($id) {
+        return \core::get_instance();
     }
 
     function prepare_db($id) {

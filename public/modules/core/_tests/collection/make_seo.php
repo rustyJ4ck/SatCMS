@@ -9,7 +9,7 @@ require('../loader.php');
 $core = core::get_instance();
 
 /** @var test_images_collection */
-$ci = $core->class_register('test_images');
+$ci = $core->model('test_images');
 
 $ci->create(array(
     'title' => 'тест'

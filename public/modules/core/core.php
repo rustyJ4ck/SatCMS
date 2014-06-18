@@ -151,7 +151,11 @@ class core extends core_module /*module_orm*/ {
         self::time_check('core-boot');
 
         // bogus: fix loop with get_instance
-        if (!self::$_instance) self::$_instance = $this;
+        if (!self::$_instance) {
+            self::$_instance = $this;
+        }
+        
+        $this->_init_config();
 
         $initilize_after_load = ($params === true);
 
@@ -161,13 +165,12 @@ class core extends core_module /*module_orm*/ {
         $cfg_file = loader::get_docs() . $cfg_file . '.cfg';
 
         if (fs::file_exists($cfg_file)) {
-            // echo('[error] Configuration file not found'); 
-            $this->init_config(parse_ini_file($cfg_file, true));
+            $this->config->merge(parse_ini_file($cfg_file, true));
         }
 
         // override core-config
         if (!empty($params['config'])) {
-            $this->config = array_merge($this->config, $params['config']);
+            $this->config->merge($params['config']);
         }
 
         // multiconfig config/domain.engine.cfg
@@ -175,20 +178,20 @@ class core extends core_module /*module_orm*/ {
         $host = @$_SERVER['HTTP_HOST'];
         $host = strpos($host, 'www.') === 0 ? substr($host, 4) : $host;
 
-        if ($this->cfg('multidomain_config', false) && $host) {
+        if ($this->config->get('multidomain_config', false) && $host) {
 
             $host = str_replace(':', '.', $host); // localhost:8002
 
             $host_config = loader::get_docs() . $host . '.engine.cfg';
 
             if (fs::file_exists($host_config)) {
-                $this->init_config(parse_ini_file($host_config, true), abs_config::INIT_APPEND);
+                $this->config->merge(parse_ini_file($host_config, true));
             }
         }
 
-        $this->class_aliases($this->cfg('aliases'));
+        $this->class_aliases($this->config->get('aliases'));
 
-        setlocale(LC_ALL, ($locale = $this->cfg('locale', 'ru_RU.UTF8')));
+        setlocale(LC_ALL, ($locale = $this->config->get('locale', 'ru_RU.UTF8')));
 
         if (loader::is_windows()) {
             list($lang, $codeset) = explode('.', $locale);
@@ -204,7 +207,7 @@ class core extends core_module /*module_orm*/ {
 
         self::$libs = new core_libs();
 
-        $duagent = $this->cfg('debugger_agent', 'iamdebugger');
+        $duagent = $this->config->get('debugger_agent', 'iamdebugger');
 
         // compare only lside of agent, because firephp or something add its stuff to end
         if (isset($_SERVER['HTTP_USER_AGENT']) && substr($_SERVER['HTTP_USER_AGENT'], 0, strlen($duagent)) === $duagent
@@ -214,7 +217,7 @@ class core extends core_module /*module_orm*/ {
             self::set_debug(
                 !empty($params['debug'])
                     ? $params['debug']
-                    : $this->cfg('debug', self::E_INFO)
+                    : $this->config->get('debug', self::E_INFO)
             );
 
             if (!self::is_debug()) {
@@ -229,10 +232,10 @@ class core extends core_module /*module_orm*/ {
                 // bind console (modules/core/console)
                 self::register_lib('console',
                     new Debug_HackerConsole_Main(
-                           !$this->cfg('no_console')
+                           !$this->config->get('no_console')
                         && !loader::in_shell()
                         && !loader::in_ajax()
-                        || (loader::in_ajax() && $this->cfg('debug_ajax', false))
+                        || (loader::in_ajax() && $this->config->get('debug_ajax', false))
                     )
                 );
 
@@ -247,20 +250,20 @@ class core extends core_module /*module_orm*/ {
             } else {
                 // enable debug messages in shell
                 self::set_debug(
-                    $this->cfg('shell_debug_level', self::E_INFO)
+                    $this->config->get('shell_debug_level', self::E_INFO)
                 );
             }
 
         }
 
         if (self::is_debug()
-            && (!loader::in_ajax() || $this->cfg('debug_ajax', false))
+            && (!loader::in_ajax() || $this->config->get('debug_ajax', false))
             && !loader::_option(loader::OPTION_TESTING)
             && class_exists('\Whoops\Run')) {
                 $whoops = new \Whoops\Run;
                 $whoops->pushHandler(new \Whoops\Handler\PrettyPageHandler);
                 $whoops->register();
-                $this->set_cfg_var('with_debugger', true);
+                $this->config->set('with_debugger', true);
         }
 
         // build module
@@ -293,9 +296,9 @@ class core extends core_module /*module_orm*/ {
      */
     function in_index($flag = null) {
         if (isset($flag)) {
-            $this->set_cfg_var('in_index', $flag);
+            $this->config->set('in_index', $flag);
         }
-        return $this->cfg('in_index');
+        return $this->config->get('in_index');
     }
 
     /**
@@ -469,7 +472,7 @@ class core extends core_module /*module_orm*/ {
             self::libs()
                 ->configure($id, $config
                         ? $config
-                        : self::get_instance()->cfg('lib_' . $id, array())
+                        : self::cfg('lib_' . $id, array())
                 )
                 ->set($id, $lib)
                 ->is_resolved($id)
@@ -598,11 +601,11 @@ class core extends core_module /*module_orm*/ {
                 $cfg = $id;
             } else {
                 $id = 'database-' . $id;
-                $cfg = $this->cfg($id);
+                $cfg = $this->config->get($id);
             }
         }
 
-        if (!$cfg || $this->cfg('options.skip_database')) {
+        if (!$cfg || $this->config->get('options.skip_database')) {
             $cfg['engine'] = 'null';
             self::dprint('Missing database configuration section', core::E_CRIT);
         }
@@ -650,10 +653,10 @@ class core extends core_module /*module_orm*/ {
         });
 
         // database setup (database-`mysql`)
-        $this->configure_database($this->cfg('database'));
+        $this->configure_database($this->config->get('database'));
 
         // set default timezone
-        $tz = $this->cfg('default_timezone');
+        $tz = $this->config->get('default_timezone');
         date_default_timezone_set($tz ? $tz : 'Europe/Moscow');
 
         // load core config
@@ -678,7 +681,7 @@ class core extends core_module /*module_orm*/ {
 
         $modules_config = array();
 
-        if ('file' == $this->cfg('modules_config', '')
+        if ('file' == $this->config->get('modules_config', '')
             && ($modules_config_file = loader::get_docs() . 'modules.cfg')
             && fs::file_exists($modules_config_file)
         ) {
@@ -695,7 +698,7 @@ class core extends core_module /*module_orm*/ {
         // site init %domain%
         // config/%domain%/init.php
         $site_config      = array();
-        $site_config_path = $this->cfg('site_config');
+        $site_config_path = $this->config->get('site_config');
         if (!empty($site_config_path)) {
             $host = @$_SERVER['HTTP_HOST'];
             if ('%domain%' == $site_config_path) {
@@ -726,7 +729,7 @@ class core extends core_module /*module_orm*/ {
         parent::init0();
 
         // check bans
-        if (!$this->cfg('no_bans_check')
+        if (!$this->config->get('no_bans_check')
             && isset($_SERVER['REQUEST_URI'])
             && ($_uri = $_SERVER['REQUEST_URI']) && !empty($_uri)
         ) {
@@ -779,6 +782,8 @@ class core extends core_module /*module_orm*/ {
         */
 
         // route request
+
+        $response = null;
 
         try {
 
@@ -858,7 +863,7 @@ class core extends core_module /*module_orm*/ {
      * Faculties supports aliases, this it!
      */
     function get_cname() {
-        return $this->cfg('cname');
+        return $this->config->get('cname');
     }
 
     /**
@@ -869,7 +874,7 @@ class core extends core_module /*module_orm*/ {
      */
     function dispatch($url = false) {
 
-        if ($this->cfg('options.log_requests')) {
+        if ($this->config->get('options.log_requests')) {
             $this->logger->log('request', $url);
         }
 
@@ -880,7 +885,7 @@ class core extends core_module /*module_orm*/ {
         $skip_site_check = false;
 
         if (preg_match('@users/(login|logout)/\z@', $request)) {
-            $this->set_cfg_var('in_login', true);
+            $this->config->set('in_login', true);
             $skip_site_check = true;
         }
 
@@ -889,14 +894,14 @@ class core extends core_module /*module_orm*/ {
         $subdomain   = ($_SERVER['HTTP_HOST'] != $domain) ? substr($_SERVER['HTTP_HOST'], 0, (-1 + -1 * strlen($domain))) : false;
 
         if ('www' === $subdomain) $subdomain = false;
-        $this->set_cfg_var('subdomain', $subdomain);
+        $this->config->set('subdomain', $subdomain);
 
         $cname = false;
 
         // check for cname
         if ($domain != substr($_SERVER['HTTP_HOST'], (-1 * ($sl = strlen($domain))), $sl)) {
             $cname = preg_replace('/^.*\.([^\.]+\.[\w]+)$/', '$1', $_SERVER['HTTP_HOST']);
-            $this->set_cfg_var('cname', $cname);
+            $this->config->set('cname', $cname);
         }
 
         // @todo fix tails or errors
@@ -911,7 +916,7 @@ class core extends core_module /*module_orm*/ {
         }
 
         $this->append_base_url($this->router->get_protocol());
-        $this->append_base_url($this->cfg('main_domain'), true);
+        $this->append_base_url($this->config->get('main_domain'), true);
 
         if ($dispatcher && functions::is_callable(array($dispatcher, 'predispatch'))) {
             $dispatcher->predispatch($domain, $request);
@@ -947,7 +952,7 @@ class core extends core_module /*module_orm*/ {
 
         if ($this->in_index()) {
             // override frontpage layout
-            if ($template = $this->cfg('site.frontpage.template')) {
+            if ($template = $this->config->get('site.frontpage.template')) {
                 $this->renderer->set_page_template($template);
             }
         }
@@ -1079,7 +1084,7 @@ class core extends core_module /*module_orm*/ {
      * @see self::dispatch
      */
     function get_sub_domain() {
-        return $this->cfg('subdomain');
+        return $this->config->get('subdomain');
     }
 
     /**
@@ -1486,31 +1491,30 @@ class core extends core_module /*module_orm*/ {
      *
      * @param string langID
      * @param array|string varargs parsed against $lang_id
-     * @param bool $vars - is langwords keys
+     * @param bool $params - is langwords keys
      * @return self
      */
-    function set_message($lang_id, $vars = array(), $is_langs = false, $separator = '<br/>') {
+    function set_message($lang_id, $params = array()) {
 
-        $value = $this->get_langword($lang_id);
-        if (empty($value)) {
-            $value = '*lang=' . $lang_id;
-        }
-        if (!empty($vars)) {
-            if ($is_langs)
-                foreach ($vars as &$var) {
-                    $var = $this->get_langword($var);
-                }
-            $value = vsprintf($value, $vars);
+        $value = $this->i18n->T($lang_id);
+
+        if (!empty($params)) {
+            foreach ($params as &$var) {
+                $var = $this->$this->i18n->T($var);
+            }
+            $value = vsprintf($value, $params);
         }
 
         // remove unused printf %sequences
         $value = preg_replace('#(\s\%[^\s]+)#', '', $value);
 
         // append messages
-        if (!empty($this->message))
-            $this->message .= ($separator . $value);
-        else
+        if (!empty($this->message)) {
+            $this->message .= ('<br/>' . $value);
+        }
+        else {
             $this->message = $value;
+        }
 
         return $this;
     }
@@ -1562,7 +1566,7 @@ class core extends core_module /*module_orm*/ {
     function check_last_modified() {
         $user = $this->lib('auth')->get_user();
 
-        $disable = $this->cfg('disable_last_modify', false);
+        $disable = $this->config->get('disable_last_modify', false);
 
         if (!$disable && $user->is_anonymous()) {
             if ($time = $this->last_modified()) {
@@ -1593,10 +1597,10 @@ class core extends core_module /*module_orm*/ {
      * Warn! From shell SERVER_NAME undefined, set main_domain in engine.cfg
      */
     function get_main_domain($prefix = false) {
-        $domain_prefix = $this->cfg('domain_prefix', ''); // 'www.'
+        $domain_prefix = $this->config->get('domain_prefix', ''); // 'www.'
         return (
             ($prefix ? $domain_prefix : '')
-            . (($md = $this->cfg('main_domain')) ? $md : @$_SERVER['SERVER_NAME'])
+            . (($md = $this->config->get('main_domain')) ? $md : @$_SERVER['SERVER_NAME'])
         );
     }
 
@@ -1605,7 +1609,7 @@ class core extends core_module /*module_orm*/ {
      * @param $domain
      */
     function set_main_domain($domain) {
-        $this->set_cfg_var('main_domain', $domain);
+        $this->config->set('main_domain', $domain);
         return $this;
     }
 
@@ -1633,7 +1637,7 @@ class core extends core_module /*module_orm*/ {
      * @return ctype_collection
      */
     protected function get_ctype_handle() {
-        return $this->class_register('ctype');
+        return $this->model('ctype');
     }
 
     /* core collections */
@@ -1689,14 +1693,14 @@ class core extends core_module /*module_orm*/ {
         $return = array();
 
         // old format via config
-        $_s = $this->cfg('render_config_vars', '');
+        $_s = $this->config->get('render_config_vars', '');
 
         if ($_s) {
             $_s = explode(',', $_s);
 
             foreach ($_s as $key) {
                 $key          = trim($key);
-                $return[$key] = $this->cfg($key);
+                $return[$key] = $this->config->get($key);
             }
         }
 
@@ -1715,7 +1719,18 @@ class core extends core_module /*module_orm*/ {
      * @return string domain url
      */
     function get_static_url() {
-        return ($t = $this->cfg('static_domain')) ? "http://{$t}" : '';
+        return ($t = $this->config->get('static_domain')) ? "http://{$t}" : '';
+    }
+
+    /**
+     * Config helper
+     * @param $id
+     * @param null $default
+     * @return mixed
+     */
+    static function cfg($id, $default = null) {
+        $object = isset($this) ? $this : self::selfie();
+        return $object->config->get($id, $default);
     }
 
 }

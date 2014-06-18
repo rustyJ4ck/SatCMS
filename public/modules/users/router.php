@@ -25,7 +25,7 @@ class users_router extends module_router {
             return $response;
         }
 
-        $layout = $this->context->cfg('template', 'root');
+        $layout = $this->context->config->get('template', 'root');
 
         // request
         $r = new stdClass();
@@ -43,7 +43,7 @@ class users_router extends module_router {
         } else
         // users/cp/action/*params////*
         if ('cp' == @$parts[0] && $count > 1) {
-            $layout           = $this->context->cfg('cp_template', 'root');
+            $layout           = $this->context->config->get('cp_template', 'root');
             $r->action        = 'cp';
             $r->option        = $parts[1];
             $r->option_params = count($parts > 2) ? array_splice($parts, 2) : array();
@@ -59,7 +59,7 @@ class users_router extends module_router {
         /** @var users_controller */
         $controller = $this->controller;
 
-        $controller->run($r);
+        $response = $controller->run($r);
 
         $this->renderer
             ->set_page_template($layout)
@@ -67,7 +67,7 @@ class users_router extends module_router {
                 $controller->get_template()
             );
 
-        return true;
+        return $response;
     }
 
 }

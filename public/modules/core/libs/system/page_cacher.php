@@ -52,8 +52,8 @@ class tf_page_cacher {
     */
     function __construct() {
         $this->cache  = core::lib('cache')->get_engine($this->_cache_engine);
-        $this->handle = core::get_instance()->class_register('page_cache', array('no_preload' => true));
-        $this->_enabled = !core::get_instance()->get_cfg_var('disable_page_cache', false);
+        $this->handle = core::get_instance()->model('page_cache');
+        $this->_enabled = !core::cfg('disable_page_cache', false);
         
         if (!empty($this->_cache_threshold) && $this->_cache_threshold != 1) {
             foreach ($this->_threshold_table as $k => $v) {

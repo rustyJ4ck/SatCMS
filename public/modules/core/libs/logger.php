@@ -54,7 +54,7 @@ class tf_logger extends singleton {
       //  $this->storage = new logger_storage_null();
       //  return;
         
-        $this->storage = core::get_instance()->class_register(
+        $this->storage = core::get_instance()->model(
             'logs'
             , array('no_preload' => true), true
         );        
@@ -120,12 +120,17 @@ class tf_logger extends singleton {
     
     /**
     * return backtrace
-    * Eats memeory like big snake!
+    * Eat memory like big snake!
     */                              
-    public static function debug_backtrace($nl = "\n") {        
-        $dbg_trace = debug_backtrace();
+    public static function debug_backtrace($nl = "\n") {
+
+        $dbg_trace = loader::is_php54()
+            ? debug_backtrace(0, 6)
+            : debug_backtrace();
+
         // remove 2 calls from begin
         $dbg_trace = array_splice($dbg_trace, 2, 5);
+
         foreach ($dbg_trace as $k => $item) {
             if (isset($item['object'])) unset($dbg_trace[$k]['object']);                
             if (!empty($item['args'])) {

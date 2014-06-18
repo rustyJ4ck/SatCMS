@@ -341,6 +341,10 @@
          return (version_compare(PHP_VERSION, '5.3.0') >= 0);
      }
 
+     static function is_php54() {
+         return (version_compare(PHP_VERSION, '5.4.0') >= 0);
+     }
+
      protected static $_preload =  // require loop
 
          array(
@@ -357,6 +361,7 @@
              , 'abs_data'                 => 'abstract/data'
              , 'abs_config'               => 'abstract/config'
              , 'registry'                 => 'abstract/registry'
+             , 'aregistry'                => 'abstract/aregistry'
              , 'collection_iterator'      => 'abstract/collection/iterator'
              , 'abs_collection'           => 'abstract/collection/collection'
 

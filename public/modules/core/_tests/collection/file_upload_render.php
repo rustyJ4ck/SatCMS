@@ -13,7 +13,7 @@ $core = core::get_instance();
 
         $file = loader::get_root() . 'modules/content/tests/news_import/img/1.jpg'; 
                 
-        $collection = $core->class_register('test_images');
+        $collection = $core->model('test_images');
 
         $data = array();
 

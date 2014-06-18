@@ -861,7 +861,7 @@ abstract class abs_collection implements IAbs_Collection, IteratorAggregate {
             throw new collection_exception('Append_where invalid VF');
         }
 
-        $key = static::TABLE_DOMAIN . '.' . $key;
+        $key = /*static::TABLE_DOMAIN . '.' .*/ $key;
 
         if (!$raw) {
 
@@ -1499,7 +1499,7 @@ abstract class abs_collection implements IAbs_Collection, IteratorAggregate {
      */
     function remove_all_fast() {
         $w   = $this->get_where();
-        $sql = "DELETE FROM " . $this->get_table() . ($w ? " WHERE {$w}" : '') . ';';
+        $sql = "DELETE FROM " . $this->get_table() /*. ' ' . static::TABLE_DOMAIN . ' '*/ . ($w ? " WHERE {$w}" : '') . ';';
         $this->db->query($sql);
         $this->clear();
 
@@ -2724,145 +2724,6 @@ abstract class abs_collection implements IAbs_Collection, IteratorAggregate {
         return $this;
     }
 
-
-    /**
-     * Load extra fields for this collection
-     * depends on core class 'extra_fields'
-     * must be loaded
-     *
-     * @throws collection_exception
-     */
-    public function load_extra_fields() {
-
-        if (empty($this->DOMAIN)) {
-            throw new collection_exception('With extrafields option used without self::DOMAIN in ' . get_class($this));
-        }
-
-        if (!core::get_instance()->class_registered('extra_fields')) {
-            throw new collection_exception('Extra fields not loaded');
-        }
-
-        // filter for domain
-        $this->extra_fields = core::get_instance()->class_register('extra_fields')->get_by_domain($this->DOMAIN);
-        $this->extra_fields->update_collection($this->fields);
-    }
-
-    /**
-     * Assign extra fields for item
-     * Called to blame static in collection constructor
-     * @param object user
-     */
-    public function load_extra_fields_data(IAbs_Collection_Item $item) {
-
-        $ef = $this->with_extra_fields();
-        if ($ef) {
-            // $ef[0] - module
-            // $ef[1] - class
-            $efdata = core::module($ef[0])->class_register($ef[1], array('no_preload' => true), true);
-            $efdata->set_where('pid = %d', $item->id);
-            $efdata->load();
-            $efdata->set_parent_extra($this->extra_fields);
-
-            // inject extra data to object
-            if (!$efdata->is_empty()) {
-                $efdata->rewind();
-                while ($efitem = $efdata->next()) {
-                    $key = $this->extra_fields->get_item_by_id($efitem->fid)->key;
-                    $item->set_data($key, $efitem->value);
-                }
-            }
-
-            return $efdata;
-        }
-
-        return false;
-
-        // append valid fields
-    }
-
-# SPECIALS ==>
-
-    /**
-     *     Добавить слайс (срез по дате)
-     *     по дате MONTH_FROM, YEAR, MONTH_TO
-     */
-
-    function create_slice($m, $y, $m1 = false) {
-
-        $m  = intval($m);
-        $y  = intval($y);
-        $m1 = ($m1 === false) ? false : intval($m1);
-
-        if (empty($this->items)) return false;
-        foreach ($this->items as $k => $v) {
-
-            $stime = strtotime($v->data['date']);
-            $m_    = intval(date('m', $stime));
-            $y_    = intval(date('Y', $stime));
-
-            // core_c::cprint("[color=red]{$m},{$y} : {$m_},{$y_}[/color]");
-            if ($m1 === false) {
-                // not match!
-                if ($m != $m_ || $y != $y_) {
-                    unset($this->items[$k]);
-                }
-            } else {
-                if ($m_ < $m || $m_ > $m1 || $y != $y_) {
-                    unset($this->items[$k]);
-                }
-            }
-        }
-
-        return count($this->items);
-    }
-
-    /**
-     *   create_slice_ex
-     *   Создать срез
-     *   ['to_month'] ['from_month'] ['from_year']
-     *   и по остальным параметрам
-     *
-     * @param array параметры сортировки [key]=[value(mixed)]
-     */
-
-    function create_slice_ex($data_) {
-
-        if ($this->is_empty() || empty($data_) || !is_array($data_))
-            return false;
-
-        if (isset($data_['from_month']))
-            $this->create_slice(
-                $data_['from_month'], $data_['from_year'], $data_['to_month']
-            );
-
-        $unset_ = array('from_month', 'from_year', 'to_month', 'c', 'ref_submit', '2print', 'simple');
-
-        // cropppingg
-        foreach ($unset_ as $k => $v)
-            if (isset($data_[$v]))
-                unset($data_[$v]);
-
-        /*    фильтруем по оставшимся даных
-        */
-
-        foreach ($data_ as $k => $v) {
-
-            core::cprint('[color=green]filter=[/color]' . $k . ' : ' . $v);
-
-            if ($v != -1 || (is_array($v) && !empty($v))) { /* -1 - все */
-                foreach ($this->items as $k_item => $v_item) {
-                    if ((is_array($v) && !in_array($v_item->get_data($k), $v))
-                        || (!is_array($v) && $v_item->get_data($k) != $v)
-                    ) unset($this->items[$k_item]); //kill kill kill
-
-                }
-            }
-        }
-
-        return count($this->items);
-
-    }
-
     /** @return int ctype_id */
     function get_ctype_id() {
         return $this->_ctype_id;
@@ -2880,7 +2741,6 @@ abstract class abs_collection implements IAbs_Collection, IteratorAggregate {
      * Get ctype name
      * extract constant CTYPE to ctype_id
      */
-
     function _get_ctype() {
 
         if (!isset($this->_ctype)) {

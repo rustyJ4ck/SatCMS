@@ -19,11 +19,11 @@ class sat_site_item extends abs_collection_item {
     * Doamin matched in initial_route
     */
     function set_current() {
+
         $this->_current = true;
         
         if (0 != $this->template) {
-            $core = core::get_instance();
-            $templates = $core->get_cfg_var('templates');
+            $templates = core::cfg('templates');
             
             if (isset($templates[$this->template])) {
                 core::dprint(array('SITE_LAYOUT : %s', $templates[$this->template]), core::E_DEBUG1);

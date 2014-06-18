@@ -381,7 +381,7 @@ class mysql_db extends dbal {
 
         ++$this->_counter;
 
-        $tm_ = core::get_instance()->time_check('mysql', 1, 1);
+        $tm_ = core::time_check('mysql', 1, 1);
 
         unset($this->query_result);
 
@@ -407,7 +407,7 @@ class mysql_db extends dbal {
 
             $this->sql_time += $endtime - $starttime;
 
-            if (core::get_instance()->cfg('debug_sql') >= 100) {
+            if (core::cfg('debug_sql') >= 100) {
                 core::dprint('<b>' . ($this->_counter) . ' ' . $this->num_queries . ')  ' . htmlspecialchars($query) . ' [' . round($this->sql_time, 4) . 'ms]</b>');
 
                 // debug code idea by jovani (phpbbguru.net/community/profile.php?mode=viewprofile&u=12)
@@ -428,11 +428,11 @@ class mysql_db extends dbal {
             // replace password in query for log
             $query = preg_replace("#password = '.*'#U", "password = '*******'", $query);
 
-            if (core::get_instance()->get_cfg_var('debug_sql')) {
-                $tm_ = core::get_instance()->time_check('mysql', 1);
+            if (core::cfg('debug_sql')) {
+                $tm_ = core::time_check('mysql', 1);
 
                 core::dprint($this->_counter . '. ' . $query . ' --[time : ' . $tm_ . ' s]', core::E_SQL);
-                if (0 && ($console = core::lib('console'))) {
+                if (($console = core::lib('console')) && is_callable(array($console, 'debug_backtrace_smart'))) {
                     $dbg_trace = $console->debug_backtrace_smart();
                     if (isset($dbg_trace[2]) && !isset($dbg_trace[2]['class'])) $dbg_trace[2]['class'] = '';
                     $dbg_info = $dbg_trace[1]['file'] . ' in ' . $dbg_trace[1]['line'] . (!isset($dbg_trace[2]) ? '' : " ({$dbg_trace[2]['class']}::{$dbg_trace[2]['function']}) ");
@@ -446,8 +446,8 @@ class mysql_db extends dbal {
 
             $this->sql_time += $endtime - $starttime;
 
-            if (core::get_instance()->get_cfg_var('debug_sql')) {
-                $tm_ = core::get_instance()->time_check('mysql', 1);
+            if (core::cfg('debug_sql')) {
+                $tm_ = core::time_check('mysql', 1);
                 $err = $this->sql_error();
                 core::dprint('[* SQL FAIL] ' . $query, core::E_SQL);
                 core::dprint('[* SQL FAIL] ' . $err['message'] . ' : ' . $err['code'] . ' --[time : ' . $tm_ . ' s]', core::E_SQL);

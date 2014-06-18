@@ -28,7 +28,7 @@ class tf_sat extends core_module {
     /** @return sat_news_collection       */    function get_news_handle()          { return $this->model('news');   }
     /** @return sat_news_category_collection*/  function get_news_category_handle() { return $this->model('news_category');   }
     
-    /** @return sat_site_item */ 
+    /** @var sat_site_item */
     private $_site;
 
     /**
@@ -43,7 +43,7 @@ class tf_sat extends core_module {
         $site = null;
 
         // try with prefix
-        if ($this->cfg('route.site_path_prefix')) {
+        if ($this->config->get('route.site_path_prefix')) {
 
             $_path = explode('/', $path);
 
@@ -107,7 +107,7 @@ TPL
                 $this->core->error('Site inactive!', 200);
             }
 
-            $site->set_force_static($this->cfg('sat_force_static', false));
+            $site->set_force_static($this->config->get('sat_force_static', false));
 
             if ('/' == $path) {
                 $this->core->in_index(true);
@@ -214,7 +214,7 @@ TPL
 
         // tree cacher file|apc|memcached
         // config: sat.tree_cacher = "apc"
-        if (($scacher = $this->cfg('tree_cacher'))
+        if (($scacher = $this->config->get('tree_cacher'))
             && ($ccacher = core::lib('cache')->get_engine($scacher))
         ) {
             $ccacher->set('site_tree_' . $site_id, $tree);
@@ -256,7 +256,7 @@ TPL
             $from_cache = false;
             
             // config: sat_tree_cacher = "apc"        
-            if (($scacher = $this->cfg('tree_cacher'))
+            if (($scacher = $this->config->get('tree_cacher'))
                 && ($ccacher = core::lib('cache')->get_engine($scacher))
             ) {
                 $data = $ccacher->get('site_tree_' . $site_id);
@@ -352,8 +352,11 @@ TPL
             core::dprint('[Warn!] Regenerate tree cache');
             $this->update_tree($site->id);
         }
-    } 
-    
+    }
+
+    /**
+     * @return bool
+     */
     function get_current_site() {
         return $this->_site ? $this->_site : false;
     }    
@@ -490,12 +493,13 @@ TPL
         /* save static cache!
            skip logged in users, debug mode
         */
-        if ($this->get_core()->cfg('sat_use_static')
-            && !core::lib('auth')->logged_in() && !core::is_debug()
+        if ($this->config->get('sat_use_static')
+            && !$this->auth->logged_in() && !core::is_debug()
             ) {
             $file = $this->get_static_node_path(($tnode = $this->get_router()->get_current_node()));
            
-            $pagination_filter = $this->get_router()->get_filter('pagination');     
+            $pagination_filter = $this->router->get_filter('pagination');
+
             if ($pagination_filter && ($page = $pagination_filter->get_start())) {
                 $file = str_replace('/index.html', "/page/{$page}/index.html", $file);
             }           
@@ -505,7 +509,7 @@ TPL
             if (!file_exists($file)) {
                 $dir = dirname($file);
                 if (!is_dir($dir)) mkdir($dir, 0777, true);
-                file_put_contents($file, core::lib('renderer')->get_buffer());
+                file_put_contents($file, $this->renderer->get_buffer());
             }
         }
     }
@@ -514,7 +518,7 @@ TPL
      * @deprecated use renderer->get_templates
      */
     function get_templates() {
-        return $this->core->get_cfg_var('templates');
+        return $this->core->config->templates;
     }
     
     /** @return sat_text_collection */ function get_text_handle() { return $this->model('text'); }

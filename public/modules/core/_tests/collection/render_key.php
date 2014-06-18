@@ -4,7 +4,7 @@ require "../loader.php";
 
 
 /** @var abs_collection */
-$collection = core::get_instance()->class_register('test_images');
+$collection = core::get_instance()->model('test_images');
 
 $collection->load_from_array(
 $array = array(

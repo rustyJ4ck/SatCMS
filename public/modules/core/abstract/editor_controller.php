@@ -687,7 +687,7 @@ abstract class editor_controller extends abs_config  {
         );
         $this->action_flip_after();
         if ($this->in_ajax()) {
-            $this->_ajax_answer(true, i18n::T('Items position changed'));
+            $this->_ajax_answer(true, $this->i18n->T('Items position changed'));
         }
 
     }
@@ -714,7 +714,7 @@ abstract class editor_controller extends abs_config  {
             $this->action_drop_after();
 
         if ($this->in_ajax()) {
-            $this->_ajax_answer($status, i18n::T('Item deleted'), $data);
+            $this->_ajax_answer($status, $this->i18n->T('Item deleted'), $data);
         }
     }
 
@@ -726,7 +726,7 @@ abstract class editor_controller extends abs_config  {
         $ids = $this->request->post('ids');
 
         if (empty($ids)) {
-            $this->_ajax_answer(false, i18n::T('No items selected'));
+            $this->_ajax_answer(false, $this->i18n->T('No items selected'));
         }
 
         $this->collection->clear()->set_where(
@@ -740,7 +740,7 @@ abstract class editor_controller extends abs_config  {
         if (is_callable(array($this, 'action_drop_all_after')))
             $this->action_drop_all_after($ids);
 
-        $this->_ajax_answer(true, i18n::T('Items deleted') . ' (' . $count .  ')');
+        $this->_ajax_answer(true, $this->i18n->T('Items deleted') . ' (' . $count .  ')');
     }
 
     /*
@@ -764,8 +764,8 @@ abstract class editor_controller extends abs_config  {
             $this->action_drop_all_after();
 
         if ($this->in_ajax()) {
-            $this->_ajax_answer((bool)$count, i18n::T('Items deleted'), $count);
-        } else $this->set_message(i18n::T('Items deleted'));
+            $this->_ajax_answer((bool)$count, $this->i18n->T('Items deleted'), $count);
+        } else $this->set_message($this->i18n->T('Items deleted'));
 
         $this->disable_render(true);
     }
@@ -803,7 +803,7 @@ abstract class editor_controller extends abs_config  {
             $result = $this->action_modify_before($this->postdata, $item);
 
         if ($result === false) {
-            if (!$this->is_message_set()) $this->set_message(i18n::T('Action canceled'), false);
+            if (!$this->is_message_set()) $this->set_message($this->i18n->T('Action canceled'), false);
         } else {
 
             $id = $this->collection->modify($this->get_postdata(), $this->params->id);
@@ -830,8 +830,8 @@ abstract class editor_controller extends abs_config  {
                 //$data['redirect'] = $newbie->get_urls
 
                 $this->set_message(
-                    !$id ? i18n::T('Action failed')
-                         : i18n::T($this->params->id ? 'Item modified' : 'Item added'), $id
+                    !$id ? $this->i18n->T('Action failed')
+                         : $this->i18n->T($this->params->id ? 'Item modified' : 'Item added'), $id
                     )->set_message_data($data)
                     ;
             }
@@ -869,12 +869,12 @@ abstract class editor_controller extends abs_config  {
         $value = $this->request->post('value');
 
         if ($this->request->method == 'GET') {
-            $this->_ajax_answer(false, i18n::T('Method not available'));
+            $this->_ajax_answer(false, $this->i18n->T('Method not available'));
             return;
         }
 
         if (!$field || !$this->collection->get_field($field)) {
-            $this->_ajax_answer(false, i18n::T('Field change failed'));
+            $this->_ajax_answer(false, $this->i18n->T('Field change failed'));
             return;
         }
 
@@ -886,7 +886,7 @@ abstract class editor_controller extends abs_config  {
         $_item->update_fields($field);
 
         if ($this->in_ajax()) {
-            $this->_ajax_answer(true, i18n::T('Field modified'));
+            $this->_ajax_answer(true, $this->i18n->T('Field modified'));
         }
         $this->disable_render(true);
 
@@ -912,7 +912,7 @@ abstract class editor_controller extends abs_config  {
             $this->action_active_after();
 
         if ($this->in_ajax()) {
-            $this->_ajax_answer(true, i18n::T('Status changed'));
+            $this->_ajax_answer(true, $this->i18n->T('Status changed'));
         }
     }
 

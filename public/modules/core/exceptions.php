@@ -17,7 +17,7 @@ class tf_exception extends exception {
     /**
      * Mail for user reports
      */
-    private $bugs_email = 'rustyj4ck@gmail.ru';
+    private $email = 'root@localhost';
 
     private static $last_exception = false;
 
@@ -28,7 +28,7 @@ class tf_exception extends exception {
      * default false
      */
     protected $logable = true;
-    protected $log_id = false;
+    protected $log_id = null;
 
     function __construct($title, $err_no = 0) {
 
@@ -41,9 +41,11 @@ class tf_exception extends exception {
             } else {
 
                 // override email
-                if (class_exists('core', 0) && core::selfie()) {
-                    $this->bugs_email = core::selfie()->cfg('email', $this->bugs_email);
+                if (class_exists('core', 0)) {
+                    $this->email = core::cfg('email', $this->email);
                 }
+
+                /** @var tf_logger $logger */
 
                 // log if logger available
                 if ($this->logable && class_exists('core', 0)
@@ -52,7 +54,6 @@ class tf_exception extends exception {
                 ) {
                     $this->log_id = $logger->error($title, $err_no, $this->getTraceAsString());
                 }
-
 
             }
         }
@@ -112,7 +113,7 @@ class tf_exception extends exception {
             $message = '<style>* {font: 0.97em verdana;} a {text-decoration:none;background:#EFEFEF;padding:4px;} a:hover{background: red;}</style><h1>Ups! We have an error here.</h1>';
             $subject = "Error " . ($this->log_id ? "#{$this->log_id}" : '') . " at "
                 . (loader::in_shell() ? 'console' : $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']);
-            $message .= "Please send report to <a href='mailto:" . $this->bugs_email . "?subject={$subject}'>Bugs mail</a>.<br/>";
+            $message .= "Please send report to <a href='mailto:" . $this->email . "?subject={$subject}'>Bugs mail</a>.<br/>";
             $message .= 'Thank you.<br/><br/>';
             $message .= 'Visit <a href="/">index</a> page.<br/><br/>';
             echo $message;

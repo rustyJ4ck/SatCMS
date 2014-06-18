@@ -152,7 +152,7 @@ class core_modules extends registry {
         
         $newb = $this->get($module);        
         
-        $newb->init_config($this->_get_module_config($module), abs_config::INIT_APPEND);
+        $newb->config->merge($this->_get_module_config($module));
         
         return $newb;
     }

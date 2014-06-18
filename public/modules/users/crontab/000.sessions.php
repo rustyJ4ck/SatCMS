@@ -5,7 +5,8 @@ class_exists('core', 0) or die('Invisuxcruensseasrjit');
 
     core::dprint('Users crontab');
 
-    $core = core::selfie();
+    /** @var core $core */
+    $core = $this->core;
 
     $last_time    = (int)$core->cfg('users_crontab_last');
     $interval     = $core->cfg('users_crontab_interval',        3600*24*2);
@@ -14,6 +15,7 @@ class_exists('core', 0) or die('Invisuxcruensseasrjit');
     $time         = time();
 
     $interval = 1;
+
     /*
     core::var_dump( $last_time
     ,   $interval

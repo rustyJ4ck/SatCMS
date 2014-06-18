@@ -2,7 +2,7 @@
 
 require "../loader.php";
 
-$i = core::get_instance()->class_register('test_images');
+$i = core::get_instance()->model('test_images');
 
 $i->create(array(
     'image' => array(

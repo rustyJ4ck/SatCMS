@@ -139,6 +139,8 @@ class tf_renderer extends abs_data {
     */
     private $_disable_output;
 
+    private $_buffer;
+
     /**
      * Construct
      * @param string template root
@@ -146,8 +148,8 @@ class tf_renderer extends abs_data {
      */
     public function __construct($template, $tp) {
 
-        $this->_charset = core::get_instance()->cfg('charset', $this->_charset);
-        $this->templates = core::get_instance()->cfg('templates');
+        $this->_charset = core::cfg('charset', $this->_charset);
+        $this->templates = core::cfg('templates');
 
         $this->current = new aregistry;
         $this->return = new aregistry;
@@ -322,7 +324,7 @@ class tf_renderer extends abs_data {
     function get_template_root($template = null) {
         if (!isset($template)) return $this->template_root;
         return loader::fix_path(loader::get_public()
-            . core::get_instance()->get_cfg_var('site_url') 
+            . core::cfg('site_url') 
             . loader::DIR_TEMPLATES . $template . '/'); 
     }
     
@@ -335,7 +337,7 @@ class tf_renderer extends abs_data {
     }   
     
     function get_template_by_id($id = 0) {
-        if (empty($id)) return core::get_instance()->get_cfg_var('template');
+        if (empty($id)) return core::cfg('template');
         return @$this->templates[$id];
     }     
     
@@ -507,9 +509,11 @@ class tf_renderer extends abs_data {
         ;
 
     }
-    
-    private $_buffer;
-    
+
+    /**
+     * Get buffered output
+     * @return mixed
+     */
     function get_buffer() {
         return $this->_buffer;
     }
@@ -615,7 +619,18 @@ class tf_renderer extends abs_data {
         return $this;
     }  
     
-    /** @return self */ function set_ajax_message($msg)   { $this->_set_ajax_answer(); $this->ajax_answer['data']['message']   = $msg; return $this; }
+    /** @return self */
+    function set_ajax_message($msg, $append = false)   {
+        $this->_set_ajax_answer();
+        if ($append && !empty($this->ajax_answer['data']['message'])) {
+            $this->ajax_answer['data']['message'] .= $msg;
+        } else {
+            $this->ajax_answer['data']['message']  = $msg;
+        }
+
+        return $this;
+    }
+
     /** @return self */ function set_ajax_result($res)    { $this->_set_ajax_answer(); $this->ajax_answer['data']['status']    = $res; return $this; }
     /** @return self */ function set_ajax_type($res)      { $this->_set_ajax_answer(); $this->ajax_answer['type']              = $res; return $this; }
     /** @return self */ function set_ajax_redirect($res)  { $this->_set_ajax_answer(); $this->ajax_answer['data']['url']       = $res; return $this; }
@@ -761,7 +776,7 @@ class tf_renderer extends abs_data {
             // root template relative                      
             $this->set_data('modtpl_prefix', '../../modules/' . $m . '/editor/templates/');
             $this->data['config']['base_url']   = core::module($m)->get_editor_base_url();
-            $this->data['config']['editor_url'] = core::get_instance()->cfg('site_url') . loader::DIR_EDITOR;
+            $this->data['config']['editor_url'] = core::cfg('site_url') . loader::DIR_EDITOR;
         }
 
         if (core::get_params('embed')) {
@@ -776,7 +791,7 @@ class tf_renderer extends abs_data {
 
         /*
         else {
-            $layout = core::get_instance()->cfg('editor.layout');
+            $layout = core::cfg('editor.layout');
             $template = $layout ? "layout/{$layout}/" : '';
             $template .= 'root';
             //$template .= loader::DOT_TPL;

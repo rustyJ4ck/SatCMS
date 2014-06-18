@@ -75,7 +75,7 @@ class core_controller extends module_controller {
             }
         }
 
-        return JsonResponse::make($menuNormalized);
+        return JsonResponse::create($menuNormalized);
 
         /*
             $this->renderer

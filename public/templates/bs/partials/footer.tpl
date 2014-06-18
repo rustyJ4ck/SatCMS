@@ -29,6 +29,7 @@
 </div>
 
 {*lazy-loaded*}
+{*
 <section id="contact-form" class="c-hidden">
     <div class="panel panel-success">
         <div class="panel-heading">
@@ -39,3 +40,4 @@
         </div>
     </div>
 </section>
+*}

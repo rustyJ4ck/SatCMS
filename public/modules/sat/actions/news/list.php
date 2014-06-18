@@ -15,7 +15,7 @@ class sat_news_list_action extends controller_action {
     private $_per_page;
 
     function construct_after() {
-        $this->_per_page = $this->context->cfg('news.per_page', 10);
+        $this->_per_page = $this->context->config->get('news.per_page', 10);
     }
 
     /*

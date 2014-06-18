@@ -19,32 +19,12 @@
  *   }
  *
  */
-abstract class module_orm extends abs_config {
+abstract class module_orm {
 
-    protected $classes;
-
-    /**
-     * Destroy class
-     */
-    function class_destroy($module) {
-        if (!isset($this->classes[$module])) return false;
-        unset($this->classes[$module]);
-    }
+    private $_models;
 
     /**
-     * Register model instanse
-     * @param $model
-     * @param array $config
-     * @param bool $standalone
-     * @return abs_collection
-     */
-
-    function model($model, $config = array(), $standalone = true) {
-        return $this->class_register($model, $config, $standalone);
-    }
-
-    /**
-     * Create or retrieve object by class
+     * Register model instance
      *
      * module name prefixed with {@see loader::CLASS_PREFIX}
      *
@@ -54,13 +34,11 @@ abstract class module_orm extends abs_config {
      *                extend - extend base model classes, chrooted in /model/{extend}/*.php, naming: {extend}_base_collection
      * @param boolean standalone (регистрировать в системе или нет)
      *
-     * @return abs_collection (&by ref)
-     *
-     * @depricated use $this->model()
+     * @return abs_collection
      *
      * @throws core_exception
      */
-    function class_register($model, $config = array(), $standalone = true) {
+    function model($model, $config = array(), $standalone = true) {
 
         // check for module.model
         $module = '';
@@ -75,7 +53,7 @@ abstract class module_orm extends abs_config {
 
         // call external module
         if (!empty($module) && $module != $this->get_name()) {
-            return core::module($module)->class_register($model, $config, $standalone);
+            return core::module($module)->model($model, $config, $standalone);
         }
 
         $_model = $model;
@@ -88,7 +66,7 @@ abstract class module_orm extends abs_config {
         }
 
         // return if not standalone & registered
-        if (!$standalone && $this->class_registered($model)) return $this->classes[$model];
+        if (!$standalone && $this->class_registered($model)) return $this->_models[$model];
 
         $tmp = false;
 
@@ -152,8 +130,8 @@ abstract class module_orm extends abs_config {
             require_once($f_class[1]);
         }
 
-        if (!$standalone && isset($this->classes[$model])) {
-            return $this->classes[$model];
+        if (!$standalone && isset($this->_models[$model])) {
+            return $this->_models[$model];
         }
 
         /*   use prefix
@@ -176,7 +154,7 @@ abstract class module_orm extends abs_config {
         $config_ = array(
             //  'load'        => false                    // not load anything by default
             'table' => $table_
-        , 'root'    => $f_class_path
+            , 'root'    => $f_class_path
         );
 
         if ($config !== false) $config_ = array_merge($config_, $config);
@@ -192,41 +170,26 @@ abstract class module_orm extends abs_config {
 
         if ($standalone) return $tmp;
 
-        $this->classes[$model] = $tmp;
+        $this->_models[$model] = $tmp;
 
-        return $this->classes[$model];
+        return $this->_models[$model];
     }
 
     /**
      * Check for registered class
      */
-    function class_registered($id) {
-        return isset($this->classes[$id]);
+    private function _registered($id) {
+        return array_key_exists($id, $this->_models);
     }
 
     /**
-     * Clone class
+     * Destroy class
      */
-    function class_clone($id, $destroy = false) {
-        $cl = $this->class_register($id); // загрузить заранее с нужными параметрами
-        if ($cl === false) return false;
-        $m = clone $cl;
-        if ($destroy) {
-            $this->class_destroy($id);
-        }
-
-        return $m;
-    }
-
-    /**
-     * Debug, dump
-     */
-    function class_dump() {
-        foreach ($this->classes as $k => $v) {
-            core::dprint('classdump] ' . $k);
+    private function _destroy($id) {
+        if ($this->_registered($id)) {
+            unset($this->_models[$id]);
         }
     }
-
 
 }
 

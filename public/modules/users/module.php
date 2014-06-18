@@ -44,11 +44,11 @@ class tf_users extends core_module {
 
     // model handles
         
-    /** @return users_collection        */  function get_users_handle()         {  return $this->class_register('users');              }
-    /** @return user_group_collection   */  function get_user_group_handle()    {  return $this->class_register('user_group');         }    
-    /** @return sessions_collection     */  function get_sessions_handle()      {  return $this->class_register('sessions');           }
-    /** @return acl_collection          */  function get_acl_handle()           {  return $this->class_register('acl');                }    
-    /** @return users_payments_collection*/ function get_users_payments_handle(){  return $this->class_register('users_payments');     }
+    /** @return users_collection        */  function get_users_handle()         {  return $this->model('users');              }
+    /** @return user_group_collection   */  function get_user_group_handle()    {  return $this->model('user_group');         }
+    /** @return sessions_collection     */  function get_sessions_handle()      {  return $this->model('sessions');           }
+    /** @return acl_collection          */  function get_acl_handle()           {  return $this->model('acl');                }
+    /** @return users_payments_collection*/ function get_users_payments_handle(){  return $this->model('users_payments');     }
 
     /** @param sessions_item $session */
     function on_auth_session($session) {
@@ -74,7 +74,7 @@ class tf_users extends core_module {
     }
 
     function with_acls() {
-        return $this->cfg('acls', 0);
+        return $this->config->get('acls', 0);
     }
 
     /**
@@ -164,7 +164,7 @@ class tf_users extends core_module {
     * Render module
     * (indirect)
     */
-    public function render($renderer) {
+    public function render() {
 
         // if ($this->auth->logged_in()) {
         $this->set_cp_data('links', $this->get_cp_links());
@@ -177,11 +177,10 @@ class tf_users extends core_module {
            , 'logout'         => array('title' => $this->T('logout')            , 'url' => '/users/logout/')
            , 'lost_password'  => array('title' => $this->T('lost_my_pass')      , 'url' => '/users/lost_password/')
            , 'cp'             => array('title' => $this->T('cp_title')          , 'url' => '/users/cp/')
-           , 'vip'            => array('title' => $this->T('cp_vip')            , 'url' => '/users/cp/vip/')
         ));
         
         // to template
-        $renderer->set_data('cp', $this->cp_data);
+        $this->renderer->set_data('cp', $this->cp_data);
     }
     
     /**
@@ -264,41 +263,8 @@ class tf_users extends core_module {
         $this->get_current_user()->update_profile($data);
         return true;
     }
-    
-    /**
-    * Render users list
-    */
-    function render_users_list() {
-        $users = $this->get_users_handle();
-        $users->with_deps(false);                          
-        $users->with_extra_fields(false);  
-        //@todo depricated pagination
-        $page = $this->core->pagination();             
-        $filter = $this->core->create_filter($users);
-        $filter->set_config($this->filter_config);
-        // users per page
-        $filter->set_pagination($page, 100);  
-        $out = $filter->apply();  
-        return $out;               
-    }
-    
-    /**
-    * Render users list
-    */
-    function render_bans_list() {
-        $users = $this->get_core()->get_bans_handle();
-        //@todo depricated pagination
-        $page = $this->core->pagination();             
-        $filter = $this->core->create_filter($users);
-        $filter->set_base_url('/bans/');
-        $filter->set_config($this->filter_config);
-        // users per page
-        $filter->set_pagination($page, 100);  
-        $out = $filter->apply();  
-        return $out;               
-    }    
-    
-    
+
+
     /**
     * Cleanup (called on login)
     */
@@ -306,8 +272,8 @@ class tf_users extends core_module {
         
         $time = time();
         
-        $last_time    = (int)$this->get_core()->get_cfg_var('users_crontab_last');     
-        $interval     = (int)$this->get_core()->get_cfg_var('users_crontab_interval',        600);     
+        $last_time    = (int)core::cfg('users_crontab_last');
+        $interval     = (int)core::cfg('users_crontab_interval',        600);
        
         if (empty($last_time) || ($last_time + $interval) < $time) {
             
@@ -315,10 +281,11 @@ class tf_users extends core_module {
               - clear obsolete sessions
             */
             
-            $this->get_sessions_handle()
-            ->clean_sessions();
+            $this->get_sessions_handle()->clean_sessions();
                                
-            $this->get_core()->get_dyn_config()->update_param('users_crontab_last', $time);            
+            $this->core
+                ->get_dyn_config()
+                ->update_param('users_crontab_last', $time);
         }                     
     }
     

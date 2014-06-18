@@ -10,23 +10,25 @@
  
 /**
 * @package users
+*
+* @property tf_users $context
 */
-
 class users_controller extends module_controller {
 
-    protected $_cp_url = '/users/cp/';
-    protected $_editor_url = '/editor/';
-    
-    /** @var tf_auth */
-    protected $_auth;
+    protected $_cp_url = '/%s/cp/';
+    protected $_editor_url;
     
     function construct_after() {
-        $this->_auth = core::lib('auth');
+        $this->_cp_url = sprintf($this->_cp_url, $this->context->name);
+        $this->_editor_url = '/' . loader::DIR_EDITOR;  // `/editor/`
     }
 
     function section_api() {
     }
 
+    /**
+     * Get current user
+     */
     function action_api_user_current() {
 
         $this->renderer
@@ -35,7 +37,7 @@ class users_controller extends module_controller {
                     $this->context->get_current_user()->render(
                         array('id', 'login', 'email', 'level', 'active')
                     ),
-                    array('logged' => $this->_auth->logged_in()))
+                    array('logged' => $this->auth->logged_in()))
             )
             ->ajax_flush();
 
@@ -43,8 +45,8 @@ class users_controller extends module_controller {
 
     
     /*
-    core::get_instance()->set_message('invalid');
-    core::get_instance()->set_message_data($_POST, false);
+    $this->core->set_message('invalid');
+    $this->core->set_message_data($_POST, false);
     */
 
     /**
@@ -66,7 +68,9 @@ class users_controller extends module_controller {
         $this->set_section_name('users');
         
         // default action
-        if (empty($r->action)) $r->action = 'users';
+        if (empty($r->action)) {
+            $r->action = 'users';
+        }
 
         $this->set_req($r);
         
@@ -76,37 +80,9 @@ class users_controller extends module_controller {
 
         // call method
         core::dprint('users_controller::' . $r->action);
-        call_user_func(array($this, $r->action), $r);
-        return $this->get_template();
+
+        return call_user_func(array($this, $r->action), $r);
     }
-    
-    /**
-    * Suggest
-    */
-    function suggestions() {
-        core::var_dump('suggest');
-        //$this->get_context()->get_users_like()
-    }
-    
-    /**
-    * Bans list
-    */
-    function bans() {
-        $data = $this->get_context()->render_bans_list();
-        $this->get_renderer()->set_filtered_list('bans', $data); 
-        $this->get_renderer()->set_page_title($this->get_context()->T('bans'));
-        $this->set_template('bans_list');  
-    }
-    
-    /**
-    * Users list
-    */
-    public function users() {
-        $data = $this->get_context()->render_users_list();
-        $this->get_renderer()->set_filtered_list('users', $data);
-        $this->get_renderer()->set_page_title($this->get_context()->T('users_list'));
-        $this->set_template('users/list');        
-    }    
     
     /**
     * Online users list
@@ -117,48 +93,50 @@ class users_controller extends module_controller {
         
         $data = array();
         
-        $data['all']    = $this->get_context()->count_all();
-        $data['online'] = $this->get_context()->count_online();
-        $data['logged'] = $this->get_context()->count_online_logged();        
+        $data['all']    = $this->context->count_all();
+        $data['online'] = $this->context->count_online();
+        $data['logged'] = $this->context->count_online_logged();        
 
         if (!$return) {
-            $this->get_renderer()->set_return($data);        
+            $this->renderer->set_return($data);        
             
-            if (loader::in_ajax())
-                $this->get_renderer()->set_ajax_answer($data);
+            if (loader::in_ajax()) {
+                $this->renderer
+                    ->set_ajax_answer($data)
+                    ->ajax_flush();
+            }
         }
         else return $data;
     }
     
     public function test() {
         $this->set_template('users/test');
-        return  true;        
+        return true;
     }
     
     /**
     * Login
     */
     public function login() {
-        
+
         if (!loader::in_ajax()) {
             $this->set_template('users/login');
             return;
         }
         
-        
         // cleanup
-        $this->get_context()->clean_sessions();
+        $this->context->clean_sessions();
         
         $redirect = functions::request_var('redirect', '');
         $login    = functions::request_var('login', '');
         $password = functions::request_var('password', '');
         
         // already logged
-        if ($this->_auth->logged_in()) {
+        if ($this->auth->logged_in()) {
                 $this->set_null_template();
-                core::lib('renderer')->set_ajax_answer(array(
+                $this->renderer->set_ajax_answer(array(
                       'status'  => false
-                    , 'message' => $this->get_context()->T('already_logged')
+                    , 'message' => $this->context->T('already_logged')
                 ));
                 return;        
         }
@@ -166,22 +144,30 @@ class users_controller extends module_controller {
         // empty fields
         if (empty($login) || empty($password)) {             
                 $this->set_null_template();
-                core::lib('renderer')->set_ajax_answer(array(
+                $this->renderer->set_ajax_answer(array(
                       'status'  => false
-                    , 'message' => $this->get_context()->T('empty_login')
+                    , 'message' => $this->context->T('empty_login')
                 ));
                 return;
         }
-        
+
+        $result = false;
+
         // try
-        $result = $this->_auth->login($login, $password);
-        
+        try {
+            $result = $this->auth->login($login, $password);
+        }
+        catch (auth_exception $e) {
+
+            return MessageResponse::create()->message($e->getMessage())->status(false);
+        }
+
         if ($result) {
                 $message = 'done';
                 $status  = true;
                 $this->set_template('blocks/user_cp');                
                 
-                $user = $this->_auth->get_user();
+                $user = $this->auth->get_user();
                 
                 if (empty($redirect)) {
                     if ($user->level >= 100) 
@@ -190,17 +176,17 @@ class users_controller extends module_controller {
                         $redirect = $this->_cp_url;
                 }
                 
-                core::lib('renderer')->render_user();
+                $this->renderer->render_user();
                 
                 
         }
         else {
                 $status = false;
                 $this->set_null_template();
-                $message = $this->get_context()->T('fail_to_login');
+                $message = $this->context->T('fail_to_login');
         }
                
-        core::lib('renderer')->set_ajax_answer(array(
+        $this->renderer->set_ajax_answer(array(
               'status'  => $status
             , 'message' => $message
             , 'redirect'=> $redirect
@@ -213,16 +199,15 @@ class users_controller extends module_controller {
     */
     public function logout() {
         
-        if ($this->_auth->logged_in()) {
-            $this->_auth->logout();    
+        if ($this->auth->logged_in()) {
+            $this->auth->logout();
+            $this->core->set_message(array('users','logged_out'));
+        } else {
+            $this->core->set_message(array('users','not_logged_in'));
         }
         
         if (loader::in_ajax()) {
-            $this->set_null_template(); 
-            core::lib('renderer')->set_ajax_answer(array());            
-        }
-        else {
-            core::get_instance()->set_message(array('users','user_logouted'));
+            $this->renderer->ajax_flush();
         }
     }
     
@@ -238,15 +223,15 @@ class users_controller extends module_controller {
     */
     public function profile($r) {
 
-        $user = $this->get_context()->get_user($r->user, 'id');
-        core::lib('renderer')->set_main_title($this->get_context()->T('user_info'));
+        $user = $this->context->get_user($r->user, 'id');
+        $this->renderer->set_main_title($this->context->T('user_info'));
         
         // user not found, throw some shit about
         if ($user->id == 0) {
             throw new controller_exception('No such user');
         }
         
-        core::lib('renderer')->set_data('user_view', $user->render());
+        $this->renderer->set_data('user_view', $user->render());
         $this->set_template('users/profile');
     }
     
@@ -267,11 +252,11 @@ class users_controller extends module_controller {
         // register new
         if ($op == 'register') {
             try {
-                $uid = $this->get_context()->get_users_handle()->register_new_user($data);
+                $uid = $this->context->get_users_handle()->register_new_user($data);
             }
             catch (validator_exception $e) {
                     $error = $e->getMessage();
-                    $error = $this->get_context()->T($error);
+                    $error = $this->context->T($error);
             }                                     
             
 
@@ -282,17 +267,17 @@ class users_controller extends module_controller {
                 $login    = functions::request_var('login', '');
                 $password = functions::request_var('password', '');                
                 if (!empty($login) && !empty($password))
-                $result = $this->_auth->login($login, $password);   
+                $result = $this->auth->login($login, $password);   
             }           
                
             // log user in!
             
             if (loader::in_ajax()) {
                 $this->set_null_template();
-                core::lib('renderer')->set_ajax_answer(array(
+                $this->renderer->set_ajax_answer(array(
                       'status'  => ($error === false)
                     , 'message' => $error
-                    , 'url'     => $this->get_context()->get_router()->make_url('users/register_success/')));
+                    , 'url'     => $this->context->get_router()->make_url('users/register_success/')));
 
             }
         }
@@ -334,22 +319,22 @@ class users_controller extends module_controller {
         functions::headers_no_cache();
         
         // force login screen
-        if (!$this->_auth->logged_in()) {
+        if (!$this->auth->logged_in()) {
             /*
-            $this->renderer->set_message($this->get_context()->T('Please login'));
+            $this->renderer->set_message($this->context->T('Please login'));
             */
             $this->renderer->set_return('redirect', $_SERVER['REQUEST_URI']);
             $this->set_template('users/login');
             return;
         }
         
-        $this->_cp_user = $this->get_context()->get_current_user();
+        $this->_cp_user = $this->context->get_current_user();
         
         $this->set_section_name('cp');
         $this->set_action_name('cp');
         $this->set_template('users/cp');
         
-        if (empty($this->req->option) && ($default_opt = $this->get_context()->get_default_cp_option())) {
+        if (empty($this->req->option) && ($default_opt = $this->context->get_default_cp_option())) {
             $this->req->option = $default_opt;    
         }
         
@@ -362,7 +347,7 @@ class users_controller extends module_controller {
             // call cp method
             call_user_func(array($this, $cmd));
             
-            $this->get_context()->set_cp_data('option', $this->req->option);
+            $this->context->set_cp_data('option', $this->req->option);
         }
         
     }
@@ -378,21 +363,21 @@ class users_controller extends module_controller {
                         
             $error = false;
             try {
-                $this->get_context()->update_user_profile($post);
+                $this->context->update_user_profile($post);
             }
                 catch (validator_exception $e) {
                     $error = $e->getMessage();
-                    $error = $this->get_context()->T($error);
+                    $error = $this->context->T($error);
             } 
          
-            $message = ($error !== false) ? $error : $this->get_context()->T('profile_update_ok');
+            $message = ($error !== false) ? $error : $this->context->T('profile_update_ok');
 
             if (loader::in_ajax()) {
                 $this->set_null_template();
-                core::lib('renderer')->set_ajax_answer(array('status' => (false === $error), 'message' => $message));
+                $this->renderer->set_ajax_answer(array('status' => (false === $error), 'message' => $message));
             }   
             else {
-                $core = core::get_instance();
+                $core = $this->core;
                 $core->set_raw_message($message);
                 $core->set_message_data(false, (false !== $error));
             }
