@@ -144,12 +144,12 @@ if (!function_exists('with')) {
  */
 abstract class singleton {
     
-    static private $_instance;
+    static protected $_instance;
 
     static function get_instance($params = null) {
-        return isset(self::$_instance)
-            ? self::$_instance
-            : (self::$_instance = new static ($params));
+        return isset(static::$_instance)
+            ? static::$_instance
+            : (static::$_instance = new static ($params));
     }
     
 }

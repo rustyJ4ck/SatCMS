@@ -4,7 +4,7 @@ require('../loader.php');
 
 $core = core::get_instance();
 
-/** @var abs_collection $collection */
+/** @var model_collection $collection */
 $collection = $core->model('test_images');
 
 test_assert($collection->get_formats()->get('editor.list.text.hidden'));

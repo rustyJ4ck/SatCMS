@@ -18,7 +18,7 @@ class embed_output_filter extends output_filter {
         core::dprint('Activate RSS');
         // tpl_loader::set_template('');
         core::lib('renderer')->set_page_template('root.embed');
-        tf_request::set_ident('embed', 'yes');
+        tf_request::set_param('embed', 'yes');
     }  
     
     /**

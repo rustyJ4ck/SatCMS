@@ -13,6 +13,7 @@
 {if $form}{assign var="form" value=$form|to_array}{/if}
 {if $btnNew}{assign var="btnNew" value=$btnNew|to_array}{/if}
 {if $btnEdit}{assign var="btnEdit" value=$btnEdit|to_array}{/if}
+{if !empty($actionUrlExtra)}{$actionUrlExtra = "&`$actionUrlExtra`"}{/if}
 
 {* default model *}
 {if !isset($entity) && isset($return.form)}

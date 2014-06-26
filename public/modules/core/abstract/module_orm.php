@@ -34,7 +34,7 @@ abstract class module_orm {
      *                extend - extend base model classes, chrooted in /model/{extend}/*.php, naming: {extend}_base_collection
      * @param boolean standalone (регистрировать в системе или нет)
      *
-     * @return abs_collection
+     * @return model_collection
      *
      * @throws core_exception
      */
@@ -66,9 +66,7 @@ abstract class module_orm {
         }
 
         // return if not standalone & registered
-        if (!$standalone && $this->class_registered($model)) return $this->_models[$model];
-
-        $tmp = false;
+        if (!$standalone && $this->_registered($model)) return $this->_models[$model];
 
         $model_prefix = '';
 
@@ -107,7 +105,7 @@ abstract class module_orm {
 
         // chroot support
         // [tf]obsolete: auto chroot to module
-        $f_class_path = $path_prefix . 'classes/' . $model . '/';
+        $f_class_path = $path_prefix . 'models/' . $model . '/';
 
         $f_class = array(
             $f_class_path . 'collection' . loader::DOT_PHP,
@@ -115,58 +113,49 @@ abstract class module_orm {
         );
 
         if (!class_exists($m_class, 0)) {
-            if (!fs::file_exists($f_class[0])) { // || !fs::file_exists($f_class[1])) {
-                core::dprint(get_class($this) . "::class_register '{$m_class}' ({$model}) file not found {$f_class[0]}");
-                core::dprint($f_class);
-                throw new core_exception("Class register failed : $model in " . $path_prefix);
-
-                return $tmp; // false;
+            if (!file_exists($f_class[0])) {
+                core::dprint(__METHOD__ . " '{$m_class}' ({$model}) fallback to model_collection", core::E_DEBUG4);
+            } else {
+                require $f_class[0];
             }
-
-            require_once($f_class[0]);
         }
 
-        if (!class_exists($m_class_item, 0) && fs::file_exists($f_class[1])) {
-            require_once($f_class[1]);
+        if (!class_exists($m_class_item, 0) && file_exists($f_class[1])) {
+            require $f_class[1];
         }
 
         if (!$standalone && isset($this->_models[$model])) {
             return $this->_models[$model];
         }
 
-        /*   use prefix
-             render to {$tpl_table}
-             sql from  {$table}
-        */
+        // new one
+        $new_config = array(
+             'table' => ($model_prefix . $model)
+           , 'root'    => $f_class_path
+        );
 
-        $table_ = $model_prefix . $model;
+        // fallback
+        if (!class_exists($m_class, 0)) {
+            $new_config['class'] = $m_class;
+            $m_class = 'model_collection';
+        }
 
-        //autoprefix when create collection
-        //$config['prefix'] = core::get_instance()->get_cfg_var(array('database', 'prefix'));
-        //$table_ = $config['prefix'] . $table_;
+        if (!class_exists($m_class_item, 0)) {
+            $m_class_item  = 'model_item';
+            $new_config['item_class'] = $m_class_item;
+        }
 
-        // if not passed, set to module tag
         if (!isset($config['tpl_table'])) {
             $config['tpl_table'] = $model_prefix . $model;
         }
 
-        // new one
-        $config_ = array(
-            //  'load'        => false                    // not load anything by default
-            'table' => $table_
-            , 'root'    => $f_class_path
-        );
-
-        if ($config !== false) $config_ = array_merge($config_, $config);
-
-        // preload fix
-        if (isset($config['no_preload']) && isset($config_['load'])) unset($config_['load']);
+        if (is_array($config)) $new_config = array_merge($new_config, $config);
 
         if (!class_exists($m_class, 0)) {
             throw new core_exception('Cant register collection, no class : ' . $m_class);
         }
 
-        $tmp = new $m_class($config_);
+        $tmp = new $m_class($new_config);
 
         if ($standalone) return $tmp;
 

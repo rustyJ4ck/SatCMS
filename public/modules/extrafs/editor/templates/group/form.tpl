@@ -1,7 +1,7 @@
 {extends 'widgets/model/form.tpl'}
 
 {block 'params'}
-    {$form = "dialog: yes, grid: yes, enctype: 'multipart/form-data'"}
+    {$form = "dialog: yes, enctype: 'multipart/form-data'"}
     {*$model = $return.form.data*}
 {/block}
 

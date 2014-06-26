@@ -42,7 +42,7 @@ class collection_filter {
      * @var collection_params
      */
     public $config = array();
-    /** @var abs_collection */
+    /** @var model_collection */
     protected $collection;
     protected $count;
     protected $pagination_start = 0;
@@ -74,7 +74,7 @@ class collection_filter {
      * @param IAbs_Collection object
      * @param string base url
      */
-    function __construct(IAbs_Collection $collection, $base_url = false) {
+    function __construct(model_collection_interface $collection, $base_url = false) {
 
         $this->set_collection($collection);
 
@@ -170,7 +170,7 @@ class collection_filter {
 
     /**
      * Get collection
-     * @return abs_collection
+     * @return model_collection
      */
     function get_collection() {
         return $this->collection;

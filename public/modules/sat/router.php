@@ -169,7 +169,7 @@ class sat_router extends module_router  {
     * used in multisite config, when accessing another domain resources
     */
     function add_url_domain($url) {
-        /** @var sat_site_item */
+
         $psite = $this->context->get_current_site();
         
         if ($psite && !in_array($this->get_request()->get_host(), $psite->get_domains())) {

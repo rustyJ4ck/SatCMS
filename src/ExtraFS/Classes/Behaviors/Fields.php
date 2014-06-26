@@ -79,7 +79,11 @@ class Fields extends \model_behavior {
     function render_after($data) {
 
         if ($this->fields) {
-            if (!core::in_editor()) $this->fields->is_render_by_key('name');
+
+            if (!core::in_editor()) {
+                $this->fields->is_render_by_key('name');
+            }
+
             $data['extrafs'] = $this->fields->render(); // [group].fields.[name]
         }
 
@@ -90,13 +94,6 @@ class Fields extends \model_behavior {
      * @param mixed $data
      */
     function prepare2edt_before($data) {
-
-        /*
-        var_dump('prepare2edt_before',
-            core::get_modules()->is_registered('extrafs'),
-            $data['template_a']
-            );
-        */
 
         if ($this->get()) {
             $data['extrafs'] = $this->fields->render();

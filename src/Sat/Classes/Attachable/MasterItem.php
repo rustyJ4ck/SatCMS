@@ -2,9 +2,9 @@
 
 namespace SatCMS\Sat\Classes\Attachable;
 
-use core, abs_collection_item;
+use core, model_item;
 
-class MasterItem extends abs_collection_item {
+class MasterItem extends model_item {
 
     /**
      * @var MasterCollection
@@ -26,9 +26,7 @@ class MasterItem extends abs_collection_item {
             }
 
         } {
-
             core::dprint('No attach-sid assigned in ' . get_class($this), core::E_ERROR);
-
         }
 
         parent::modify_after($data);

@@ -10,7 +10,7 @@ $items->append($items->alloc(array('id' => 1)));
 
 test_assert($items->count() === 1, 'count');
 
-/** @var abs_collection_item $item */
+/** @var model_item $item */
 $item = $items->get_item();
 
 $item->invokeMethod = function($item) {

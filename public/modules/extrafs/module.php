@@ -38,7 +38,7 @@ class tf_extrafs extends core_module {
 
     /**
      * @param array $ids - array(id1, id2, ...)
-     * @param abs_collection_item $parent
+     * @param model_item $parent
      * @return extrafs_group_collection
      */
     function get_groups_w_fields($ids, $parent = null) {

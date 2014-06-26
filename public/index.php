@@ -1,11 +1,7 @@
 <?php
 /**
- * Front entry point 
- * 
- * @package    SatCMS
- * @author     Golovkin Vladimir <r00t@skillz.ru> http://www.skillz.ru
- * @copyright  SurSoft (C) 2008
- * @version    $Id: index.php,v 1.3.2.1 2010/08/07 22:50:40 surg30n Exp $
+ * SatCMS  http://satcms.ru/
+ * @author Golovkin Vladimir <rustyj4ck@gmail.com> http://www.skillz.ru
  */
 
 require 'modules/core/loader.php';

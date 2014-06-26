@@ -17,19 +17,12 @@ class sat_widget_controller extends SatController {
      
     protected $_where = 'pid = %d'; 
     
-    protected $collection_config = array('with_module_prefix' => 1);
-    
     protected $cmd_pid;
-    
 
-
-    
     function construct_after() {
 
         $this->cmd_pid = $this->params->pid;                     
-        
 
-        
         $this->_where = sprintf($this->_where
             , (int)$this->params->pid
         );

@@ -34,7 +34,7 @@ class sat_comment_modify_route_filter extends route_filter {
 
         /**
          * Parent item, must be assigned thru @see module_controller::set_current_item()
-         * @var abs_collection_item
+         * @var model_item
          */
         $post = $pctl->get_current_item(); 
         

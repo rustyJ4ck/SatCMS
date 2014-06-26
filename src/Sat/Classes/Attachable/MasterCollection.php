@@ -2,7 +2,7 @@
 
 namespace SatCMS\Sat\Classes\Attachable;
 
-use abs_collection;
+use model_collection;
 use aregistry;
 
 /**
@@ -10,7 +10,7 @@ use aregistry;
  * Class MasterCollection
  * @package SatCMS\Sat\Classes\Attachable
  */
-class MasterCollection extends abs_collection {
+class MasterCollection extends model_collection {
 
     /**
      * @var aregistry  array(abs_collection)
@@ -23,12 +23,22 @@ class MasterCollection extends abs_collection {
     function construct_after() {
         parent::construct_after();
         $this->config->set('attachable.master', true);
-        $this->attachables = new aregistry();
+        $this->attachables = new aregistry($this->attachables);
         $this->create_attachables();
     }
 
-    /** @abstract create attachable model  */
+    /** @abstract create attachable model
+     *
+     * Create attachable collection, notify them on updates
+     */
     function create_attachables() {
+
+        foreach ($this->attachables as $key => $attach) {
+            if (is_string($attach)) {
+                $this->attachables->set($key, core::selfie()->model($attach));
+            }
+        }
+
         // Example:
         // $this->attachables->files = core::module('sat')->get_file_handle();
     }

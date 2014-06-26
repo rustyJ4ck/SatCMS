@@ -16,7 +16,7 @@
       'url' => string ''
  */
  
- class control_image extends abs_control {
+ class control_image extends model_control {
      
     /**
     * Filter with wideimage (must be installed)
@@ -87,7 +87,7 @@
       * Process upload
       * Return data for saving
       *
-      * @param abs_collection $citem
+      * @param model_collection $citem
       * @param array $vf
       * @param array $fld
       * @param array $current

@@ -17,10 +17,9 @@
 /**
  * Item interface
  */
-interface IAbs_Collection_Item {
+interface model_item_interface {
     function get_url(); // break php5.4 strict
 }
-
 
 /**
  * Class model_behavior
@@ -28,11 +27,11 @@ interface IAbs_Collection_Item {
 class model_behavior {
 
     /**
-     * @var abs_collection_item parent
+     * @var model_item parent
      */
     protected $model;
 
-    function set_model(abs_collection_item $model) {
+    function set_model(model_item $model) {
         $this->model = $model;
         $this->configure();
     }
@@ -50,7 +49,7 @@ class model_behaviors extends aregistry {
 /**
  * Collection element
  */
-abstract class abs_collection_item extends abs_data implements IAbs_Collection_Item {
+class model_item extends abs_data implements model_item_interface {
 
     /**
      * @var ModelBehaviors
@@ -63,7 +62,7 @@ abstract class abs_collection_item extends abs_data implements IAbs_Collection_I
     protected $controls;
 
     /**
-     * @var abs_collection
+     * @var model_collection
      */
     protected $container;
 
@@ -120,7 +119,6 @@ abstract class abs_collection_item extends abs_data implements IAbs_Collection_I
         'is_key_autoincrement'
     );
 
-
     /**
      * Create an item
      * new item: __construct($config, $data)
@@ -129,12 +127,14 @@ abstract class abs_collection_item extends abs_data implements IAbs_Collection_I
      * @param array record
      * @param bool verified = true if data load from DB, false = create new object
      */
-    function __construct(IAbs_Collection $container
+    function __construct(
+          model_collection_interface $container
         , $config = false
         , $data = false
         , $verified = false) {
 
-        $inerface_check = 'IAbs_Collection';
+        $inerface_check = 'model_collection_interface';
+
         if (!($container instanceof $inerface_check)) {
             throw new collection_exception('Bad constructor syntax', tf_exception::CRITICAL);
         }
@@ -314,7 +314,7 @@ abstract class abs_collection_item extends abs_data implements IAbs_Collection_I
      *   exyta fields
      */
     /*protected*/
-    function set_container(IAbs_Collection $container) {
+    function set_container(model_collection_interface $container) {
         $this->container = $container;
     }
 
@@ -449,7 +449,7 @@ abstract class abs_collection_item extends abs_data implements IAbs_Collection_I
      * Without params it clear weorking fields
      * Warn! use this only with UPDATE item
      * @param mixed varargs OR array
-     * @return abs_collection_item
+     * @return model_item
      */
     public function set_working_fields() {
         $this->working_fields = array();
@@ -865,7 +865,6 @@ abstract class abs_collection_item extends abs_data implements IAbs_Collection_I
 
         // create new!
         $this->format_fields($data, 'modify');
-        $data_ = $data;
 
         // filter          
         // $this->filter_data($data);          
@@ -880,9 +879,7 @@ abstract class abs_collection_item extends abs_data implements IAbs_Collection_I
         else return false;
         */
 
-        if ($this->save()) {
-            $this->modify_after($data_);
-        } else {
+        if (!$this->save()) {
             return false;
         }
 
@@ -890,7 +887,9 @@ abstract class abs_collection_item extends abs_data implements IAbs_Collection_I
         $this->filter_data($data);
         $this->set_data($data);
 
-        $this->create_after($data_);
+        $this->create_after($data);
+
+        $this->modify_after($data);
 
         return $this->get_id();
     }

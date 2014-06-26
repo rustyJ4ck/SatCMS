@@ -27,7 +27,7 @@ class InstallCommand extends BaseCommand {
 
         $models = Helpers\ModelEnumerator::find();
 
-        $generator = \abs_collection::get_generator();
+        $generator = \model_collection::get_generator();
 
         /** @var \SplFileInfo  $file */
         foreach ($models as $model) {
@@ -53,7 +53,7 @@ class InstallCommand extends BaseCommand {
         $finder = new Finder();
         $finder->directories()->in($root)->name('*')->depth('== 0');
 
-        $generator = \abs_collection::get_generator();
+        $generator = \model_collection::get_generator();
 
         /** @var \SplFileInfo  $file */
         foreach ($finder as $file) {

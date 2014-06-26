@@ -70,7 +70,7 @@ class GeneratorCommand extends BaseCommand {
 
         /** @var collection_generator */
         $generator =
-            \abs_collection::get_generator(
+            \model_collection::get_generator(
             # $id
             # 'core.mail_tpl'
             # 'core/texts'

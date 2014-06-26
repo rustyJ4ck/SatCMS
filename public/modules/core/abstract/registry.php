@@ -185,7 +185,7 @@ class registry implements IteratorAggregate, ArrayAccess, Countable {
      *
      * @param mixed $method
      * @param mixed $params
-     * @return abs_collection self
+     * @return model_collection self
      */
     function invoke($method, $params = null) {
 

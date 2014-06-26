@@ -16,7 +16,7 @@ use core;
 class BaseAttachs extends \model_behavior {
 
     /**
-     * @var \abs_collection
+     * @var \model_collection
      */
     protected $attachs;
 
@@ -115,7 +115,7 @@ class BaseAttachs extends \model_behavior {
 
     /**
      * Get model
-     * @return \abs_collection
+     * @return \model_collection
      */
     function get_attach_model() {
         return core::module('sat')->model($this->model_class);
@@ -151,7 +151,7 @@ class BaseAttachs extends \model_behavior {
 
     /**
      * Get data
-     * @return \abs_collection
+     * @return \model_collection
      */
     function get_attachs() {
 

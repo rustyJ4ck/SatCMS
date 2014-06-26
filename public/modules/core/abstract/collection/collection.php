@@ -4,9 +4,6 @@
  *
  * Load modificators (construct):
  * ------------------------------
- *  no_preload                      // do not load anything
- *  no_extra                        // without extrafields
- *  no_dependencies                 // without depend objects
  *
  *  load_only_id                    // eq where_sql = "id = {$id}"
  *  order_sql
@@ -97,7 +94,7 @@
  *
  * use @see strings
  */
-interface IAbs_collection {
+interface model_collection_interface {
 }
 
 /**
@@ -116,29 +113,29 @@ class collection_formats extends aregistry {
  * Elements collection
  * @package core
  */
-abstract class abs_collection implements IAbs_Collection, IteratorAggregate {
+class model_collection implements model_collection_interface, IteratorAggregate, ArrayAccess, Countable  {
 
-    const VF_FILE = 'model.php';
+    const MODEL_FILE = 'model.php';
 
     /** @var array cached vf from file [domain] */
-    private static $_vf_file = array();
+    private static $_model_cache = array();
 
     /** @var  string /root/ */
     protected $_root;
 
-    protected $vfs_prototypes = array(
-      'list'   => array()
-    , 'numeric'  => array()
-    , 'text'     => array()
-    , 'boolean'  => array()
-    , 'unixtime' => array()
-    , 'virtual'  => array()
-    , 'file'     => array()
-    , 'image'    => array()
-    , 'position' => array()
-    , 'relation' => array()
+    protected static $vfs_prototypes = array(
+          'list'     => array()
+        , 'numeric'  => array()
+        , 'text'     => array()
+        , 'boolean'  => array()
+        , 'unixtime' => array()
+        , 'virtual'  => array()
+        , 'file'     => array()
+        , 'image'    => array()
+        , 'position' => array()
+        , 'relation' => array()
+        , 'array'    => array()
     );
-
 
     protected $readonly = false;
 
@@ -158,18 +155,12 @@ abstract class abs_collection implements IAbs_Collection, IteratorAggregate {
     const TABLE_DOMAIN = 'p1';
 
     /**
-     * Class domain, need for linking
-     * extra fields.
-     * Fill it with lowercase!
+     * module.model
      */
-    protected $DOMAIN = false;
     protected $_class = false;
 
-    /** example users_users */
+    /** Name: users_users */
     protected $_name;
-
-    /** binded module */
-    protected $_module_name;
 
     /**
      * Valid item fields
@@ -179,13 +170,6 @@ abstract class abs_collection implements IAbs_Collection, IteratorAggregate {
 
     /** backed when formats applied */
     protected $original_fields;
-
-    /**
-     * Extra fields storage
-     * ARRAY('domain', 'storage_collection_class')
-     * of false if disabled
-     */
-    protected $_with_extra_fields = false;
 
     /**
      * item class, setup automaticaly
@@ -266,10 +250,8 @@ abstract class abs_collection implements IAbs_Collection, IteratorAggregate {
         $this->config = new collection_params($this->config ? $this->config : null);
         $this->formats = new collection_formats($this->formats ? $this->formats : null);
 
-        // default doamin
-        if (!$this->DOMAIN) $this->DOMAIN = strtolower(substr(get_class($this), 0, -1 * strlen('_collection')));
-
         $class = get_class($this);
+
         if ($class == __CLASS__ && isset($config['class'])) {
             $class = $config['class'];
         }
@@ -279,8 +261,11 @@ abstract class abs_collection implements IAbs_Collection, IteratorAggregate {
         }
 
         // default domain (like: users\users)
-        if (!$this->_class) $this->_class =
-            strtolower(substr($class, 0, -1 * strlen('_collection')));
+        if (!$this->_class) {
+            $this->_class = strtolower(substr($class, 0, -1 * strlen('_collection')));
+        }
+
+        $this->_class = str_replace(array('_', '\\'), '.', $this->_class);
 
         // pull objects
         $this->core  = core::get_instance();
@@ -291,18 +276,17 @@ abstract class abs_collection implements IAbs_Collection, IteratorAggregate {
         // external configuration (model.php)
         //
         if (!isset($this->fields)) {
-            $model_file = $this->_root . self::VF_FILE;
+            $model_file = $this->_root . self::MODEL_FILE;
 
-            $deb_01     = $class; //isset(self::$_vf_file[$this->DOMAIN]);
             $ext_config = array();
 
-            if (!isset(self::$_vf_file[$class])) {
+            if (!isset(self::$_model_cache[$class])) {
                 if (file_exists($model_file)) {
                     $ext_config             = require $model_file;
-                    self::$_vf_file[$class] = $ext_config;
+                    self::$_model_cache[$class] = $ext_config;
                 }
             } else
-                $ext_config = self::$_vf_file[$class];
+                $ext_config = self::$_model_cache[$class];
 
             $this->fields = array();
 
@@ -366,8 +350,12 @@ abstract class abs_collection implements IAbs_Collection, IteratorAggregate {
         }
 
         if (empty($this->_name)) {
-            if (isset($config['name'])) $this->_name = $config['name'];
-            else $this->_name = str_replace('\\', '_', $this->_class);
+            if (isset($config['name'])) {
+                $this->_name = $config['name'];
+            }
+            else {
+                $this->_name = str_replace('.', '_', $this->_class);
+            }
         }
 
         // auto assign items class (like class_collection)
@@ -404,11 +392,6 @@ abstract class abs_collection implements IAbs_Collection, IteratorAggregate {
             throw new collection_exception('Cannot instanciate class ' . $this->item_class);
         }
 
-        // WITHOUT EXTRA
-        if (isset($config['no_extra'])) {
-            $this->disable_extra_fields();
-        }
-
         $this->check_config($config);
 
         $this->config->from_array($config);
@@ -416,11 +399,6 @@ abstract class abs_collection implements IAbs_Collection, IteratorAggregate {
         // old compat
         if ($rbk = $this->config->get('render_by_key')) {
             $this->is_render_by_key($rbk);
-        }
-
-        // extra fields
-        if ($this->with_extra_fields()) {
-            $this->load_extra_fields();
         }
 
         if (!empty($config['load'])) {
@@ -653,15 +631,8 @@ abstract class abs_collection implements IAbs_Collection, IteratorAggregate {
     /**
      * Get domain (module/class)
      */
-    public function get_class($short = false) {
-        return get_class($this);
-    }
-
-    /**
-     * Get domain
-     */
-    public function get_domain() {
-        return $this->DOMAIN;
+    public function get_class() {
+        return $this->_class;
     }
 
     /**
@@ -715,9 +686,13 @@ abstract class abs_collection implements IAbs_Collection, IteratorAggregate {
 
         foreach ($this->fields as $k => &$v) {
 
+            if (!isset($v['type'])) {
+                throw new collection_exception(__METHOD__ . ' field `' . $k . '` type not specified in ' . $this->get_class());
+            }
+
             $type = $v['type'];
 
-            if (!isset($this->vfs_prototypes[$type])) {
+            if (!isset(static::$vfs_prototypes[$type])) {
                 // bad model format
                 throw new collection_exception('Invalid VF type used ' . $k . '@' . $type);
             }
@@ -839,21 +814,12 @@ abstract class abs_collection implements IAbs_Collection, IteratorAggregate {
     }
 
     /**
-     * Where {key}
+     * Append `where` condition {key}
      * @param $key
      * @param $value
      * @return $this
      */
     function where($key, $value, $operator = '=', $connector = 'AND', $raw = false) {
-        return $this->append_where_vf($key, $value, $operator, $connector, $raw);
-    }
-
-    /**
-     * @deprecated use where()
-     * Append where from string
-     * @return $this
-     */
-    function append_where_vf($key, $value, $operator = '=', $connector = 'AND', $raw = false) {
 
         $vf = $this->get_field($key);
 
@@ -900,7 +866,7 @@ abstract class abs_collection implements IAbs_Collection, IteratorAggregate {
     /**
      * @param mixed $sql
      * @param mixed $op
-     * @return self
+     * @return model_collection
      */
     function append_where($sql, $connector = 'AND') {
         if (empty($sql)) return $this;
@@ -932,15 +898,44 @@ abstract class abs_collection implements IAbs_Collection, IteratorAggregate {
         $order = array_shift($args);
         if ($count > 1)
             $order = vsprintf($order, $args);
+
         $this->config->set('order_sql', $order);
 
         return $this;
     }
 
+    /**
+     * Set order
+     * @param $field
+     * @param bool $desc
+     * @return $this
+     */
+    function order($field, $desc = false) {
+
+        $order = $this->config->get('order_sql');
+
+        if (!empty($order)) {
+            $order .= ', ';
+        }
+
+        $order .= $field;
+        $order .= (' ' . $desc ? 'DESC' : 'ASC');
+
+        $this->config->set('order_sql', $order);
+
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
     function get_order() {
         return $this->config->get('order_sql');
     }
 
+    /**
+     * @return $this
+     */
     function disable_order() {
         $this->set_order(false);
 
@@ -1096,7 +1091,7 @@ abstract class abs_collection implements IAbs_Collection, IteratorAggregate {
 
     /**
      * Reload (loaded) items data
-     * @return abs_collection
+     * @return model_collection
      */
     function refresh() {
         foreach ($this->items as $i) {
@@ -1148,7 +1143,7 @@ abstract class abs_collection implements IAbs_Collection, IteratorAggregate {
 
     /**
      * Load first item
-     * @return abs_collection_item
+     * @return model_item
      */
     function load_first() {
         return $this->set_limit(1)
@@ -1212,11 +1207,11 @@ abstract class abs_collection implements IAbs_Collection, IteratorAggregate {
     }
 
     /**
-     * @param abs_collection_item $item
+     * @param model_item $item
      * @param bool $id
      * @return $this
      */
-    function append(abs_collection_item $item, $id = false) {
+    function append(model_item $item, $id = false) {
 
         // if external
         $item->set_container($this);
@@ -1230,10 +1225,10 @@ abstract class abs_collection implements IAbs_Collection, IteratorAggregate {
     }
 
     /**
-     * @param abs_collection_item $item
+     * @param model_item $item
      * @return $this
      */
-    function prepend(abs_collection_item $item) {
+    function prepend(model_item $item) {
         array_unshift($this->items, $item);
         return $this;
     }
@@ -1340,7 +1335,7 @@ abstract class abs_collection implements IAbs_Collection, IteratorAggregate {
 
     /**
      * Gets item last modified @see last_id
-     * @return abs_collection_item
+     * @return model_item
      */
     function get_last_item() {
         if (!$this->_last_id) return null;
@@ -1350,7 +1345,7 @@ abstract class abs_collection implements IAbs_Collection, IteratorAggregate {
 
     /**
      * Allocate item for modification
-     * @return abs_collection_item
+     * @return model_item
      */
     function alloc($data = array()) {
 
@@ -1416,7 +1411,7 @@ abstract class abs_collection implements IAbs_Collection, IteratorAggregate {
      * Without params it clear weorking fields
      * Warn! use this only with UPDATE item or validate
      * @param mixed varargs OR array
-     * @return abs_collection
+     * @return model_collection
      */
     public function set_working_fields() {
         $this->working_fields = array();
@@ -1461,7 +1456,7 @@ abstract class abs_collection implements IAbs_Collection, IteratorAggregate {
     /**
      * drop
      * @param null|id if null, remove_all used
-     * @return self
+     * @return model_collection
      */
     function remove($id) {
 
@@ -1481,7 +1476,7 @@ abstract class abs_collection implements IAbs_Collection, IteratorAggregate {
 
     /**
      * drop all
-     * @return self
+     * @return model_collection
      */
     function remove_all() {
         if (!empty($this->items))
@@ -1495,7 +1490,7 @@ abstract class abs_collection implements IAbs_Collection, IteratorAggregate {
     /**
      * drop all indirect
      * (without creating items and notify them)
-     * @return self
+     * @return model_collection
      */
     function remove_all_fast() {
         $w   = $this->get_where();
@@ -1533,8 +1528,7 @@ abstract class abs_collection implements IAbs_Collection, IteratorAggregate {
         return $this->config->get('prefix');
     }
 
-    function get_name($short = false) {
-        // @todo short name
+    function get_name() {
         return $this->_name;
     }
 
@@ -1604,8 +1598,7 @@ abstract class abs_collection implements IAbs_Collection, IteratorAggregate {
     }
 
     /**
-     * подготовка к редактированию
-     * Item must be loaded
+     * Prepare Item Form || Alloc
      */
     function prepare2edt($id = null) {
 
@@ -1613,6 +1606,7 @@ abstract class abs_collection implements IAbs_Collection, IteratorAggregate {
         $elm = $id ? $this->get_item_by_id($id) : $this->alloc();
         core::dprint('prepare2edt id=' . $id);
         $elm->prepare2edt();
+
         return $elm;
 
     }
@@ -1660,7 +1654,7 @@ abstract class abs_collection implements IAbs_Collection, IteratorAggregate {
     /**
      * Set tpl namespace
      * (auto adds prefix 'tpl_')
-     * @return self
+     * @return model_collection
      */
     function set_tpl_table($name) {
         $this->config->tpl_table = $name;
@@ -1681,7 +1675,7 @@ abstract class abs_collection implements IAbs_Collection, IteratorAggregate {
      * Set render enable|key via @see is_render_by_key method
      *
      * @param mixed $k
-     * @return abs_collection
+     * @return model_collection
      */
     function set_render_key($k = null) {
         $this->_render_key = empty($k) ? 'id' : $k;
@@ -1709,7 +1703,7 @@ abstract class abs_collection implements IAbs_Collection, IteratorAggregate {
 
         if (!empty($this->items)) {
 
-            /** @var abs_collection_item $v */
+            /** @var model_item $v */
             foreach ($this as $k => $v) {
                 // prevent  $out[]
                 if ($this->is_render_by_key())
@@ -1787,7 +1781,7 @@ abstract class abs_collection implements IAbs_Collection, IteratorAggregate {
     }
 
     /**
-     * @return self
+     * @return model_collection
      */
     function set_load_only_id($id) {
         return
@@ -1797,7 +1791,7 @@ abstract class abs_collection implements IAbs_Collection, IteratorAggregate {
 
     /**
      * Load only one item
-     * @return abs_collection_item
+     * @return model_item
      */
     function load_only_id($id) {
 
@@ -1813,7 +1807,7 @@ abstract class abs_collection implements IAbs_Collection, IteratorAggregate {
      * посчитать количество элементов
      */
     function count() {
-        return @intval(count($this->items));
+        return $this->items ? count($this->items) : 0;
     }
 
     /**
@@ -1841,10 +1835,6 @@ abstract class abs_collection implements IAbs_Collection, IteratorAggregate {
         $this->_ids_cache[$id] = $set;
     }
 
-    function __invoke($id) {
-        return $this->get_item_by_id($id);
-    }
-
     function merge($collection) {
         if ($collection->count()) {
             $this->items = array_merge($this->items, $collection->get_items());
@@ -1855,7 +1845,7 @@ abstract class abs_collection implements IAbs_Collection, IteratorAggregate {
 
     /**
      * элемент по Id
-     * @return abs_collection_item or false
+     * @return model_item or false
      */
     function get_item_by_id($id) {
         return $this->get_item_by_prop($this->get_key(), $id);
@@ -1863,7 +1853,7 @@ abstract class abs_collection implements IAbs_Collection, IteratorAggregate {
 
     /**
      * элемент по Name
-     * @return abs_collection_item or false
+     * @return model_item or false
      */
     function get_item_by_name($id) {
         return $this->get_item_by_prop('name', $id);
@@ -1890,7 +1880,7 @@ abstract class abs_collection implements IAbs_Collection, IteratorAggregate {
      * @param string property name
      * @param mixed val
      * @param bool no_case |casesensitive, default true
-     * @return abs_collection_item or false
+     * @return model_item or false
      */
     function get_item_by_prop($name, $val = null, $nc = false) {
 
@@ -1937,7 +1927,7 @@ abstract class abs_collection implements IAbs_Collection, IteratorAggregate {
      *
      * @param mixed $method
      * @param mixed $params
-     * @return abs_collection self
+     * @return model_collection self
      */
     function invoke($method, $params = null) {
 
@@ -1973,7 +1963,7 @@ abstract class abs_collection implements IAbs_Collection, IteratorAggregate {
     /**
      * set cfg to all childs
      * @depricated
-     * @return self
+     * @return model_collection
      */
     /*
     function config->set_ex($var, $value) {
@@ -1993,22 +1983,23 @@ abstract class abs_collection implements IAbs_Collection, IteratorAggregate {
      */
     function render($fields = false) {
 
-        if (empty($this->items)) return false;
-
         $out = array();
-        foreach ($this->items as $k => $v) {
-            // prevent  $out[]
-            if ($this->is_render_by_key())
-                $out[$v->get_data($this->_render_key)] = $v->render($fields); // silent
-            else
-                $out[] = $v->render($fields); // force append
+
+        if (!empty($this->items)) {
+            foreach ($this->items as $k => $v) {
+                // prevent  $out[]
+                if ($this->is_render_by_key())
+                    $out[$v->get_data($this->_render_key)] = $v->render($fields); // silent
+                else
+                    $out[] = $v->render($fields); // force append
+            }
         }
 
         return $out;
     }
 
     /**
-     * @return self
+     * @return model_collection
      */
     function is_render_by_key($fl = null) {
         if ($fl === true) {
@@ -2035,17 +2026,27 @@ abstract class abs_collection implements IAbs_Collection, IteratorAggregate {
      * Загрузка вспомогательных элементов
      * (дочерние объекты, зависимые объекты...)
      * Выполняет соответствующий код для всех элементов коллекции
+     * @return $this
      */
     function load_secondary($options = null) {
-        if ($this->is_empty()) return $this;
-        foreach ($this->items as $item) $item->load_secondary($options);
+        if (!$this->is_empty()) {
+            foreach ($this->items as $item) {
+                $item->load_secondary($options);
+            }
+        }
 
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     function render_secondary() {
-        if ($this->is_empty()) return $this;
-        foreach ($this->items as $item) $item->render_secondary();
+        if (!$this->is_empty()) {
+            foreach ($this->items as $item) {
+                $item->render_secondary();
+            }
+        }
 
         return $this;
     }
@@ -2057,7 +2058,7 @@ abstract class abs_collection implements IAbs_Collection, IteratorAggregate {
 
     /**
      * rewind
-     * @return self
+     * @return model_collection
      */
     public function rewind() {
         $this->_loop_index = 0;
@@ -2096,7 +2097,7 @@ abstract class abs_collection implements IAbs_Collection, IteratorAggregate {
      *   true  - get next
      *   index - get index
      *
-     * @return abs_collection_item
+     * @return model_item
      */
     public function get_item($index = false, $clone = false) {
         $item = false;
@@ -2257,8 +2258,13 @@ abstract class abs_collection implements IAbs_Collection, IteratorAggregate {
                     // remove unused stuff from asving to storage
                     if (isset($fld['thumbnail'])) unset($fld['thumbnail']);
                 }
+                // @todo need escape?
                 $fld = empty($fld) ? "''" : "'" . serialize($fld) . "'";
                 break;
+
+            case 'array':
+                $fld = @serialize($fld) ?: '';
+                // pass to default
 
             default:
                 $fld = "'" . $this->db->escape($fld) . "'";
@@ -2276,6 +2282,7 @@ abstract class abs_collection implements IAbs_Collection, IteratorAggregate {
 
         $type = $vf['type'];
         switch ($type) {
+
             case 'unixtime':
             //---------------
                 $fld = (int)$fld;
@@ -2288,11 +2295,21 @@ abstract class abs_collection implements IAbs_Collection, IteratorAggregate {
 
             case 'numeric':
             //---------------
-                if (!empty($vf['float'])) $fld = (float)$fld;
-                else
-                    if (!empty($vf['long'])) $fld = (float)$fld; /*long*/
-                    else $fld = (int)$fld;
+                if (!empty($vf['float'])) {
+                    $fld = (float)$fld;
+                }
+                elseif (!empty($vf['long'])) {
+                    $fld = (float)$fld; /*long*/
+                }
+                else {
+                    $fld = (int)$fld;
+                }
 
+                break;
+
+            case 'array':
+            //---------------
+                $fld = @unserialize($fld) ?: array();
                 break;
 
             case 'file':
@@ -2347,6 +2364,9 @@ abstract class abs_collection implements IAbs_Collection, IteratorAggregate {
 
     /**
      * format on view
+     * @param $vf
+     * @param $fld
+     * @param $item model_item
      */
     function format_field_on_view($vf, &$fld, $item) {
         $type = $vf['type'];
@@ -2398,6 +2418,11 @@ abstract class abs_collection implements IAbs_Collection, IteratorAggregate {
                     $fld    = $item->render_virtual($method, 'view');
                 }
                 break;
+        }
+
+        // render method overrides
+        if (isset($vf['render']) && functions::is_closure($vf['render'])) {
+            $fld = $vf['render']($vf, $fld, $item);
         }
     }
 
@@ -2451,7 +2476,7 @@ abstract class abs_collection implements IAbs_Collection, IteratorAggregate {
             case 'boolean':
             //---------------
 
-                $t_ = intval($fld); // 1 OR 0
+                $fld = intval($fld); // 1 OR 0
                 break;
 
             case 'numeric':
@@ -2477,7 +2502,7 @@ abstract class abs_collection implements IAbs_Collection, IteratorAggregate {
 
                 if (!empty($vf['method'])) {
                     $method = $vf['method'];
-                    // call virtual_method to retrive data
+                    // call virtual_method to retrieve data
                     $fld = $item->render_virtual($method, 'edit');
                 }
                 break;
@@ -2510,9 +2535,8 @@ abstract class abs_collection implements IAbs_Collection, IteratorAggregate {
      */
     function format_field_on_modify($vf, &$fld, $current) {
         $type = $vf['type'];
-        /**
-         * @todo must validate and normalize all input (utf8)
-         */
+
+        //  @todo must validate and normalize all input (utf8)
 
         switch ($type) {
 
@@ -2573,20 +2597,16 @@ abstract class abs_collection implements IAbs_Collection, IteratorAggregate {
             case 'unixtime':
             //---------------
 
-                // raw, wihtout format
-                if (isset($vf['no_check'])) break;
-
-                // default date modificator
-
                 // @todo fix @see abs_collection_item::format_fields()
                 if ($fld == 'now' /*isset($vf['defailt']) && $vf['defailt'] == 'now'*/) $fld = time();
 
-                // core::var_dump($fld);
-
                 if (empty($fld)) $fld = 0;
                 else
-                    if (ctype_digit($fld) && intval($fld) > 9999) $fld = intval($fld); // this is raw unix
-                    else $fld = strtotime($fld);
+                    if (ctype_digit($fld) && intval($fld) > 9999) {
+                        $fld = intval($fld);
+                    } else {
+                        $fld = strtotime($fld);
+                    }
 
                 break;
 
@@ -2594,9 +2614,6 @@ abstract class abs_collection implements IAbs_Collection, IteratorAggregate {
             case 'file':
             case 'image':
             //---------------
-
-                // $control = $this->create_control('image');
-                // $control->modify($vf, $fld);
 
                 if (!empty($fld)) {
                     $fld = control_image::process_modify($this, $vf, $fld, $current);
@@ -2612,10 +2629,7 @@ abstract class abs_collection implements IAbs_Collection, IteratorAggregate {
     }
 
     /**
-     * форматировать поле для вывода
-     * 'id' => 'value'
-     *
-     * @todo make CONTROLS Object
+     * @todo make extends this to controls
      *
      * @param string key
      * @param mixed value
@@ -2647,11 +2661,14 @@ abstract class abs_collection implements IAbs_Collection, IteratorAggregate {
 
 
     /**
-     * @return abs_control
+     * @return model_control
      */
     protected function create_control($type) {
         $class = 'control_' . $type;
-        if (!class_exists($class, 0)) fs::req('modules/core/abstract/controls/' . $type . '.php');
+
+        if (!class_exists($class, 0)) {
+            require 'modules/core/abstract/controls/' . $type . '.php';
+        }
 
         return new $class;
     }
@@ -2660,10 +2677,10 @@ abstract class abs_collection implements IAbs_Collection, IteratorAggregate {
      * compare 2 collections
      * @return bool
      */
-    public function compare(abs_collection $subj) {
+    public function compare(model_collection $subj) {
         $subj->rewind();
         while ($item = $subj->next()) {
-            if (!(($tmp = $this->get_element_by_id($item->id)) && $tmp->get_data() == $item->get_data())) return false;
+            if (!(($tmp = $this->get_item_by_id($item->id)) && $tmp->get_data() == $item->get_data())) return false;
         }
         if ($subj->count() != $this->count()) return false;
 
@@ -2681,23 +2698,13 @@ abstract class abs_collection implements IAbs_Collection, IteratorAggregate {
     }
 
     /**
-     * Is extra fields enabled?
-     * @return string extra fields storage
-     */
-    public function with_extra_fields($fl = null) {
-        if ($fl !== null) $this->_with_extra_fields = (bool)$fl;
-
-        return $this->_with_extra_fields;
-    }
-
-    /**
      * Check w/dependencies
      *
      * @param array|boolean
      *  true === load all
      *  [dep1, dep2] = load specified
      *
-     * @return self:bool Return $this if set flag called (for chaining)
+     * @return model_collection:bool Return $this if set flag called (for chaining)
      */
     public function with_deps($fl = null) {
         if (!isset($fl)) return $this->_with_deps;
@@ -2707,14 +2714,8 @@ abstract class abs_collection implements IAbs_Collection, IteratorAggregate {
     }
 
     /**
-     * Disable fields
-     */
-    public function disable_extra_fields() {
-        $this->_with_extra_fields = false;
-    }
-
-    /**
-     * @return self
+     * @todo figure it out wtf is this
+     * @return model_collection
      */
     function with_renderer_cache($fl) {
         if (!empty($this->items))
@@ -2768,7 +2769,10 @@ abstract class abs_collection implements IAbs_Collection, IteratorAggregate {
      * @return collection_generator
      */
     static function get_generator($classes = false) {
-        require_once "modules/core/abstract/collection/generator.php";
+
+        if (!class_exists('collection_generator', 0)) {
+            require __DIR__ . '/generator.php';
+        }
 
         return new collection_generator($classes);
     }
@@ -2778,13 +2782,47 @@ abstract class abs_collection implements IAbs_Collection, IteratorAggregate {
         return new null_collection();
     }
 
+    /**
+     * @param $id
+     * @return model_item
+     */
+    function __invoke($id) {
+        return $this->get_item_by_id($id);
+    }
+    
+    // Array access
+
+    public function offsetExists($offset)
+    {
+        return isset($this->items[$offset]);
+    }
+
+    public function offsetGet($offset)
+    {
+        return $this->offsetExists($offset) ? $this->items[$offset] : null;
+    }
+
+    public function offsetSet($offset, $value)
+    {
+        if (is_null($offset)) {
+            $this->items[] = $value;
+        } else {
+            $this->items[$offset] = $value;
+        }
+    }
+
+    public function offsetUnset($offset)
+    {
+        unset($this->items[$offset]);
+    }    
+
 }
 
 
 /**
  * NUll collection
  */
-class null_collection extends abs_collection {
+class null_collection extends model_collection {
 
     protected $fields = array('id' => array('type' => 'numeric'));
 
@@ -2796,8 +2834,6 @@ class null_collection extends abs_collection {
 }
 
 /*
-
-some diagrams:
 
 Item modification flow (call modify())
               |

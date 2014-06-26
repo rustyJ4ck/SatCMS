@@ -425,6 +425,9 @@ h1, h2, h3, h4, h5, h6, th { color: rgb(95, 95, 95); font-weight: 700; }
 
 .box .box-header .box-toolbar a {
     text-shadow: none;
+}
+
+.box .box-header .box-toolbar > li > a {
     font-weight:bold;
 }
 

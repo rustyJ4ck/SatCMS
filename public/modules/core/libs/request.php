@@ -19,7 +19,7 @@
 * @property string gid groupID
 * @property string start Page
 */                   
-class ident_vars extends aregistry {
+class request_params extends aregistry {
 
     const IDENT_MODULE      = 'm';
     const IDENT_CONTROLLER  = 'c';
@@ -46,7 +46,7 @@ class ident_vars extends aregistry {
     }
 
     private function _cast($id, $v) {
-        return preg_match('@id$@', $id) ? (int)$v : (string)$v;
+        return !is_array($v) ? preg_match('@id$@', $id) ? (int)$v : (string)$v : $v;
     }
     
     function get($id,  $default = null) {
@@ -61,10 +61,10 @@ class ident_vars extends aregistry {
 */
 class tf_request extends singleton {
 /** 
-    * @var ident_vars registry
+    * @var request_params registry
     * usage @see self::get_params()
     */
-    private static $_ident_vars;
+    public $params;
 
     /**
     * All user contributed data
@@ -104,8 +104,8 @@ class tf_request extends singleton {
         $this->_all = functions::array_merge_recursive_distinct($this->_all, $this->_files);
         
 
-         // @todo use self::TAG_ ..
-        self::$_ident_vars = new ident_vars(
+        // @todo use self::TAG_ ..
+        $this->params = new request_params(
             array(
                   'id'        => $this->postget('id') //,       0)
                 , 'pid'       => $this->postget('pid') //,      0)
@@ -191,14 +191,18 @@ class tf_request extends singleton {
     * use core::TAG_ constants for naming
     * @return mixed registry|mixed or single param
     */
-    public static function get_ident($name = false, $default = null) {
-        return ($name) ? self::$_ident_vars->get($name, $default) : self::$_ident_vars;
+    public function get_param($name, $default = null) {
+        return $this->params->get($name, $default);
     }
     
-    public static function set_ident($name, $value) {
-        self::$_ident_vars->set($name, $value);
+    public function set_param($name, $value) {
+        $this->params->set($name, $value);
     }    
-    
+
+    function get_params() {
+        return $this->params;
+    }
+
     /**
     * @return string HTTP_HOST
     */

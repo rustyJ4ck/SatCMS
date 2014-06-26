@@ -30,10 +30,10 @@ class module_controller {
     * Current data
     */
 
-    /** @var  abs_collection */
+    /** @var  model_collection */
     protected $_current_collection;
 
-    /** @var  abs_collection_item */
+    /** @var  model_item */
     protected $_current_item;
 
     /**

@@ -5,6 +5,7 @@
  */
 
 return array(
+
   'templates' => array(
 
      // defaults

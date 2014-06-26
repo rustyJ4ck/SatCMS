@@ -13,10 +13,8 @@
  * Class tf_response
  */
 class tf_response {
-
     protected $template = null;
     protected $buffer = null;
-
 }
 
 require "modules/core/libs/renderer/layout.php";
@@ -216,9 +214,17 @@ class tf_renderer extends abs_data {
     * 
     * @param string without .tpl
     */
-    function set_main_template($name) {
-        //core::dprint(array('SET MAIN TPL : %s', $name), core::E_DEBUG3);
-        $this->set_data('main_template', empty($name) ? false : ($name . loader::DOT_TPL));
+    function set_main_template($name, $ext = true) {
+
+        if (is_string($name)) {
+            //core::dprint(array('SET MAIN TPL : %s', $name), core::E_DEBUG3);
+            $this->set_data('main_template', empty($name) ? false : ($name
+                . ($ext ? loader::DOT_TPL : '')
+            ));
+        } else {
+            $this->set_data('main_template', $name);
+        }
+
         return $this;
     }
     
@@ -644,14 +650,7 @@ class tf_renderer extends abs_data {
     public function render_user() {
         $this->set_data('user', core::lib('auth')->render());  
     }  
-    
-    /**
-    * @desc 
-    */
-    public function switch_simple_output($f = true) {
-        $this->simple_output = $f;
-    }
-    
+
     /**
      * Set response header
      * @param null $content_type
@@ -661,8 +660,9 @@ class tf_renderer extends abs_data {
         $content_type = isset($content_type) ? $content_type : $this->_content_type;
         $charset = isset($charset) ? $charset : $this->_charset;
 
-        if (!empty($content_type) && !headers_sent())
+        if (!empty($content_type) && !headers_sent()) {
             header('Content-Type: ' . $content_type . '; charset=' . $charset);
+        }
     }
     
     /**
@@ -696,9 +696,6 @@ class tf_renderer extends abs_data {
             array('in_ajax' => true)
         );
 
-        // output_ajax conflict in editor
-        // @todo test this
-
         if (loader::in_ajax() === 'json') {
             $this->set_ajax_type('json');
         }
@@ -709,7 +706,7 @@ class tf_renderer extends abs_data {
 
         $tpl = $this->get_main_template();
 
-        if ($tpl) {
+        if (is_string($tpl)) {
             $tpl = substr($tpl, 0, -4); // output_end will append .TPL
         }
 
@@ -740,7 +737,7 @@ class tf_renderer extends abs_data {
                 $return['message'] = $this->_message['message'];
             }            
             
-            echo json_encode($return);
+            echo functions::json_encode($return);
         }
         elseif (empty($tpl)) {
 
@@ -754,8 +751,6 @@ class tf_renderer extends abs_data {
             // plain output
             $this->output_end($tpl);
         }
-
-
     }
         
     /**
@@ -772,7 +767,7 @@ class tf_renderer extends abs_data {
             dd($template, __METHOD__);
         */
 
-        if (($m = core::lib('request')->get_ident()->m) && !empty($m)) {
+        if (($m = core::get_params('m')) && !empty($m)) {
             // root template relative                      
             $this->set_data('modtpl_prefix', '../../modules/' . $m . '/editor/templates/');
             $this->data['config']['base_url']   = core::module($m)->get_editor_base_url();
@@ -780,23 +775,22 @@ class tf_renderer extends abs_data {
         }
 
         if (core::get_params('embed')) {
+
+            // prefix
+            if (loader::in_ajax() && $this->get_main_template() && $m) {
+                $this->set_main_template($this->get_data('modtpl_prefix') . $this->get_main_template(), false);
+            }
+
             $this->set_page_template('embed');
 
             // allow embed in ajax
-
             if (loader::in_ajax() && !$this->get_main_template()) {
                 $this->set_main_template('embed');
             }
         }
 
-        /*
-        else {
-            $layout = core::cfg('editor.layout');
-            $template = $layout ? "layout/{$layout}/" : '';
-            $template .= 'root';
-            //$template .= loader::DOT_TPL;
-        }
-        */
+
+
     }
     
     /**

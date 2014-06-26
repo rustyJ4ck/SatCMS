@@ -58,7 +58,7 @@ class module_ioc {
      */
     public function resolve_dependency($name) {
 
-        core::dprint(array('..ioc-resolve %s %s', $name, (isset($this->dependencies[$name]['instance'])?'+':'-')), core::E_DEBUG3);
+        // core::dprint(array('..ioc-resolve %s %s', $name, (isset($this->dependencies[$name]['instance'])?'+':'-')), core::E_DEBUG3);
 
         if (isset($this->dependencies[$name]) && !isset($this->dependencies[$name]['instance'])) {
 
@@ -138,8 +138,6 @@ class module_ioc {
             }
 
         }
-
-
 
         return $this->dependencies[$name]['instance'];
     }

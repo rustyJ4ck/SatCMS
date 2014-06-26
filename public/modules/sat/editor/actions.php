@@ -37,6 +37,13 @@
           , 'fm'                 => array('url' => 'fm/'          , 'title' => 'Менеджер файлов')
 
 
+          , 'content_type'      => array('url' => '?m=sat&c=content_type'          , 'title' => 'Content types')
+          , 'content_category'  => array('url' => '?m=sat&c=content_category'      , 'title' => 'Content categories')
+
+          , 'content'           => array('url' => '?m=sat&c=content'          , 'title' => 'Content',
+                'require' => array('js' => array('controllers/node'))
+            )
+
           , 'node_image'            => array('url' => '?m=sat&c=node_image'  , 'title' => 'Картинки', 'hidden' => true)
           , 'node_file'            => array('url' => '?m=sat&c=node_file'  , 'title' => 'Файлы', 'hidden' => true)
 

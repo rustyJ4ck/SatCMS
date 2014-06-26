@@ -2,13 +2,13 @@
 
 namespace SatCMS\Sat\Classes\Attachable;
 
-use abs_collection;
+use model_collection;
 
 /**
  * 'sid'         => array('type' => 'numeric', 'unsigned' => true)
  * 'ctype_id'    => array('type' => 'numeric')
  */
-class SlaveCollection extends abs_collection {
+class SlaveCollection extends model_collection {
 
     function construct_after() {
         parent::construct_after();

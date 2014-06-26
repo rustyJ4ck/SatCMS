@@ -210,41 +210,12 @@
                            data-href="index.php?m={$req.m}&c={$req.c}&do={$req.do}&op=drop&id={$item.id}{$actionUrlExtra}">
                         </a>
 
-                    </td>
+                        {block "list-actions" hide}
+                            {$item.id}
+                        {/block}
 
-
-                    {*
-                    <td>
-                        {if $item.title}
-                            {$item.title}
-                            <div class="help">({$item.name})</div>
-                        {else}
-                            {$item.name}
-                        {/if}
-                    </td>
-
-                    <td>
-                        <a href="#" class="editable" data-type="text"
-                           data-url="{$config.base_url}"
-                           data-pk="{$item.id}"
-                           data-params="{ id: {$item.id}, op:'change_field', field: 'value' }"
-                                >{$item.value}</a>
-                    </td>
-
-                    <td class="btn-group-xs" >
-
-                        <a type="button" class="btn btn-default btn-sm glyphicon glyphicon-pencil"
-                           href="index.php?m={$params.m}&c={$params.c}&do={$params.do}&op=edit&id={$item.id}&embed=yes"
-                           dialog="{ldelim}width:540,height:380{rdelim}"
-                                >
-                        </a>
-
-                        <a type="button" class="btn btn-default btn-sm a-delete glyphicon glyphicon-trash"
-                           data-href="index.php?m={$params.m}&c={$params.c}&do={$params.do}&op=drop&id={$item.id}">
-                        </a>
 
                     </td>
-*}
 
                 </tr>
 

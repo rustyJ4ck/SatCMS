@@ -62,6 +62,7 @@ loading         = Загрузка
 close           = Закрыть
 
 url             = Ссылка
+slug            = Slug
 thumbnail       = Миниатюра
 
 group           = Группа

@@ -27,7 +27,11 @@
     {/block}
 
     {block "list"}
-        {include "./list.tpl"}
+        {if $params.list == 'blocks'}
+            {include "./list.blocks.tpl"}
+        {else}
+            {include "./list.tpl"}
+        {/if}
     {/block}
 
     {block "grid-bottom"}

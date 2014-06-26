@@ -302,12 +302,13 @@ class core extends core_module /*module_orm*/ {
     }
 
     /**
+     * @deprecated use request->get_param('key') @see tf_request
      * Get identification variable
      * use core::TAG_ constants for naming
      * @return mixed registry or single param
      */
     public static function get_params($name = false) {
-        $params = self::lib('request')->get_ident();
+        $params = self::lib('request')->params;
 
         return ($name) ? $params->get($name) : $params;
     }
@@ -319,9 +320,11 @@ class core extends core_module /*module_orm*/ {
      */
     public static function module($name) {
 
-        if ($name == 'core') return core::get_instance();
+        if ($name == 'core') return self::selfie();
 
-        if (!self::$modules) throw new core_exception('Modules not initialized. Try getting ' . $name);
+        if (!self::$modules) {
+            throw new core_exception('Modules not initialized. Try getting ' . $name);
+        }
 
         return self::$modules->get($name);
     }
@@ -485,7 +488,9 @@ class core extends core_module /*module_orm*/ {
      * Init 10
      */
     function init10() {
-        if ($auth = core::lib('auth')) $auth->on_session_end();
+        if ($auth = core::lib('auth')) {
+            $auth->on_session_end();
+        }
     }
 
     private $_halted = false;
@@ -676,29 +681,20 @@ class core extends core_module /*module_orm*/ {
             return tf_logger::get_instance()->enable(!core::get_instance()->cfg('disable_logs', false));
         });
 
-        self::register_lib('manager', new tf_manager());
-        self::register_lib('request', new tf_request());
+        self::register_lib('manager', new tf_manager);
+        self::register_lib('request', new tf_request);
 
         $modules_config = array();
 
-        if ('file' == $this->config->get('modules_config', '')
-            && ($modules_config_file = loader::get_docs() . 'modules.cfg')
-            && fs::file_exists($modules_config_file)
-        ) {
+        if (($modules_config_file = loader::get_docs('modules.cfg')) && file_exists($modules_config_file)) {
             $modules_config = parse_ini_file($modules_config_file, true);
-        } else {
-            try {
-                $modules_config = $this->module('modules', array('key' => 'tag'))->as_array();
-            } catch (module_exception $e) {
-                // misconfigured modules, some of modules not exists
-                throw new core_exception($e->getMessage(), tf_exception::CRITICAL);
-            }
         }
 
         // site init %domain%
         // config/%domain%/init.php
         $site_config      = array();
         $site_config_path = $this->config->get('site_config');
+
         if (!empty($site_config_path)) {
             $host = @$_SERVER['HTTP_HOST'];
             if ('%domain%' == $site_config_path) {
@@ -1350,8 +1346,9 @@ class core extends core_module /*module_orm*/ {
     /**
      * dprint_r
      */
-    public static function dprint_r($var) {
-        self::dprint(print_r($var, true));
+    public static function dprint_r($var, $title = null) {
+        self::dprint('=== dump-var: ' . $title);
+        self::dprint(var_export($var, true));
     }
 
     /** временные отметки */

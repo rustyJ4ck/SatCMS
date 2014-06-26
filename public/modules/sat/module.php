@@ -355,7 +355,7 @@ TPL
     }
 
     /**
-     * @return bool
+     * @return sat_site_item
      */
     function get_current_site() {
         return $this->_site ? $this->_site : false;
@@ -449,7 +449,7 @@ TPL
                 $sites->render()
             );
 
-            $site_id    = $this->request->get_ident('site_id');
+            $site_id    = $this->request->get_param('site_id');
             $site_id    = $site_id ? $site_id : $this->request->all('site_id');
 
             if (!$site_id) {
@@ -543,5 +543,50 @@ TPL
         $this->manager->set('sat_text_name', $cache_id, $handle);
         
         return $handle;
-    }     
+    }
+
+    /**
+     * Content types
+     * @return model_collection
+     */
+    function get_content_types() {
+
+        $sid = $this->get_current_site_id();
+
+        $data = $this->manager->get('content_type', $sid);
+
+        if (!$data) {
+            $data = $this->model('content_type')->where('site_id', $sid)->load();
+            $this->manager->set('content_type', $sid, $data);
+        }
+
+        return $data;
+    }
+
+    /**
+     * Content categories 0||Type
+     * @param $type
+     * @return $this|mixed|null
+     */
+    function get_content_categories($type) {
+
+        $sid = $this->get_current_site_id();
+        $key = $sid . '.' . $type;
+
+        $data = $this->manager->get('content_categories', $key);
+
+        if (!$data) {
+
+            $data = $this->model('content_category')
+                ->where('site_id', $sid)
+                ->where('type_id', $type)
+                ->where('type_id', 0, '=', 'OR')
+                ->load();
+
+            $this->manager->set('content_categories', $key, $data);
+        }
+
+        return $data;
+
+    }
 }

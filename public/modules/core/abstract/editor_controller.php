@@ -16,12 +16,12 @@
  *
  * @property core                        $core
  */
-abstract class editor_controller extends abs_config  {
+abstract class editor_controller {
 
     /** @var core_module */
     protected $context;
 
-    /** @var ident_vars */
+    /** @var request_params */
     protected $params;
 
     /**
@@ -34,7 +34,7 @@ abstract class editor_controller extends abs_config  {
     /**
      * Controlled collection
      * set it to false, when collection disabled
-     * @var abs_collection
+     * @var model_collection
      */
     protected $collection;
 
@@ -96,7 +96,7 @@ abstract class editor_controller extends abs_config  {
 
         $this->context  = $module;
 
-        $this->params   = $this->request->get_ident();
+        $this->params   = $this->request->get_params();
         $this->postdata = $this->request->filespost();
 
         $this->base_url = $this->context->get_editor_base_url();
@@ -139,7 +139,7 @@ abstract class editor_controller extends abs_config  {
             if ($this->collection !== false)
                 $this->collection = $this->create_collection();
             else
-                $this->collection = abs_collection::get_null_collection();
+                $this->collection = model_collection::get_null_collection();
 
             if ($this->model_deps) {
                 $this->collection->with_deps($this->model_deps);
@@ -167,11 +167,16 @@ abstract class editor_controller extends abs_config  {
     }
 
     /**
-     * Prepare filters from cookie
+     * Prepare filters from cookie|request
      */
     protected function get_grid_filters() {
         $filters = @json_decode(substr(stripcslashes($this->request->cookie('filters')), 1, -1), true);
         $this->grid_filters = $filters && @$filters[$this->grid_name] ? $filters[$this->grid_name] : array();
+
+        // populate from post
+        if (!empty($this->postdata['filter'])) {
+            $this->grid_filters = functions::array_merge_recursive_distinct($this->grid_filters, $this->postdata['filter']);
+        }
     }
 
     /**
@@ -181,7 +186,7 @@ abstract class editor_controller extends abs_config  {
 
         // import filters from params
         foreach ($this->collection->fields() as $key => $field) {
-            if (isset($field['filter']) && $this->params->is_set($key)) {
+            if (isset($field['filter']) && $this->params->is_set($key) && !array_key_exists($key, $this->grid_filters)) {
                 $this->grid_filters[$key] = $this->params->get($key);
             }
         }
@@ -190,7 +195,7 @@ abstract class editor_controller extends abs_config  {
         if (!empty($this->grid_filters)) {
             foreach ($this->grid_filters as $key => $value) {
 
-                if ($this->params->offsetExists($key) && !$this->params->is_set($key)) {
+                if (1 /*!$this->params->offsetExists($key) && !$this->params->is_set($key)*/) {
                     // populate params, if not set
                     $this->params->set($key, $value);
                 }
@@ -200,9 +205,13 @@ abstract class editor_controller extends abs_config  {
                 $this->_limit = (int)$this->grid_filters['limit'];
             }
         }
+
+        if ($this->request->method == 'POST') {
+            core::dprint_r([$this->grid_filters], 'grid_filters');
+        }
     }
 
-    /** @return abs_collection */
+    /** @return model_collection */
     protected function create_collection() {
         return $this->context->model(
             $this->collection_model, $this->collection_config
@@ -229,7 +238,7 @@ abstract class editor_controller extends abs_config  {
      * @param $item
      * @return string
      */
-    function get_edit_url(abs_collection_item $item, $extra = '') {
+    function get_edit_url(model_item $item, $extra = '') {
         return $this->context->editor->make_url(
             '?m=' . $this->params->m .
             '&c=' . $this->params->c .
@@ -245,7 +254,7 @@ abstract class editor_controller extends abs_config  {
     /**
      * Set current collection
      */
-    function set_collection(abs_collection $c) {
+    function set_collection(model_collection $c) {
         $this->collection = $c;
 
         return $this;
@@ -781,6 +790,7 @@ abstract class editor_controller extends abs_config  {
         $this->collection->prepare2edt();
         $this->disable_render(true);
 
+        // Generate sid for attachable collections
         if ($this->collection->config->get('attachable.master')) {
             $this->response->attach_sid = $this->collection->make_attach_sid();
         }
@@ -916,15 +926,26 @@ abstract class editor_controller extends abs_config  {
         }
     }
 
-//
-
+    /**
+     * Load item
+     * @param null $id
+     * @param bool $force
+     * @return model_item
+     * @throws controller_exception
+     */
     protected function _load_id($id = null, $force = false) {
         $id = $id ? $id : $this->params->id;
 
-        if (!$force && ($return = $this->collection->get_item_by_id($id))) return $return;
+        // loaded already
+        if (!$force && ($return = $this->collection->get_item_by_id($id))) {
+            return $return;
+        }
 
-        $return = $this->collection->clear(1)->load_only_id($id);
-        if (!$return) throw new controller_exception("_load_id({$id}) cant load item");
+        $return = $this->collection->load_only_id($id);
+
+        if (!$return) {
+            throw new controller_exception("_load_id({$id}) cant load item");
+        }
 
         return $return;
     }

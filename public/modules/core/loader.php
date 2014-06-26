@@ -363,16 +363,16 @@
              , 'registry'                 => 'abstract/registry'
              , 'aregistry'                => 'abstract/aregistry'
              , 'collection_iterator'      => 'abstract/collection/iterator'
-             , 'abs_collection'           => 'abstract/collection/collection'
+             , 'model_collection'         => 'abstract/collection/collection'
 
-             , 'abs_control'              => 'abstract/controls/abs_control'
+             , 'model_control'            => 'abstract/controls/control'
              , 'control_number'           => 'abstract/controls/number'
              , 'control_text'             => 'abstract/controls/text'
              , 'control_unixtime'         => 'abstract/controls/unixtime'
              , 'control_boolean'          => 'abstract/controls/boolean'
              , 'control_image'            => 'abstract/controls/image'
 
-             , 'abs_collection_item'      => 'abstract/collection/item'
+             , 'model_item'      => 'abstract/collection/item'
              , 'collection_filter'        => 'abstract/collection/filter'
              , 'module_orm'               => 'abstract/module_orm'
 

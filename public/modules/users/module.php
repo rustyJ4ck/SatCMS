@@ -12,7 +12,8 @@
 class tf_users extends core_module {  
 
     protected $editor_default_action = 'users';
-    
+
+    /** @var  users_collection */
     private $users;
     
     /**
@@ -200,26 +201,26 @@ class tf_users extends core_module {
             return $this->get_anonymous_user();  
         }
         
-        $user = $this->core->lib('manager')->get($this->users->get_domain(), $prop . '_' . $id);       
+        $user = $this->manager->get($this->users->get_class(), $prop . '_' . $id);
          
-        if ($user) return $user;
+        if ($user) {
+            return $user;
+        }
         
         if ($prop == 'id') {
             $user = $this->users->load_only_id($id);
         }
         else {
-            $this->users->clear();
-            // potentialy security flaw
-            $this->users->set_where($prop . ' = ' . (is_numeric($id) ? $id : "'{$id}'"));
-            $this->users->load();
-            $user = $this->users->get_item();   
+            $user = $this->users->clear()->where($prop, $id)->load_first();
         }
         
-        // if user not found treat him as anonymous
+        // if user not found, make him anonymous
+
         if (!$user) {
             $user = $this->get_anonymous_user();  
         }
-        $this->core->lib('manager')->set($this->users->get_domain(), $prop . '_' . $id, $user);
+
+        $this->manager->set($this->users->get_class(), $prop . '_' . $id, $user);
         
         return $user;
     }

@@ -18,6 +18,27 @@ define(['app', 'angular', 'bootbox'],
 
         console.log('Grid-directive');
 
+        /**
+         * Filter name must be filter[name]
+         * @param name
+         * @returns {*}
+         * @private
+         */
+        function _name(name) {
+
+            if (typeof name === undefined || !name) {
+                console.warn('filter::_name is empty');
+                return false;
+            }
+
+            return name;
+
+            /*
+                $('[name="filter[title]"]').attr('name')
+                name.match(/\[(.*)\]/)[1];
+            */
+        }
+
         function restoreFilters() {
             return $localStorage['filters-' + id];
         }
@@ -32,7 +53,7 @@ define(['app', 'angular', 'bootbox'],
             for (var k in filters) {
                 var v = filters[k];
                 // console.log(k, v, '[name=' + k +'].filter',  root.find('[name=' + k +'].filter').size());
-                root.find('[name=' + k +'].filter').each(function(){
+                root.find('[name="filter[' + k +']"].filter').each(function(){
                     var $this = $(this);
 
                     if ($this.data('index-name')) {
@@ -102,22 +123,28 @@ define(['app', 'angular', 'bootbox'],
             var filters = {};
             var persist = {};
 
+            // static filters
             // <filter name="">value</filter>
             this.find('filter').each(function(){
                 var $v = $(this);
-                if ($v.attr('name')) filters [$v.attr('name')]= $v.text();
+                if ($v.attr('name')) {
+                    filters [($v.attr('name'))]= $v.text();
+                }
             });
 
             // <input class="filter" name="" value=""/>
             this.find('.filter').each(function(){
                 var $v = $(this);
+                var name = _name($v.attr('name'));
 
-                if ($v.attr('name')) {
+                if (name) {
                     if ($v.data('index-name')) {
-                        if (!filters[$v.attr('name')] || typeof  filters[$v.attr('name')] !== 'object')  filters [$v.attr('name')] = {};
-                        filters [$v.attr('name')][$v.data('index-name')] = $v.val();
+                        if (!filters[name] || typeof filters[name] !== 'object') {
+                            filters [name] = {};
+                        }
+                        filters [name][$v.data('index-name')] = $v.val();
                     } else {
-                        filters [$v.attr('name')]= $v.val();
+                        filters [name]= $v.val();
                     }
                 }
             });
@@ -125,12 +152,16 @@ define(['app', 'angular', 'bootbox'],
             // @todo optimize this
             this.find('.filter.filter-persist').each(function(){
                 var $v = $(this);
-                if ($v.attr('name')) {
+                var name = _name($v.attr('name'));
+
+                if (name) {
                     if ($v.data('index-name')) {
-                        if (!persist[$v.attr('name')] || typeof  persist[$v.attr('name')] !== 'object')  persist [$v.attr('name')] = {};
-                        persist [$v.attr('name')][$v.data('index-name')] = $v.val();
+                        if (!persist[name] || typeof  persist[name] !== 'object') {
+                            persist [name] = {};
+                        }
+                        persist [name][$v.data('index-name')] = $v.val();
                     } else {
-                        persist [$v.attr('name')]= $v.val();
+                        persist [name]= $v.val();
                     }
                 }
                 // persist [$v.attr('name')]= $v.val();
@@ -277,7 +308,7 @@ define(['app', 'angular', 'bootbox'],
                         // update form
                         //
 
-                        $.post(url, $scope.filters)
+                        $.post(url, {filter: $scope.filters})
 
                             .done(function(data, textStatus, jqXHR) {
 

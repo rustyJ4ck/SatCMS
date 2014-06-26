@@ -294,7 +294,7 @@ array(12) {
     
     /**
     * Generate sql
-    * @param abs_collection $object
+    * @param model_collection $object
     */
     function generate_object_sql($object) {
 
@@ -317,7 +317,7 @@ array(12) {
 
         $driver = $object->connection()->type();
 
-        if ($driver == 'mysql') {
+        if (strpos($driver, 'mysql') !== false) {
             $engine = empty($schema['engine']) ? 'MyISAM' : $schema['engine'];
         } else {
             // sqlite
@@ -438,7 +438,8 @@ array(12) {
                         $size = (isset($vfs['id']['size']) ? $vfs['id']['size'] : 4);
                         $sql_part .= ($this->int_length_to_string($size) . " {$field_unsigned} NOT NULL");
                         break;
-                    
+
+                    case 'array':
                     case 'text':
                         $sql_part .= ($this->string_length_to_string(@$vf['size'], $field_allow_size) . ' NOT NULL DEFAULT \'\'');
                         break;
@@ -589,7 +590,7 @@ array(12) {
     */
     function update_table_structure($drop = false) {
 
-        /** @var abs_collection $object */
+        /** @var model_collection $object */
         foreach ($this->_objects as $object) {
 
             $db = $object->connection();

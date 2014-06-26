@@ -4,7 +4,7 @@ require('../loader.php');
 
 $core = core::get_instance();
 
-/** @var abs_collection $collection */
+/** @var model_collection $collection */
 $collection = $core->model('test_images');
 
 $collection->remove_all_fast();
@@ -21,7 +21,7 @@ if (!$item) {
 test_assert(false === $collection->get_item_by_id(8888), 'null test #1');
 test_assert(false === $collection->get_item_by_prop('name', 8888), 'null test #2');
 
-test_assert($item instanceof abs_collection_item, 'LOAD_ONLY_ID');
+test_assert($item instanceof model_item, 'LOAD_ONLY_ID');
 
 $item =
     $collection->clear(true)
@@ -36,7 +36,7 @@ test_assert(
     === $collection->get_last_query(), 'sql check'
 );
 
-test_assert($item instanceof abs_collection_item, 'LOAD_ONLY_ID class');
+test_assert($item instanceof model_item, 'LOAD_ONLY_ID class');
 
 if (!$item) return;
 
@@ -52,12 +52,12 @@ test_assert(function() use ($item) {
 
 }, 'Save model');
 
-/** @var abs_collection_item $item */
+/** @var model_item $item */
 $item =
     $collection->clear(true)
         ->load_only_id($id);
 
-test_assert($item instanceof abs_collection_item, 'LOAD_ONLY_ID class');
+test_assert($item instanceof model_item, 'LOAD_ONLY_ID class');
 
 if (
     !test_assert($item->id === $id, '2-LOAD_ONLY_ID Id')
@@ -92,7 +92,7 @@ test_except('core_exception', function(){
 
 $item = $collection->alloc();
 
-test_assert($item instanceof abs_collection_item, 'alloc.1');
+test_assert($item instanceof model_item, 'alloc.1');
 
 test_assert($item->is_allocated(), 'is-alloc');
 test_assert($item->is_new(), 'is-new');

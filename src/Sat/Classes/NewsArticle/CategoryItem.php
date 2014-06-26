@@ -11,7 +11,7 @@
 
 namespace SatCMS\Sat\Classes\NewsArticle;
 
-abstract class CategoryItem extends \abs_collection_item {
+abstract class CategoryItem extends \model_item {
 
     protected $_items;
 

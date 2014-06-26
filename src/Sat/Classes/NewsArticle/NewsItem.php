@@ -59,7 +59,7 @@ class NewsItem extends MasterAttachableItem {
 
     /**
      * Similar
-     * @return \abs_collection
+     * @return \model_collection
      */
     function get_similar() {
         if (!isset($this->_similar) && $this->pid) {
@@ -89,7 +89,12 @@ class NewsItem extends MasterAttachableItem {
 
     function sync_count() {
         $handle = $this->container->get_category_model();
-        $handle->sync_children();
+
+        if ($handle && is_callable(array($handle, 'sync_children'))) {
+            $handle->sync_children();
+        } else {
+            core::dprint(__METHOD__ . ' sync_count not callable');
+        }
     }
 
     /**

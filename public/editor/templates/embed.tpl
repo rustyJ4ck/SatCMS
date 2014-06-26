@@ -13,8 +13,9 @@
 
 {/if}
 
-{if $config.in_ajax}
-    {*fix embed*}
+
+{*fix embed*}
+{if $config.in_ajax && $main_template == 'embed.tpl'}
     {$main_template = false}
 {/if}
 

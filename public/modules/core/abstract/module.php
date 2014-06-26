@@ -9,20 +9,20 @@
 /**
 * Module class
 *
-* @property module_controller           $controller
-* @property module_router               $router
-* @property module_blocks               $blocks
+* @property module_controller           controller
+* @property module_router               router
+* @property module_blocks               blocks
 *
-* @property tf_auth                     $auth
-* @property tf_request                  $request
-* @property tf_renderer                 $renderer
-* @property tf_logger                   $logger
-* @property Smarty3                     $tpl_parser
-* @property dbal                        $db
-* @property tf_editor                   $editor
-* @property Debug_HackerConsole_Main    $console
-*
-* @property core                        $core
+* @property tf_auth                     auth
+* @property tf_request                  request
+* @property tf_renderer                 renderer
+* @property tf_logger                   logger
+* @property Smarty3                     tpl_parser
+* @property dbal                        db
+* @property tf_editor                   editor
+* @property Debug_HackerConsole_Main    console
+* @property tf_manager                  manager
+* @property core                        core
 */
 abstract class core_module extends module_orm {
 
@@ -253,8 +253,8 @@ abstract class core_module extends module_orm {
     * Get editor base url 
     */
     public function get_editor_base_url() {
-        return ('?' . ident_vars::IDENT_MODULE . '=' . $this->name
-              . '&' . ident_vars::IDENT_CONTROLLER . '=' . core::get_params(ident_vars::IDENT_CONTROLLER));
+        return ('?' . request_params::IDENT_MODULE . '=' . $this->name
+              . '&' . request_params::IDENT_CONTROLLER . '=' . core::get_params(request_params::IDENT_CONTROLLER));
     }
     
     /**
@@ -661,7 +661,7 @@ abstract class core_module extends module_orm {
     
     /** 
     * Get managed model item
-    * @return abs_collection_item
+    * @return model_item
     */    
     public function get_managed_item($model, $id) {
 

@@ -289,6 +289,13 @@ class functions {
         return false;
     }
 
+    /**
+     * Is object a closure
+     */
+    static function is_closure($method) {
+        return $method instanceof \Closure;
+    }
+
     
 }
 

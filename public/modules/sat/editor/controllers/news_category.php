@@ -26,5 +26,4 @@ class sat_news_category_controller extends SatController {
     //     dd($this->collection->get_last_query(),__METHOD__);
     }
 
-
 }

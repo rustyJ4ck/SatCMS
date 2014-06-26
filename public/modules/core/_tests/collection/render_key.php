@@ -3,7 +3,7 @@
 require "../loader.php";
 
 
-/** @var abs_collection */
+/** @var model_collection */
 $collection = core::get_instance()->model('test_images');
 
 $collection->load_from_array(

@@ -11,7 +11,7 @@
 
 namespace SatCMS\Sat\Classes\NewsArticle;
 
-abstract class CategoryCollection extends \abs_collection {
+abstract class CategoryCollection extends \model_collection {
 
 
     /** @abstract string  */

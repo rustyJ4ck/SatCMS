@@ -144,6 +144,8 @@ class sat_node_controller extends SatController {
 
         // render tree
         $tree = $this->context->get_current_site_tree();
+
+        // @fixme current.site?
         $this->renderer->set_data('tree', $tree);
         
 

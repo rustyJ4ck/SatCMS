@@ -11,7 +11,7 @@ $m = memory_get_usage();
 
 test_print("PHP " . PHP_VERSION . " MEM: " .  sprintf('%u', $m));
 
-/** @var abs_collection */
+/** @var model_collection */
 $cdata = $core->model('test_images');
 
 test_print("CREATE COLLECTION MEM " .  sprintf('%u', memory_get_usage() - $m));

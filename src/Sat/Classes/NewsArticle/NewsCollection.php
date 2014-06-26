@@ -78,7 +78,7 @@ class NewsCollection extends MasterCollection {
     }
 
     /**
-     * @return \abs_collection
+     * @return \model_collection
      */
     function get_category_model() {
         return core::module('sat')->model($this->category_model);

@@ -140,7 +140,7 @@
     * 
     * Do not ovverride identvars with (pid,.. etc) URL, respect post data
     */
-    function dispatch($path, ident_vars $params) {
+    function dispatch($path, request_params $params) {
 
         if (empty($path)) return;
 

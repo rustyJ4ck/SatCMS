@@ -1,7 +1,7 @@
 {extends 'widgets/model/form.tpl'}
 
 {block 'params'}
-    {$form = "dialog: yes, grid: yes, controller: extrafsFieldsFormController"}
+    {$form = "dialog: yes, controller: extrafsFieldsFormController"}
     {$dialog = true}
     {$model = $return.form.data}
 {/block}

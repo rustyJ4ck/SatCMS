@@ -9,5 +9,5 @@
  * @version    $Id: boolean.php,v 1.1 2008/05/13 11:01:31 j4ck Exp $
  */
  
- class control_boolean extends abs_control {
+ class control_boolean extends model_control {
  }
