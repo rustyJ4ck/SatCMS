@@ -53,7 +53,7 @@ define(['app', 'angular', 'bootbox'],
             for (var k in filters) {
                 var v = filters[k];
                 // console.log(k, v, '[name=' + k +'].filter',  root.find('[name=' + k +'].filter').size());
-                root.find('[name="filter[' + k +']"].filter').each(function(){
+                root.find('[name="' + k +'"].filter').each(function(){
                     var $this = $(this);
 
                     if ($this.data('index-name')) {

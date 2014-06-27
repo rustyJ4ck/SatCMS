@@ -106,6 +106,7 @@ class Fields extends \model_behavior {
      * @param mixed $data
      */
     function modify_after($data) {
+
         if ($this->has_extra && ($flds = $this->get()) && isset($data['_efs'])) {
             $flds->sat_update_fields($data['_efs']);
             core::dprint('node::modify_after', core::E_DEBUG5);

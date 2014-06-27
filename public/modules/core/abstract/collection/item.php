@@ -863,6 +863,8 @@ class model_item extends abs_data implements model_item_interface {
         $this->create_before($ref_data);
         $this->modify_before($ref_data);
 
+        $_data = $data;
+
         // create new!
         $this->format_fields($data, 'modify');
 
@@ -887,9 +889,11 @@ class model_item extends abs_data implements model_item_interface {
         $this->filter_data($data);
         $this->set_data($data);
 
-        $this->create_after($data);
+        // update ID
+        $_data['id'] = $this->get_id();
 
-        $this->modify_after($data);
+        $this->create_after($_data);
+        $this->modify_after($_data);
 
         return $this->get_id();
     }

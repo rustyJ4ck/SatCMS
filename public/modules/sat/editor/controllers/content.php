@@ -56,6 +56,7 @@ class sat_content_controller extends SatController {
         if ($type) {
             $this->collection->set_type($type);
             $this->_type = $this->context->get_content_types()->get_item_by_id($type);
+            $this->base_url .= ('&type_id=' . $type);
 
         } else {
             $this->params->op = 'index2';
