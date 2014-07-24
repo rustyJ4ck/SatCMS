@@ -37,9 +37,16 @@ class image_extrafs_field_item extends extrafs_field_item {
     * Create html control
     * @abstract create_control 
     */
-    function create_html_control() {             
-    
-        $fvalue = $this->get_fvalue(); //;$this->get_data('fvalue');
+    function create_html_control() {
+
+        $field = $this->get_value();
+        $value = $this->get_fvalue();  //;$this->get_data('fvalue');
+
+        return Html::File(array(
+            'title' => $field['title'],
+            'name'  => sprintf('_efs[%s][%s]', ($this->get_group() ? $this->_group->name : '@fixme@'), $this->name),
+            'value' => $value
+        ));
         
         $uid = uniqid('_efs');
     

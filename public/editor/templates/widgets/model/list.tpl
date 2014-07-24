@@ -70,12 +70,17 @@
                 <td class="fit">ID</td>
 
                 {foreach $model.fields as $fid => $field}
-                {if !$field.hidden && !in_array($fid, $ignoredFields)}{assign var="fields_count" value=$fields_count + 1}
-                    <td class="{if $field.class}{$field.class}{/if}{if $field.type!='text' AND $field.type!='virtual'} fit{/if}"
-                        {if !empty($field.attrs)}{$field.attrs}{/if}
-                        {if !empty($field.description)}data-popover="true" data-placement="top" data-content="{$field.description}" data-container="table" {/if}
-                    >{if !empty($field.title)}{$field.title}{else}{$fid|i18n:$i18n}{/if}</td>
-                {/if}
+
+                    {if !$field.hidden && !in_array($fid, $ignoredFields)}{$fields_count = $fields_count + 1}
+                        <td data-name="{$fid}"
+                            class="{if $field.class}{$field.class}{/if}{if $field.type!='text' AND $field.type!='virtual'} fit{/if}"
+                            {if !empty($field.attrs)}{$field.attrs}{/if}
+                            {if $field.sortable}data-sortable="{$field.sortable}" data-sortable-original="{$field.sortable}"{/if}
+                            {if !empty($field.description)}data-popover="true" data-placement="top" data-content="{$field.description}" data-container="table" {/if}
+                        >{if !empty($field.title)}{$field.title}{else}{$fid|i18n:$i18n}{/if}
+                        </td>
+                    {/if}
+
                 {/foreach}
 
                 {if $params.sortable}

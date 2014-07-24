@@ -48,7 +48,7 @@ class BaseAttachs extends \model_behavior {
         $sid = @$data['attach_sid'];
 
         // otherwise use PID
-        $pid = $data['id'];
+        $pid = $this->model->get_id();
 
         // core::selfie()->ajax_answer(array(__METHOD__,$data));
 

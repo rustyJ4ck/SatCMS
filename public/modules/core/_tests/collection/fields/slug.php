@@ -16,7 +16,7 @@ $collection->create(array(
 
 test_assert('онотоле' == $collection->get_last_item()->slug, 'slug');
 
-$collection->update_vfs(function(&$fields){
+$collection->update_fields(function(&$fields){
     $fields['slug']['make_seo']['translit'] = true;
 });
 

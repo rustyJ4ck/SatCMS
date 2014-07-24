@@ -61,19 +61,23 @@
 
     <div class="grid-blocks">
 
+    {block 'list-content'}
 
-    {foreach $model.data as $i => $item}
+        {foreach $model.data as $i => $item}
 
-        <div class="col-xs-4" style="height:100px;">
-            <div class="padded label-info">
-            <a class="pull-left" href="#">
-                {$item.title}
-            </a>
+            <div class="col-xs-4" style="height:100px;">
+                <div class="padded label-info">
+                <a class="pull-left" href="#">
+                    {$item.title}
+                </a>
+                </div>
             </div>
-        </div>
 
 
-    {/foreach}
+        {/foreach}
+
+
+    {/block}
 
     </div>
 

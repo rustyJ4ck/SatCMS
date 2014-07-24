@@ -39,8 +39,121 @@ define(['app', 'angular', 'bootbox'],
             */
         }
 
+
+        /** sortable */
+
+        function restoreSortables() {
+            return $localStorage['grid-sortables-' + id];
+        }
+
+        function getSortables() {
+
+            var data = {};
+
+            root.find('.table-normal thead td[data-sortable]').each(function(k, v){
+                var $v = $(v);
+                var value = $v.data('sortable');
+                if (value == 'ASC' || value == 'DESC') {
+                    data[$v.data('name')] = value;
+                }
+            });
+
+            return data;
+        }
+
+        function saveSortables(data) {
+
+            var sortables;
+
+            if (typeof data !== 'undefined') {
+                sortables = data;
+
+            } else {
+                sortables = getSortables();
+            }
+
+            // for client
+
+            $localStorage['grid-sortables-' + id] = sortables;
+
+            // cookie for server-side filters
+
+            var prevValue = $.cookie('grid-sortables');
+
+            var cookieSortables = {};
+
+            if (!prevValue || typeof cookieSortables === 'undefined' /*|| !$(cookieFilters).size()*/) {
+
+            } else {
+
+                try {
+                    cookieSortables = JSON.parse(prevValue);
+                } catch (e) {
+
+                }
+            }
+
+            if (!sortables || $(sortables).size() == 0) {
+                delete cookieSortables[id];
+            }
+            else {
+                cookieSortables[id] = sortables;
+            }
+
+            var newValue = JSON.stringify(cookieSortables);
+
+            if (newValue !== prevValue) {
+                $.cookie('grid-sortables', newValue, { expires: 365, path: app.urls.base });
+            }
+
+        }
+
+        function applySortables() {
+
+            var sortables = restoreSortables();
+
+            if (sortables && $(sortables).size()) {
+                for (var key in sortables) {
+                    var elm = root.find('.table-normal thead td[data-sortable][data-name=' + key + ']');
+                    elm.data('sortable', sortables[key]);
+                    elm.attr('data-sortable', sortables[key]);
+                }
+            }
+        }
+
+        /**
+         * Sortable
+         */
+        function bindSortable($scope)  {
+
+            root.find('.table-normal thead td[data-sortable]').on('click', function() {
+
+                var $this = $(this);
+
+                var value;
+                var currentValue = $this.data('sortable');
+
+                if (currentValue === 'DESC') value = 1;
+                else if (currentValue === 'ASC') value = 'DESC';
+                else value = 'ASC';
+
+                $this.data('sortable', value);
+                $this.attr('data-sortable', value);
+
+                app.message('Reorder grid');
+
+                saveSortables();
+
+                $scope.grid.reload();
+            })
+
+        }
+
+
+        /** filters */
+
         function restoreFilters() {
-            return $localStorage['filters-' + id];
+            return $localStorage['grid-filters-' + id];
         }
 
         function applyFilters() {
@@ -78,11 +191,11 @@ define(['app', 'angular', 'bootbox'],
 
             // for client
 
-            $localStorage['filters-' + id] = filters;
+            $localStorage['grid-filters-' + id] = filters;
 
             // cookie for server-side filters
 
-            var prevValue = $.cookie('filters');
+            var prevValue = $.cookie('grid-filters');
 
             var cookieFilters = {};
 
@@ -107,7 +220,7 @@ define(['app', 'angular', 'bootbox'],
             var newValue = JSON.stringify(cookieFilters);
 
             if (newValue !== prevValue) {
-                $.cookie('filters', newValue, { expires: 365, path: app.urls.base });
+                $.cookie('grid-filters', newValue, { expires: 365, path: app.urls.base });
             }
 
             // console.log('cookieFilters' , filters, cookieFilters);
@@ -224,6 +337,10 @@ define(['app', 'angular', 'bootbox'],
                 // restore filters
                 applyFilters();
 
+                applySortables();
+                bindSortable($scope);
+
+
 // console.log('events',$._data($('#grid-sat-sat_node_image').get(0), 'events'));
 
             },
@@ -249,9 +366,8 @@ define(['app', 'angular', 'bootbox'],
 
                     id: id,
 
-
                     /**
-                     *
+                     * Reset filters
                      */
                     reset : function() {
 
@@ -272,26 +388,29 @@ define(['app', 'angular', 'bootbox'],
 
                         saveFilters({});
 
+                        saveSortables({});
+
+                        // @todo reset sortables
+
                         this.fetch();
 
                     },
 
                     /**
-                     *
+                     * Reload
                      */
                     reload : function() {
 
                         app.message('Loading data...');
 
                         prepareFilters($scope);
-
                         saveFilters($scope.filtersPersist);
 
                         this.fetch();
                     },
 
                     /**
-                     *
+                     * Fetch remote
                      */
                     fetch : function() {
 
@@ -301,14 +420,9 @@ define(['app', 'angular', 'bootbox'],
 
                         console.log('grid-fetch [%s] scope: %s url %s', id, $scope.$id, url);
 
-
-
-
-                        //
                         // update form
-                        //
 
-                        $.post(url, {filter: $scope.filters})
+                        $.post(url, {filter: $scope.filters, order: getSortables()})
 
                             .done(function(data, textStatus, jqXHR) {
 

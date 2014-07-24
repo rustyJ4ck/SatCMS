@@ -23,7 +23,11 @@
 * @property Debug_HackerConsole_Main    console
 * @property tf_manager                  manager
 * @property core                        core
+*
+* @property SatCMS\Core\Translation\I18n   i18n
 */
+
+
 abstract class core_module extends module_orm {
 
     /**

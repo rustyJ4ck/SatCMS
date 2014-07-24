@@ -187,13 +187,16 @@ define(['jquery', 'app', 'jqueryValidate', 'tinyMCE'],
 
             if (data.status) {
 
-                if (data.message && data.message.length) app.message(data.message);
+                if (!!data.message) {
+                    app.message(data.message);
+                }
 
                 if (form.data('successDismiss')) {
                     $('#formModal').modal('hide');
                 }
 
-                if (data.url !== undefined && data.url.length) {
+                // @deprecated
+                if (!!data.url) {
                     console.log('submitable data-url: ' + data.url);
                     //@todo if not dialog, digest already in process
                     app.go(data.url, true);
@@ -203,7 +206,9 @@ define(['jquery', 'app', 'jqueryValidate', 'tinyMCE'],
                 console.log('-form-submit.success', data);
 
                 // response.redirect
-                if (data.redirect !== undefined && data.redirect) {
+                if (!!data.redirect) {
+                    // @fixme self redirect doesn't work here
+                    data.redirect += ((data.redirect.indexOf('?') === -1) ? 'rand/' : '&rand=') + Math.ceil(10000 * Math.random()) + '/';
                     app.go(data.redirect, true);
                     app.message('data.redirect: ' + data.redirect);
                     return;
@@ -235,7 +240,9 @@ define(['jquery', 'app', 'jqueryValidate', 'tinyMCE'],
 
             }
             else {
-                if (data.message && data.message.length) app.message(data.message, !data.result);
+                if (!!data.message) {
+                    app.message(data.message, !data.result);
+                }
 
                 setTimeout(function(){
                     form.find('[data-disable-on-submit]').prop('disabled', false);
@@ -244,8 +251,6 @@ define(['jquery', 'app', 'jqueryValidate', 'tinyMCE'],
                 console.log('-form-submit.error', data);
 
             }
-
-            return;
 
         }
 

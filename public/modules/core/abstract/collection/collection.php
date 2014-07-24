@@ -1,6 +1,6 @@
 <?php
 /**
- * Items Collection
+ * Collection item
  *
  * Load modificators (construct):
  * ------------------------------
@@ -116,6 +116,9 @@ class collection_formats extends aregistry {
 class model_collection implements model_collection_interface, IteratorAggregate, ArrayAccess, Countable  {
 
     const MODEL_FILE = 'model.php';
+
+    const ORDER_ASC  = 'ASC';
+    const ORDER_DESC = 'DESC';
 
     /** @var array cached vf from file [domain] */
     private static $_model_cache = array();
@@ -317,7 +320,6 @@ class model_collection implements model_collection_interface, IteratorAggregate,
             if (isset($ext_config['behaviors']) && empty($this->behaviors)) {
                 $this->behaviors = $ext_config['behaviors'];
             }
-
         }
 
         if (empty($this->fields)) {
@@ -412,8 +414,12 @@ class model_collection implements model_collection_interface, IteratorAggregate,
         $this->_order_sql = $this->get_order();
 
         // save original order
-        if (empty($this->_order_sql)) $this->_order_sql = $this->get_order();
-        else $this->set_order($this->_order_sql);
+        if (empty($this->_order_sql)) {
+            $this->_order_sql = $this->get_order();
+        }
+        else {
+            $this->set_order($this->_order_sql);
+        }
 
         if (class_exists('core', 0)) {
             $this->_ctype_id = ($this->ctype = $this->core->get_ctype($this->_get_ctype(), 1)) ? $this->ctype->get_id() : false;
@@ -570,7 +576,7 @@ class model_collection implements model_collection_interface, IteratorAggregate,
 
         if (!isset($formatID)) {
             if ($this->original_fields) {
-                $this->set_vfs($this->original_fields);
+                $this->set_fields($this->original_fields);
             }
             return $this;
         }
@@ -581,7 +587,7 @@ class model_collection implements model_collection_interface, IteratorAggregate,
             $new_vfs = functions::array_merge_recursive_distinct($current_format, $format);
 
             // mix
-            $this->set_vfs($new_vfs);
+            $this->set_fields($new_vfs);
 
         }
 
@@ -651,16 +657,9 @@ class model_collection implements model_collection_interface, IteratorAggregate,
     }
 
     /**
-     * Get vfs
+     * Set fields
      */
-    public function get_vfs() {
-        return $this->fields;
-    }
-
-    /**
-     * Set vf
-     */
-    public function set_vfs($vfs) {
+    public function set_fields($vfs) {
         $this->fields = $vfs;
         $this->prepare_fields();
     }
@@ -670,7 +669,7 @@ class model_collection implements model_collection_interface, IteratorAggregate,
      * @param callable $callback
      * @param bool $prepare
      */
-    function update_vfs(Closure $callback, $prepare = false) {
+    function update_fields(Closure $callback, $prepare = false) {
 
         $callback($this->fields);
 
@@ -776,8 +775,6 @@ class model_collection implements model_collection_interface, IteratorAggregate,
     }
 
     /**
-     * @deprecated use fields()
-     * @see fields()
      * @return mixed
      */
     function get_fields() {
@@ -892,12 +889,25 @@ class model_collection implements model_collection_interface, IteratorAggregate,
      * @return $this
      */
     function set_order( /*$order*/) {
+
         $count = func_num_args();
-        if (empty($count)) return false;
+
+        // reset order
+        if (empty($count)) {
+            $this->config->set('order_sql', false);
+            return false;
+        }
+
         $args  = func_get_args();
         $order = array_shift($args);
-        if ($count > 1)
+
+        // restore initial
+        if ($order === true) {
+            $order = $this->_order_sql;
+        }
+        elseif ($count > 1) {
             $order = vsprintf($order, $args);
+        }
 
         $this->config->set('order_sql', $order);
 
@@ -910,7 +920,7 @@ class model_collection implements model_collection_interface, IteratorAggregate,
      * @param bool $desc
      * @return $this
      */
-    function order($field, $desc = false) {
+    function order($field, $desc = self::ORDER_DESC) {
 
         $order = $this->config->get('order_sql');
 
@@ -919,7 +929,7 @@ class model_collection implements model_collection_interface, IteratorAggregate,
         }
 
         $order .= $field;
-        $order .= (' ' . $desc ? 'DESC' : 'ASC');
+        $order .= (' ' . (($desc === self::ORDER_DESC) ? 'DESC' : 'ASC'));
 
         $this->config->set('order_sql', $order);
 
@@ -1350,7 +1360,7 @@ class model_collection implements model_collection_interface, IteratorAggregate,
     function alloc($data = array()) {
 
         // generate empty entity
-        foreach ($this->get_vfs() as $k => $v) {
+        foreach ($this->get_fields() as $k => $v) {
             if (!isset($data[$k])) $data[$k] = '';
         }
 

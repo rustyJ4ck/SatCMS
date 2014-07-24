@@ -47,6 +47,7 @@ abstract class editor_controller {
 
     /** @var  array grid params */
     protected $grid_filters;
+    protected $grid_sortables;
 
     protected $is_submitted = false;
 
@@ -170,13 +171,18 @@ abstract class editor_controller {
      * Prepare filters from cookie|request
      */
     protected function get_grid_filters() {
-        $filters = @json_decode(substr(stripcslashes($this->request->cookie('filters')), 1, -1), true);
+
+        $filters = @json_decode(substr(stripcslashes($this->request->cookie('grid-filters')), 1, -1), true);
         $this->grid_filters = $filters && @$filters[$this->grid_name] ? $filters[$this->grid_name] : array();
 
         // populate from post
         if (!empty($this->postdata['filter'])) {
             $this->grid_filters = functions::array_merge_recursive_distinct($this->grid_filters, $this->postdata['filter']);
         }
+
+        $sortables =  @json_decode(substr(stripcslashes($this->request->cookie('grid-sortables')), 1, -1), true);
+        $this->grid_sortables = $sortables && @$sortables[$this->grid_name] ? $sortables[$this->grid_name] : array();
+
     }
 
     /**
@@ -537,6 +543,18 @@ abstract class editor_controller {
                 // if ($this->params->offsetExists($key) && !$this->params->is_set($key)) {
                 //    $filter->set_f $this->params->set($key, $value);
                 // }
+            }
+
+        }
+
+        if ($this->grid_sortables) {
+
+            $this->collection->set_order();
+
+            foreach ($this->grid_sortables as $f => $order) {
+                if ($this->collection->field($f) && $order == 'ASC' || $order == 'DESC') {
+                    $this->collection->order($f, $order);
+                }
             }
 
         }

@@ -70,6 +70,8 @@ group           = Группа
 undefined       = Не выбрано
 unlimited       = Все
 
+b_default       = По-умолчанию
+
 
 ; confirms
 ; --------

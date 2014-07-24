@@ -29,8 +29,14 @@
  */
 function smarty_modifier_is_url($url, $origurl = null)
 {
-    if (empty($url)) return false;
-    if (!isset($origurl)) $origurl = urldecode($_SERVER['REQUEST_URI']);
+    if (empty($url)) {
+        return false;
+    }
+
+    if (!isset($origurl)) {
+        $origurl = urldecode($_SERVER['REQUEST_URI']);
+    }
+
     return (strings::strpos($origurl, $url) === 0) ? true : false;
 }
 

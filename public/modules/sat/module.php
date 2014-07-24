@@ -60,7 +60,11 @@ class tf_sat extends core_module {
 
         // fetch without path
         if (!$site) {
-            $site  = $this->get_site_by_domain($domain);
+            $site = $this->get_site_by_domain($domain);
+        }
+
+        if (!$site) {
+            $site = $this->get_default_site();
         }
 
         // default
@@ -314,7 +318,19 @@ TPL
         
         return false;
     }
-    
+
+    /**
+     * Get default site
+     * @return model_item
+     */
+    function get_default_site() {
+        return $this->get_site_handle()
+            ->where("b_default", true)
+            ->set_order(false)
+            ->load_first()
+            ;
+    }
+
     /**
     * @param string domain
     * @return sat_site_item

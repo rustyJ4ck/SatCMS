@@ -39,6 +39,8 @@ return array(
         , 'mk' => array('type' => 'text', 'size' => 255)
 
         , 'b_static'    => array('type' => 'boolean', 'default' => false)
+        , 'b_default'   => array('type' => 'boolean', 'default' => false, 'editable' => true)
+
         , 'active'      => array('type' => 'boolean', 'default' => true, 'json' => false, 'editable' => true)
 
         , 'image'     => array(

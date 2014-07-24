@@ -3,7 +3,6 @@
 {block 'params' append}
 
     {$params    = "new: yes, reset: yes"}
-    {*$model     = $tpl_sat_news*}
     {$model     = $return.list.collection}
     {$btnNew    = "dialog: no"}
     {$btnEdit   = "dialog: no"}
@@ -15,7 +14,11 @@
 
 
     <li class="btn-group-sm">
-        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">Content type: <b>{$controller.type.title}</b>&nbsp; <span class="caret"></span></button>
+
+        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+            Content type: <b>{$controller.type.title}</b>&nbsp; <span class="caret"></span>
+        </button>
+
         <ul class="dropdown-menu pull-right">
             {foreach $controller.types as $type}
                 <li><a href="{$config.editor_url}{$req.m}/{$req.c}/type_id/{$type.id}/">{$type.title}</a></li>

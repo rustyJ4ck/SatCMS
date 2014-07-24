@@ -102,7 +102,11 @@ class NewsItem extends MasterAttachableItem {
      */
     function modify_after($data) {
 
-        $this->sync_count();
+        // newb - sync
+
+        if (!$data['id']) {
+            $this->sync_count();
+        }
 
         if (@$data['twit_me']) {
             $this->make_urls();

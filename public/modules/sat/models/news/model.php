@@ -8,7 +8,7 @@ return
     , 'pid'               => array('type' => 'numeric')
     , 'site_id'           => array('type' => 'numeric')
 
-    , 'title'             => array('type' => 'text',            'size' => 255)
+    , 'title'             => array('type' => 'text',            'size' => 255, 'lang' => true)
 
     , 'slug'              => array('type' => 'text',
                                    'size' => 255,
@@ -84,7 +84,12 @@ return
                              ),
 
             'created_at'       => array(
-                'filter' => array('params' => array('BETWEEN', 'AND'))
+                'filter'       => array('params' => array('BETWEEN', 'AND')),
+                'sortable'     => true
+            ),
+
+            'updated_at'    => array(
+                'sortable'     => true
             ),
 
             'active'      => array('editable' => true, 'title' => 'A', 'description' => 'Active'),

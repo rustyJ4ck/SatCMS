@@ -567,9 +567,7 @@ define([
 
                 console.log('app-go: ' + url, apply);
 
-                var location = angularInjector.get('$location');
-
-                location.path(url);
+                this.ngLocation().path(url);
 
                 if (apply) {
                     angularInjector.get('$rootScope').$apply();

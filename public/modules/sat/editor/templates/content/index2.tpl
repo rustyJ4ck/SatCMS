@@ -10,7 +10,7 @@
 
             </div>
 
-            <div class="btn-group">
+            <div class="btn-group btn-group-lg">
 
                 {foreach $controller.types as $type}
 

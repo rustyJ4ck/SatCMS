@@ -139,7 +139,20 @@
                        {if $model.active}checked="checked"{/if}
                         />
             </div>
-        </div>        
+        </div>
+
+        <div class="form-block">
+            <label>Основной</label>
+            <div
+                    data-popover=""
+                    data-content="Сайт по-умолчанию для непривязанных доменов"
+
+                    >
+                <input type="checkbox" name="b_default" value="1"
+                       {if $model.b_default}checked="checked"{/if}
+                        />
+            </div>
+        </div>
 
     </div>
 

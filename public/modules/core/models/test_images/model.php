@@ -13,12 +13,17 @@ return
                         'make_seo' => array('key' => 'title', 'strict' => 1)
                   )
 
-                , 'text'  => array('type' => 'text', 'no_format' => true, 'hidden' => false)
+                , 'text'  => array('type' => 'text', 'no_format' => true, 'hidden' => false, 'lang' => true)
                 , 'image' => array('type' => 'image', 'storage' => 'test', 'thumbnail' => 100) // 'max_width' => 100%*
 
-                , 'create_date' => array('type' => 'unixtime', 'default' => 'now', 'autosave' => true)
-                , 'update_date' => array('type' => 'unixtime')
+                , 'created_at'       => array('type' => 'unixtime', 'default' => 'now', 'autosave' => true)
+                , 'updated_at'       => array('type' => 'unixtime', 'default' => 'now')
             ),
+
+
+        'behaviors' => array(
+            'Core.Multilang'
+        ),
 
         'formats' => array(
 

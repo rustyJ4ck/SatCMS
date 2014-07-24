@@ -26,6 +26,7 @@
          data-url="?m=sat&c=file&pid={$model.id}&sid={$controller.attach_sid}&ctype_id={$entity.ctype.id}"
          data-compilable="true"
          data-isolated="true"
+         data-captions="false"
          >
     </div>
 

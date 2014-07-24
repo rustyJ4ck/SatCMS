@@ -81,6 +81,9 @@ class tpl_loader {
         
         $smarty->addPluginsDir(loader::get_public() . loader::DIR_EXT . 'smarty3/plugins');
 
+        // custom plugs
+        $smarty->addPluginsDir(loader::get_public() . loader::DIR_EXT . 'smarty-plugins');
+
         // add asset compiler plugin
         $smarty->addPluginsDir(loader::get_public(loader::DIR_EXT . 'smarty-sacy'));
  

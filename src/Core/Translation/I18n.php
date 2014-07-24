@@ -12,16 +12,32 @@ use core, loader;
 
 class I18n {
 
-    protected $lang;
-
     /** Языковые переменные */
     private $words = array();
 
     private $loaded = array();
     private $imports = array();
 
+    public  $langs;
+    public  $lang;
+    public  $default;
+
     function __construct() {
-        $this->lang = core::selfie()->cfg('lang');
+        $this->lang  = core::selfie()->cfg('lang');
+        $this->set_langs(core::selfie()->cfg('langs'));
+    }
+
+    function set_langs($langs) {
+        $this->langs = array();
+        if ($langs) {
+            $this->default = $langs['default'];
+            unset($langs['default']);
+            $this->langs = $langs;
+        }
+    }
+
+    function is_multilang() {
+        return count($this->langs > 1);
     }
 
     /**

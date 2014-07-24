@@ -21,6 +21,7 @@ class collection_filter {
 
     const CONNECTOR_AND = 'AND';
     const CONNECTOR_OR  = 'OR';
+
     const FILT_RAW      = true;
 
     public static $operators = array(

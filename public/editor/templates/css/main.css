@@ -87,6 +87,7 @@ img {
 .img-circle {
     border-radius: 50%;
 }
+
 hr {
     -moz-border-bottom-colors: none;
     -moz-border-left-colors: none;
@@ -878,39 +879,34 @@ to prevent collapsing during animation*/
         margin:0;
     }
 
-/**
-* Legacy
-*/
+    .table-normal thead td[data-sortable] {
+        cursor: pointer;
+    }
 
-table.nice_borders {
-    border-collapse: collapse;
-}
+    .table-normal thead td[data-sortable]:after {
+        display: inline-block;
+        font-family: 'Glyphicons Halflings';
+        font-style: normal;
+        font-weight: 400;
+        line-height: 1;
+        position: relative;
+        top: 2px;
+        left:4px;
+        content: "\e150";
+    }
 
-table.nice_borders th, table.nice_borders td {
-    border: 1px solid #E6E6E6;
-    border-width:0px 0px 1px 1px;
-    padding:4px 6px 4px 6px;margin:0;
-    
-}
+    .table-normal thead td[data-sortable=ASC]:after {
+        content: "\e155";
+        color: darkgreen;
+    }
 
-table.nice_borders td.last {
-    text-align:center;
-}
+    .table-normal thead td[data-sortable=DESC]:after {
+        content: "\e156";
+        color: darkred;
+    }
 
-table.nice_borders th {
-    background:#FAFAFA;
-}
 
-table.nice_borders tr td:first-child, 
-table.nice_borders tr th:first-child,
-table.nice_borders td.norborder, 
-table.nice_borders th.norborder {
-    border-left-width:0;
-}
 
-table.nice_borders tr:last-child td {
-    border-bottom-width:0;
-}
 
 /* form controls */
 

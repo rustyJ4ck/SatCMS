@@ -856,7 +856,7 @@ class model_item extends abs_data implements model_item_interface {
      * Create item
      * @return integer|bool newID of false
      */
-    protected function create(array $data) {
+    function create(array $data) {
 
         $ref_data = reference::make($data);
 
@@ -893,6 +893,10 @@ class model_item extends abs_data implements model_item_interface {
         $_data['id'] = $this->get_id();
 
         $this->create_after($_data);
+
+        // modify_after, new item hasn't `id`
+        unset($_data['id']);
+
         $this->modify_after($_data);
 
         return $this->get_id();
@@ -935,7 +939,8 @@ class model_item extends abs_data implements model_item_interface {
     }
 
     /**
-     * Save to database
+     * Save item to database
+     * Does not trigger modify_before|after events
      * @return mixed nextID|bool
      */
     function save() {
@@ -957,7 +962,7 @@ class model_item extends abs_data implements model_item_interface {
          * Update
          */
         if (!empty($this->id) && !$this->is_allocated()) {
-            // modify
+
             $sql = "UPDATE " . ($low_priority ? 'LOW_PRIORITY ' : '') . $this->config->table . " SET";
 
             foreach ($vfs as $k => $v) {
@@ -972,6 +977,7 @@ class model_item extends abs_data implements model_item_interface {
                     $sql .= ',';
                 }
             }
+
             $sql = substr($sql, 0, -1) . " WHERE id = " . $this->id;
 
             $res = $this->db->query($sql);
@@ -980,7 +986,8 @@ class model_item extends abs_data implements model_item_interface {
          * Insert
          */
         else {
-            // check for position
+
+            // new position
             $this->assign_position();
 
             // new
@@ -1004,6 +1011,7 @@ class model_item extends abs_data implements model_item_interface {
                     $sql_part[1][] = $this->format_field_sql($k, $this->data[$k]);
                 }
             }
+
             $sql .= "(" . implode(',', $sql_part[0]) . ") VALUES ";
             $sql .= "(" . implode(',', $sql_part[1]) . ");";
 
