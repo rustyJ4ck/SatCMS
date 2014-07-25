@@ -50,8 +50,7 @@
         "jquery-cookie": "latest",
 
         "vis": "latest",
-	    "github.commits.widget": "*",
-
+        "github.commits.widget": "*",
 
         "headjs": "latest"
     },
