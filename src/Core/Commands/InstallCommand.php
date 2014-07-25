@@ -49,7 +49,7 @@ class InstallCommand extends BaseCommand {
      */
     function migrateDeprecated($input, $output) {
 
-        $root = loader::get_public() . loader::DIR_MODULES . '*/classes';
+        $root = loader::get_public() . loader::DIR_MODULES . '*/models';
         $finder = new Finder();
         $finder->directories()->in($root)->name('*')->depth('== 0');
 
@@ -58,7 +58,7 @@ class InstallCommand extends BaseCommand {
         /** @var \SplFileInfo  $file */
         foreach ($finder as $file) {
 
-            preg_match('@(?P<module>[\w_+]*)[\\\/]classes[\\\/](?P<model>[\w_+]*)$@', $file, $matches);
+            preg_match('@(?P<module>[\w_+]*)[\\\/]models[\\\/](?P<model>[\w_+]*)$@', $file, $matches);
 
                 if ('core' == $matches['module'] || core::modules()->is_registered($matches['module'])) {
 

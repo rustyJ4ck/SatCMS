@@ -12,12 +12,12 @@
 
     "dependencies": {
 
-        "requirejs": "~2.1.9",
-        "requirejs-text": "~2.0.10",
+        "requirejs": "2.x",
+        "requirejs-text": "2.x",
 
         "sugar": "latest",
 
-        "jquery":"~1.9.0",
+        "jquery":"1.x",
 
         "bootstrap": "3.x",
         "bootbox": "latest",
@@ -34,7 +34,7 @@
         "angular-ui-select2": "latest",
         "angular-sanitize": "latest",
         "angular-animate": "latest",
-        "ngstorage": "~0.3.0",
+        "ngstorage": "latest",
 
         "TableDND": "https://github.com/Istergul/jquery-table-multi-dnd.git",
 
@@ -50,17 +50,21 @@
         "jquery-cookie": "latest",
 
         "vis": "latest",
-	"github.commits.widget": "*"
+	    "github.commits.widget": "*",
 
 
         "headjs": "latest"
     },
 
+    "resolutions": {
+        "jquery": "1.x"
+    },
+
     "deprecated":{
-        "jquery-migrate": "~1.2.1",
+        "jquery-migrate": "1.x",
         "pnotify": "latest",
         "jquery.uniform": "latest",
-        "bootstrap-modal": "~2.2.4",
+        "bootstrap-modal": "2.x",
         "TableDnD": "latest",
         "bootstrap-timepicker": "latest",
         "bootstrap-datepicker": "latest"
