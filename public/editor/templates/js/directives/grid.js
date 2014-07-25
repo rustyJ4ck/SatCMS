@@ -140,7 +140,7 @@ define(['app', 'angular', 'bootbox'],
                 $this.data('sortable', value);
                 $this.attr('data-sortable', value);
 
-                app.message('Reorder grid');
+                //app.message('Reorder grid');
 
                 saveSortables();
 

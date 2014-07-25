@@ -104,7 +104,7 @@ class NewsItem extends MasterAttachableItem {
 
         // newb - sync
 
-        if (!$data['id']) {
+        if (!empty($data['id'])) {
             $this->sync_count();
         }
 

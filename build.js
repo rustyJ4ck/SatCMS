@@ -5,7 +5,7 @@
 	text: "../../../vendor/requirejs-text/text", // relative to baseUrl
 
         angular: "../../../vendor/angular/angular",
-        jquery: "../../../vendor/jquery/jquery",
+        jquery: "../../../vendor/jquery/dist/jquery",
         bootstrap: "../../../vendor/bootstrap/dist/js/bootstrap",
 
         angularSelect2: "../../../vendor/angular-ui-select2/src/select2",
@@ -24,7 +24,7 @@
         jqueryTableDND: "../../../vendor/TableDND/jquery.table-multi-dnd",
 
         select2: "../../../vendor/select2/select2",
-        tinyMCE: "../../../vendor/tinymce/js/tinymce/tinymce.jquery",
+        tinyMCE: "../../../vendor/tinymce/tinymce.jquery",
         notify:"../../../vendor/toastr/toastr",
         bootbox: "../../../vendor/bootbox/bootbox",
 

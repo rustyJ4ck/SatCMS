@@ -893,6 +893,7 @@ to prevent collapsing during animation*/
         top: 2px;
         left:4px;
         content: "\e150";
+        padding-right:6px;
     }
 
     .table-normal thead td[data-sortable=ASC]:after {
