@@ -54,7 +54,13 @@ class core_controller extends module_controller {
 
                 foreach ($actions as $subKey => $subMenu) {
 
-                    if (!empty($subMenu['url'])) $subMenu['url'] = $ed->make_url($subMenu['url'], 1);
+                    if (!empty($subMenu['url'])) {
+                        $subMenu['url'] = $ed->make_url($subMenu['url'], 1);
+                    }
+
+                    if (!empty($subMenu['title'])) {
+                        $subMenu['title'] = $this->core->i18n->T(array($key, $subMenu['title']));
+                    }
 
                     $submenuNormalized []=
                         !$subMenu

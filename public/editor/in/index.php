@@ -93,7 +93,7 @@ html,body {
 var _site_url = "/";
 </script>
 
-<script type="text/javascript" src="/vendor/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="/vendor/jquery/dist/jquery.min.js"></script>
 <script type="text/javascript" src="/vendor/jquery-form/jquery.form.js"></script>
 <script type="text/javascript" src="/vendor/toastr/toastr.js"></script>
 

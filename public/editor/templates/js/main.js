@@ -11,7 +11,7 @@ require.config({
 
     paths: {
         angular: '../../../vendor/angular/angular',
-        jquery: "../../../vendor/jquery/jquery",
+        jquery: "../../../vendor/jquery/dist/jquery",
         bootstrap: "../../../vendor/bootstrap/dist/js/bootstrap",
 
         //angularText: loaded ondemand
@@ -39,7 +39,7 @@ require.config({
         jqueryTableDND: "../../../vendor/TableDND/jquery.table-multi-dnd",
 
         select2: "../../../vendor/select2/select2",
-        tinyMCE: "../../../vendor/tinymce/js/tinymce/tinymce.jquery",
+        tinyMCE: "../../../vendor/tinymce/tinymce.jquery",
         notify:"../../../vendor/toastr/toastr",
         bootbox: "../../../vendor/bootbox/bootbox",
 
