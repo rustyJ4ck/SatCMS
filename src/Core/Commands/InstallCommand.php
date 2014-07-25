@@ -43,39 +43,6 @@ class InstallCommand extends BaseCommand {
         $output->writeln($generator->update_table_structure(true));
     }
 
-    /**
-     * @param $input
-     * @param $output
-     */
-    function migrateDeprecated($input, $output) {
-
-        $root = loader::get_public() . loader::DIR_MODULES . '*/models';
-        $finder = new Finder();
-        $finder->directories()->in($root)->name('*')->depth('== 0');
-
-        $generator = \model_collection::get_generator();
-
-        /** @var \SplFileInfo  $file */
-        foreach ($finder as $file) {
-
-            preg_match('@(?P<module>[\w_+]*)[\\\/]models[\\\/](?P<model>[\w_+]*)$@', $file, $matches);
-
-                if ('core' == $matches['module'] || core::modules()->is_registered($matches['module'])) {
-
-                    $model = $matches['module'] . '.' . $matches['model'];
-
-                    $generator->append_object(
-                        $this->core()->model($model), $model
-                    );
-
-                    $output->writeln('...' . $model);
-
-            }
-        }
-
-        $output->writeln($generator->update_table_structure(true));
-    }
-
     function create_admin($input, $output) {
 
         $dialog = $this->getHelperSet()->get('dialog');

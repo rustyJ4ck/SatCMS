@@ -23,6 +23,7 @@
 
      const DIR_EDITOR       = 'editor/';
      const DIR_MODULES      = 'modules/';
+     const DIR_MODELS       = 'models/';
      const DIR_TEMPLATES    = 'templates/';
      const DIR_UPLOADS      = 'uploads/';
      const DIR_EXT          = 'ext/';
