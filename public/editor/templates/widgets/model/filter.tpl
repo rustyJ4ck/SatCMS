@@ -66,16 +66,16 @@ include params="{new:true, title:'title'}" model=$tpl_data
                ng-disabled="isLoading"
                ng-click="{if $inGrid}grid.reload(){else}reload(){/if}"
             >
-                <span class="glyphicon glyphicon-refresh"></span> {if $filter.captions !== 0}Reload{/if}
+                <span class="glyphicon glyphicon-refresh"></span> {if $filter.captions !== 0}{'reload'|i18n}{/if}
             </a>
 
             {if !empty($params.reset)}
                 <a type="button" class="btn btn-default btn-sm"
                    data-popover="true" data-placement="top"
-                   data-content="Reset content filter" data-container=".box"
+                   data-content="{'Reset content filter'|i18n}" data-container=".box"
                    ng-click="grid.reset()"
                 >
-                    <span class="glyphicon glyphicon-retweet"></span>
+                    <span class="glyphicon glyphicon-filter"></span> {if $filter.captions !== 0}{'reset'|i18n}{/if}
                 </a>
             {/if}
 
@@ -100,6 +100,8 @@ include params="{new:true, title:'title'}" model=$tpl_data
 
             <span class="pull-right">
 
+                {if $params.readonly !== 1}
+
                 <a class="btn btn-default btn-sm a-delete-selected"
                    data-href="index.php?m={$req.m}&c={$req.c}&do={$req.do}&op=drop_selected{$actionUrlExtra}"
                    data-source="[name={$gridName}_id]:checked"
@@ -113,6 +115,8 @@ include params="{new:true, title:'title'}" model=$tpl_data
                    data-href="?m={$req.m}&c={$req.c}&op=drop_all{$actionUrlExtra}"
                         ><span class="glyphicon glyphicon-trash"></span>
                 </a>
+
+                {/if}
 
             </span>
 

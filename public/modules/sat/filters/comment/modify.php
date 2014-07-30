@@ -44,11 +44,13 @@ class sat_comment_modify_route_filter extends route_filter {
             throw new controller_exception('No item assigned');
         }
 
-        if (!$post->has_behavior('sat.commentable')) {
+        if (!$post->has_behavior('Sat.Commentable')) {
             throw new controller_exception('Not commentable');
         }
 
-        $comments = $post->behavior('sat.commentable')->get_attach_model(); //get_comments();
+        $comments = $post->behavior('Sat.Commentable')->get_attach_model(); //get_comments();
+
+        $i18n = core::module('sat')->i18n;
 
         $request  = core::lib('request');
         $renderer = core::lib('renderer');
@@ -75,7 +77,7 @@ class sat_comment_modify_route_filter extends route_filter {
                 $renderer->set_ajax_answer(array(
                         'status'  => false
                       , 'id'      => 0
-                      , 'message' => vsprintf(i18n::T('sat\\comment_interval_restriction'), ($time + $limit - time()))
+                      , 'message' => vsprintf($i18n->T('comment_interval_restriction'), ($time + $limit - time()))
                 ))
                 ->ajax_flush();
                 ;
@@ -115,7 +117,7 @@ class sat_comment_modify_route_filter extends route_filter {
             ->set_ajax_answer(array(
                 'status'  => true
               , 'id'      => $id
-          ))->set_ajax_message(i18n::T('sat\\comment_posted'));
+          ))->set_ajax_message($i18n->T('comment_posted'));
         //->set_main_template('content/comment/view');  
         
         $renderer->ajax_flush('shared/comments/comment');

@@ -22,6 +22,9 @@ class core_dashboard_controller extends editor_controller {
 
         $this->set_layout('embed');
         $this->set_template('partials/index');
+
+        core::event('editor_dashboard', $this);
+
         //dd(__METHOD__);
     }
 

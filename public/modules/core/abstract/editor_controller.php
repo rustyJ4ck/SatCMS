@@ -464,12 +464,21 @@ abstract class editor_controller {
 
         core::dprint("run_action $method ");
 
+        $response = null;
+
         if (method_exists($this, $method)) {
-            call_user_func(array($this, $method));
+            $response = call_user_func(array($this, $method));
         }
 
         if (is_callable(array($this, 'action_after')))
             $this->action_after($op);
+
+        if ($response instanceof Symfony\Component\HttpFoundation\Response) {
+            $response->send();
+            // thats bad!
+            $this->core->halt();
+            return;
+        }
 
         // delayed ajax answer
         if ($this->_ajax_answer_data) {

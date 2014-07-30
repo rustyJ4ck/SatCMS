@@ -27,7 +27,6 @@ define([
     $.cookie.json = true;
 
     // fix HTML5 locations ie9
-
     var buggyAndroid = parseInt((/android (\d+)/.exec(window.navigator.userAgent.toLowerCase()) || [])[1], 10) < 4;
 
     if (!history.pushState || buggyAndroid) {
@@ -37,6 +36,8 @@ define([
             window.location.replace('/#!' + window.location.pathname); //No hash, take path
         }
     }
+
+
 
     /**
      * tfApp

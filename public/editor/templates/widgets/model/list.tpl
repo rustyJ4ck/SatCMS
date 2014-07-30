@@ -67,7 +67,9 @@
             <thead>
             <tr class="nodrag">
 
+                {if $params.ids !== 0}
                 <td class="fit">ID</td>
+                {/if}
 
                 {foreach $model.fields as $fid => $field}
 
@@ -77,7 +79,7 @@
                             {if !empty($field.attrs)}{$field.attrs}{/if}
                             {if $field.sortable}data-sortable="{$field.sortable}" data-sortable-original="{$field.sortable}"{/if}
                             {if !empty($field.description)}data-popover="true" data-placement="top" data-content="{$field.description}" data-container="table" {/if}
-                        >{if !empty($field.title)}{$field.title}{else}{$fid|i18n:$i18n}{/if}
+                        >{if !empty($field.title)}{$field.title|i18n}{else}{$fid|i18n:$i18n}{/if}
                         </td>
                     {/if}
 
@@ -87,7 +89,9 @@
                     <td class="fit"><span class="glyphicon glyphicon-sort"></span></td>
                 {/if}
 
+                {if $params.actions !== 0}
                 <td class="fit">{"ops"|i18n}</td>
+                {/if}
 {*
                 <td>ID</td>
                 <td>{"name"|i18n}</td>
@@ -110,9 +114,11 @@
                     data-position="{$item.position}"
                     {if $item.b_is_global}class="label-info"{/if}   >
 
+                    {if $params.ids !== 0}
                     <td data-popover="true" data-content="ID: {$item.id}" data-container="tbody" data-placement="left">
                         <input type="checkbox" value="{$item.id}" name="{$gridName}_id">
                     </td>
+                    {/if}
 
                     {foreach $model.fields as $key => $field}
                         {if !$field.hidden AND $key != 'id' && !in_array($key, $ignoredFields)}
@@ -200,20 +206,25 @@
                         </td>
                     {/if}
 
+                    {if $params.actions !== 0}
                     <td class="btn-group-xs">
 
-                        {if $params.edit !== 0}
-                        <a type="button" class="btn btn-default btn-xs glyphicon glyphicon-pencil"
-                           data-title="{$btnEdit.dialogTitle|default:"Правка элемента"}"
-                           href="index.php?m={$req.m}&c={$req.c}&do={$req.do}&op=edit&id={$item.id}&embed=yes{$actionUrlExtra}{$page}"
-                           {if $btnEdit.dialog}dialog="{$btnEdit.dialog}"{/if}
-                                >
-                        </a>
-                        {/if}
+                        {if $params.readonly !== 1}
 
-                        <a type="button" class="btn btn-default btn-xs a-delete glyphicon glyphicon-trash text-danger"
-                           data-href="index.php?m={$req.m}&c={$req.c}&do={$req.do}&op=drop&id={$item.id}{$actionUrlExtra}">
-                        </a>
+                            {if $params.edit !== 0}
+                            <a type="button" class="btn btn-default btn-xs glyphicon glyphicon-pencil"
+                               data-title="{$btnEdit.dialogTitle|default:"Правка элемента"}"
+                               href="index.php?m={$req.m}&c={$req.c}&do={$req.do}&op=edit&id={$item.id}&embed=yes{$actionUrlExtra}{$page}"
+                               {if $btnEdit.dialog}dialog="{$btnEdit.dialog}"{/if}
+                                    >
+                            </a>
+                            {/if}
+
+                            <a type="button" class="btn btn-default btn-xs a-delete glyphicon glyphicon-trash text-danger"
+                               data-href="index.php?m={$req.m}&c={$req.c}&do={$req.do}&op=drop&id={$item.id}{$actionUrlExtra}">
+                            </a>
+
+                        {/if}
 
                         {block "list-actions" hide}
                             {$item.id}
@@ -221,6 +232,7 @@
 
 
                     </td>
+                    {/if}
 
                 </tr>
 

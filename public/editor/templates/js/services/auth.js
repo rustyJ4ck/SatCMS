@@ -25,7 +25,7 @@ define(['app', 'angular'], function(app, angular) {
         function logout() {
             $http.get('/users/logout/')
                 .success(function(data){
-                    app.go('editor/users/login');
+                    location.href = '/editor/';
                 });
         }
 

@@ -20,18 +20,8 @@ define(['bootbox'], function (bootbox) {
 
     return [
 
-        {
-            name: 'dashboard',
-            title: 'Dashboard',
-            url: "dashboard",
-            template: "partials/index.html",
 
-            controller: function () {
-                console.info('Dashboard');
-            }
-        },
-
-
+        // Dashboard
         {
             name: 'index',
             title: 'Index',

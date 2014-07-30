@@ -49,8 +49,8 @@ if (loader::is_windows() && loader::in_shell()) {
  * @param null $title
  */
 function test_head($title = null) {
-    if ($title) echo Strings::nl() . strings::strtoupper($title) . Strings::nl();
-    echo str_repeat('-', 50) . Strings::nl();
+    if ($title) echo strings::nl() . strings::strtoupper($title) . strings::nl();
+    echo str_repeat('-', 50) . strings::nl();
 }
 
 /**
@@ -60,7 +60,7 @@ function test_print() {
     $args = func_get_args();
     foreach ($args as $v)
         echo (is_scalar($v) ? $v : var_export($v, true))
-             . Strings::nl();
+             . strings::nl();
 }
 
 /**
@@ -137,7 +137,7 @@ function test_done() {
         basename($_SERVER['PHP_SELF'])
     ));
 
-    printf('Time: %.5f ms,  Mem: %.3f MB %s', microtime(1) - test_assertions::$start_time, memory_get_peak_usage()/1048576, Strings::nl());
+    printf('Time: %.5f ms,  Mem: %.3f MB %s', microtime(1) - test_assertions::$start_time, memory_get_peak_usage()/1048576, strings::nl());
 
     // outro
     exit($fails?1:0);

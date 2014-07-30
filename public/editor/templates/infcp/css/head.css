@@ -1,0 +1,124 @@
+.area-top {
+    padding:0;
+}
+
+#cp-top-panel {
+    background: none;
+    margin-top:7px;
+    height: 150px;
+}
+
+#cp-nav {
+    height:115px;
+    background: none repeat scroll 0 0 rgba(255, 255, 255, 0.8);
+    border-radius: 0;
+    margin-bottom:0;
+    border:0;
+}
+
+#cp-nav > .container {
+    box-sizing: padding-box;
+    padding-top: 10px;
+}
+
+#cp-nav .navbar-header {
+    display: none;
+}
+
+#cp-nav .navbar-collapse {
+    padding:0;
+}
+
+#cp-nav .cp-nav-header {
+    height:72px;
+    padding:0;
+    min-width: 900px;
+    width: 100%;
+}
+
+#cp-nav .nav li > a {
+    padding-top:4px;
+    padding-bottom:4px;
+    font-size:12px;
+    font-family: Arial;
+    font-weight: bold;
+    text-decoration: none;
+    color: #000;
+}
+
+.row > .top-box:first-child {
+    margin-left:48px;
+}
+
+.top-box {
+    width:294px;
+    height:164px;
+    box-sizing: padding-box;
+    padding: 0px 30px;
+    background: transparent url('../img/top-box.png') 0 0 repeat;
+}
+
+.top-box h2 {
+    font-size:14px;
+    font-weight: bold;
+    text-decoration: underline;
+    text-shadow: -1px -1px 0px rgba(0, 0, 0, 0.1);
+}
+
+.top-box .currency {
+    font-weight: bold;
+    font-size: 12px;
+}
+
+.top-box > p {
+    margin-bottom:4px;
+}
+
+.top-box .currency {
+    text-shadow: -1px -1px 0px rgba(0, 0, 0, 0.1);
+}
+
+#logo {
+    background:blue;
+    width:240px;
+    height:56px;
+    margin-left:18px;
+    background:transparent url('../img/logo.png') 0 0 no-repeat;
+    cursor:pointer;
+}
+
+#phone {
+    font-family: Arial;
+    width:230px;
+    height:50px;
+    b111ackground: green;
+    margin-left:204px;
+    margin-top:9px;
+    font-size:18px;
+    text-align:right;
+    letter-spacing: 0px;
+}
+
+#phone > p {
+    line-height: 16px;
+    font-weight:bold;
+    color: #990000;
+    margin:0;
+}
+
+#cp-box {
+    width:239px;
+    height:81px;
+    b1ackground:transparent url('../img/cp-box.png') 0 0 no-repeat;
+    box-sizing: padding-box;
+    padding: 20px 10px 10px 54px;
+    margin-right:16px;
+    margin-top:-10px;
+    font-size: 14px;
+    font-family: "Myriad Pro", Arial;
+    text-align: right;
+}
+
+#cp-box > p {
+    margin:0;
+}
