@@ -2,6 +2,7 @@
 return array(
 
     'api/user/current' => array('section' => 'api'),
+    'api/user/logout'  => array('section' => 'api'),
 
     /*
         'search/result' => array(

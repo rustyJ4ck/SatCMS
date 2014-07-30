@@ -27,16 +27,18 @@
         tinyMCE: "../../../vendor/tinymce/tinymce.jquery",
         notify:"../../../vendor/toastr/toastr",
         bootbox: "../../../vendor/bootbox/bootbox",
-
-        uploadify: "../../../vendor/uploadify/jquery.uploadify",
-
+        
         "bootstrap-modal": "../../../vendor/bootstrap-modal/js/bootstrap-modal",
-        "bootstrap-modal-manager": "../../../vendor/bootstrap-modal/js/bootstrap-modalmanager",
 
         "sugar": "../../../vendor/sugar/release/sugar-full.development",
 
         "vis": "../../../vendor/vis/dist/vis"
 
+    },
+
+    deprecated_entries: {
+        uploadify: "../../../vendor/uploadify/jquery.uploadify",
+        "bootstrap-modal-manager": "../../../vendor/bootstrap-modal/js/bootstrap-modalmanager"
     },
 
     waitSeconds: 0,

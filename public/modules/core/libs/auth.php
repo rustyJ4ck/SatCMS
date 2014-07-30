@@ -399,8 +399,13 @@ class tf_auth {
      * Out
      */
     public function logout() {
-        if (!$this->_logged_in) return false;
+
+        if (!$this->_logged_in) {
+            return false;
+        }
+
         core::event('logout', $this->get_user());
+
         $this->set_user(0);
         $this->_logged_in = false;
         $this->update_session_uid();

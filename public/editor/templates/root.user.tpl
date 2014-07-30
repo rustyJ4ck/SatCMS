@@ -114,8 +114,16 @@
 <script src="/assets/jquery.history.js"></script>
 *}
 
-
 {if $config.lib_editor.optimized && !$config.debug}
+
+    {if $config.lib_editor.version}
+    <script type="text/javascript">
+        var require = {
+            urlArgs : "v={$config.lib_editor.version}"
+        };
+    </script>
+    {/if}
+
     <script data-main="/assets/editor/main" src="/vendor/requirejs/require.js"></script>
 {else}
     <script data-main="/editor/templates/js/main" src="/vendor/requirejs/require.js"></script>

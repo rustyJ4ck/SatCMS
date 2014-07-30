@@ -33,7 +33,7 @@
     "x-editable": "latest",
     "jquery-maskedinput": "latest",
     "blockui": "latest",
-    "tinymce": "latest",
+    "tinymce": "4.0.x",
     "uploadify": "latest",
     "jquery-cookie": "latest",
     "vis": "latest",
