@@ -39,6 +39,16 @@
 
     </script>
 
+    {*
+    <!--ie tests-->
+    <meta http-equiv="X-UA-Compatible" content="IE=9" />
+    *}
+
+    {*<!--[if lte IE 9]>*}
+    <!--[if IE]>
+    <base href="/editor/">
+    <![endif]-->
+
 </head>
 
 <body ng-class="sidebarActive&&'sidebar-active'||'sidebar-disabled'">

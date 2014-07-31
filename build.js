@@ -24,7 +24,7 @@
         jqueryTableDND: "../../../vendor/TableDND/jquery.table-multi-dnd",
 
         select2: "../../../vendor/select2/select2",
-        tinyMCE: "../../../vendor/tinymce/tinymce.jquery",
+        tinyMCE: "../../../vendor/tinymce/tinymce.jquery.min",
         notify:"../../../vendor/toastr/toastr",
         bootbox: "../../../vendor/bootbox/bootbox",
         

@@ -5,3 +5,9 @@
         {/if}
     {/foreach}
 </ul>
+
+<div class="padded-top">
+    <a class="btn btn-success"
+            href="{'/editor/'|ngUrl}"
+            >Личный кабинет</a>
+</div>

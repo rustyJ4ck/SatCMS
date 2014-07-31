@@ -57,7 +57,7 @@ var site = {
 
 <body>
 
-{include file="partials/nav.tpl" c1ache_lifetime="600" c1aching="true"}
+{*include file="partials/nav.tpl" c1ache_lifetime="600" c1aching="true"*}
 
 {block 'header'}
     <div id="masthead">

@@ -1,3 +1,16 @@
+// if console is not available -> mock it to prevent errors
+try {
+    var c = console;
+}
+catch (e) {
+    console = {};
+    console.log = function () { };
+    console.debug = function () { };
+    console.warn = function () { };
+    console.error = function () { };
+    console.dir = function () { };
+}
+
 /**
  * Common init routines
  */
@@ -87,71 +100,8 @@
             $('.cloak:not(.in)').toggleClass('in');
         }, 500);
 
-        $('#sidebar').affix({
-            offset: {
-                top: 150
-            }
-        });
-
         var $body = $(document.body);
         var navHeight = $('.navbar').outerHeight(true) + 10;
-
-        $body.scrollspy({
-            target: '#leftCol',
-            offset: navHeight
-        });
-
-        var preload_data = [
-            //   { id: 'user0', text: 'Disabled User', locked: true}
-        ];
-
-        /*
-         $.get('/assets/search.json', function(data){
-         $("#searchBox").typeahead({ source:["local", "remote", "cancel"] });
-         },'json');
-         */
-
-        // constructs the suggestion engine
-        var suggests = new Bloodhound({
-            datumTokenizer: Bloodhound.tokenizers.obj.whitespace('title'),
-            queryTokenizer: Bloodhound.tokenizers.whitespace,
-
-            // prefetch
-            // local: $.map(_states, function(state) { return { value: state }; })
-            // remote
-
-            prefetch: {
-                //url: '/assets/' + /*site.domain*/ 'localhost-' +  'search.json'
-                url: '/sat/search/tree/'
-            }
-
-        });
-
-        // kicks off the loading/processing of `local` and `prefetch`
-        suggests.initialize();
-
-        $('#searchBox').typeahead({
-                hint: true,
-                highlight: true,
-                minLength: 1,
-                limit: 10
-            },
-            {
-                name: 'suggests',
-                displayKey: 'title',
-
-                source: suggests.ttAdapter()
-            })
-            .bind('typeahead:selected', function (obj, data, name) {
-
-                if (data.url) {
-                    window.location.href = data.url;
-                }
-                else
-                    return false;
-
-            });
-
 
         /**
          * Contact form

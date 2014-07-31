@@ -80,7 +80,7 @@ define(['bootbox'], function (bootbox) {
             //templateUrl: "partials/login.html",
             //template:"<div ng-bind-html='response'></div>",
             template:"",
-            controller: 'actionController',
+            controller: 'actionController'
         },
 
 

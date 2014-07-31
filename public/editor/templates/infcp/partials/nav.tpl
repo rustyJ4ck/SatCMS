@@ -7,7 +7,7 @@
 
             <div class="cp-nav-header">
 
-                <a id="logo" class="pull-left" href="/editor/"></a>
+                <a id="logo" class="pull-left" ui-sref="default"></a>
 
                 <div id="phone" class="pull-left">
                     Круглосуточная поддержка
@@ -18,7 +18,7 @@
                         <span class="user-surname">{$user.email}</span>
                     </p>
                     <p class="padded-top">
-                        <a class="btn btn-xs btn-default" h1ref="{$config.site_url}users/logout/"
+                        <a class="btn btn-xs btn-default"
                            ng-click="logout()"
                            data-content="Действительно выйти?">Выйти</a></p>
                 </div>
@@ -55,15 +55,11 @@
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
 
-                    <li>
-                        <a class="active" href="/editor/infcp/card/">Карты</a>
-                    </li>
-                    <li>
-                        <a href="/editor/infcp/transaction/">Транзакции</a>
-                    </li>
+                    <li><a class="active" href="{'/editor/infcp/card/'|ngUrl}">Карты</a></li>
+                    <li><a href="{'/editor/infcp/transaction/'|ngUrl}">Транзакции</a></li>
 
-                    <li><a href="/editor/infcp/actions/op/docs/">Документы</a></li>
-                    <li><a href="/editor/infcp/actions/op/card/">Заказать новую карту</a></li>
+                    <li><a href="{'/editor/infcp/actions/op/docs/'|ngUrl}">Документы</a></li>
+                    <li><a href="{'/editor/infcp/actions/op/card/'|ngUrl}">Заказать новую карту</a></li>
 
                 </ul>
             </div><!--/.navbar-collapse -->

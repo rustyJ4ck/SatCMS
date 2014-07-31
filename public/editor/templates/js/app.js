@@ -27,6 +27,8 @@ define([
     $.cookie.json = true;
 
     // fix HTML5 locations ie9
+
+    /*
     var buggyAndroid = parseInt((/android (\d+)/.exec(window.navigator.userAgent.toLowerCase()) || [])[1], 10) < 4;
 
     if (!history.pushState || buggyAndroid) {
@@ -36,8 +38,7 @@ define([
             window.location.replace('/#!' + window.location.pathname); //No hash, take path
         }
     }
-
-
+    */
 
     /**
      * tfApp
@@ -152,6 +153,7 @@ define([
         function loadStates($provider) {
 
             console.log("loadStates");
+
 
             $provider.state('default', {
                     name: 'default',
@@ -302,6 +304,7 @@ define([
                             tfApp.ngStateProvider = $stateProvider;
 
                             $locationProvider.html5Mode(true).hashPrefix('!');
+
                             console.log('$urlRouterProvider-config');
 
                             $urlRouterProvider
@@ -350,8 +353,6 @@ define([
                             $http.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
                             $http.defaults.headers.post["Content-Type"] = "application/x-www-form-urlencoded";
                             $http.defaults.headers.post["SC-CSRF-TOKEN"] =  config.token;
-
-                            //$rootScope.hello = '@ZXCV@';
 
                             console.log($state);
 
