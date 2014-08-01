@@ -103,9 +103,23 @@ class I18n {
     }
 
     /**
+     * @param $id
+     * @param $value
+     * @return $this
+     */
+    function set($id, $value) {
+       if (strpos($id, '.') !== false) {
+            array_set($this->words, $id, $value);
+        } else {
+            $this->words[$id] = $value;
+        }
+        return $this;
+    }
+
+    /**
      * i18n
      *
-     * _T(...) raw text
+     * @... raw text
      *
      * mod\section.string
      * mod.section.string
@@ -119,8 +133,8 @@ class I18n {
         $mod      = false;
         $first_id = $id;
 
-        // raw text _T(...)
-        if (is_string($id) && preg_match('/^_T\((.*)\)$/', $id, $t)) {
+        // raw text @...
+        if (is_string($id) && preg_match('/^@(.*)$/', $id, $t)) {
             return $t[1];
         }
 

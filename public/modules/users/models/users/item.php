@@ -232,8 +232,8 @@ class anonymous_user extends users_item {
     function __construct($container) {
         
         parent::__construct($container, false);
-        
-        $this->nick     = 'Anonymous';
+
+        $this->nick     = core::get_instance()->i18n->T('users\\Anonymous');
         $this->login    = 'Anonymous';
         $this->id       = users_collection::ANONYMOUS;
         $this->active   = false;

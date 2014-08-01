@@ -14,6 +14,8 @@ require '../../modules/core/loader.php';
     }
 
     $token = '<input type="hidden" name="x_token" value="' . core::lib('auth')->token() . '" />';
+
+    $cp_title = core::lib('i18n')->T('Control panel');
 ?>
 <!DOCTYPE html>
 <html>
@@ -109,7 +111,7 @@ var _site_url = "/";
           action="/users/login/"
     >
 
-    <h3>Панель управления</h3><br/>
+    <h3><?=$cp_title?></h3><br/>
 
     <div class="input-group-lg">
     <input required="required" style="width:300px;"

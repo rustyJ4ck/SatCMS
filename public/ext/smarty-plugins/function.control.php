@@ -10,6 +10,7 @@ function smarty_function_control($params, $template) {
     $value = @$params['value'];
     $class = @$params['class'];
     $attrs = @$params['attrs'];
+    $format = @$params['format'];
 
     // metadata (vf)
     $field = @$params['field'];
@@ -36,8 +37,10 @@ case 'date':
 case 'unixtime':
 // -----------------------------------------------------------------
 
+        $date_format = $format ?: 'DD.MM.YYYY hh:mm';
+
 $control = <<<CTRL
-                <div class='input-group input-group-sm datetime' data-date-format="DD.MM.YYYY hh:mm">
+                <div class='input-group input-group-sm datetime' data-date-format="{$date_format}">
                     <input type='text' class="form-control {$class}"
                         name="{$name}" {$attrs}
                         value="{$value}"

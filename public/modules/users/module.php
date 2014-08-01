@@ -39,8 +39,6 @@ class tf_users extends core_module {
     function construct_after() {
         core::dprint('[users] construct', core::E_DEBUG0);
         $this->users = $this->model('users');
-        $this->anonymous = new anonymous_user($this->users);
-        
     }
 
     // model handles
@@ -189,7 +187,7 @@ class tf_users extends core_module {
     * @return users_item
     */
     public function get_anonymous_user() {
-        return $this->anonymous;    
+        return $this->anonymous ?: ($this->anonymous = new anonymous_user($this->users));
     }
  
     /**

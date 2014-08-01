@@ -43,6 +43,22 @@ class users_controller extends module_controller {
 
     }
 
+    /**
+     * Get current user
+     */
+    function action_api_user_logout() {
+
+        $logged = $this->auth->logged_in();
+
+        if ($logged) {
+            $this->auth->logout();
+        }
+
+        return \MessageResponse::create()
+            ->message($logged ? 'Произведен выход из системы' : 'Вы не залогинены')
+            ->status($logged);
+    }
+
     
     /*
     $this->core->set_message('invalid');

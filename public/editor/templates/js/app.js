@@ -2,7 +2,6 @@
  * js/app.js
  * @author     Golovkin Vladimir <r00t@skillz.ru> http://www.skillz.ru
  * @copyright  SurSoft (C) 2008
- * @version    $Id: main.js,v 1.3.2.8.2.14 2013/10/16 08:27:55 Vova Exp $
  */
 
 define([
@@ -28,6 +27,7 @@ define([
 
     // fix HTML5 locations ie9
 
+    /*
     var buggyAndroid = parseInt((/android (\d+)/.exec(window.navigator.userAgent.toLowerCase()) || [])[1], 10) < 4;
 
     if (!history.pushState || buggyAndroid) {
@@ -37,6 +37,7 @@ define([
             window.location.replace('/#!' + window.location.pathname); //No hash, take path
         }
     }
+    */
 
     /**
      * tfApp
@@ -152,6 +153,7 @@ define([
 
             console.log("loadStates");
 
+
             $provider.state('default', {
                     name: 'default',
                     title: 'Default',
@@ -200,7 +202,7 @@ define([
                     }
 
                     route.url = urls.toBase(route.url);
-                    console.log("..state", route.name, route);
+                    console.log("..state: " + route.name, route);
                     $provider.state(route);
 
                 });
@@ -301,16 +303,19 @@ define([
                             tfApp.ngStateProvider = $stateProvider;
 
                             $locationProvider.html5Mode(true).hashPrefix('!');
+
                             console.log('$urlRouterProvider-config');
 
                             $urlRouterProvider
                                 // default index
-                                //.when('/editor/', function(){
-                                //   // $state.transitionTo('dashboard');
-                                //    console.log('When-go-dashboard');
-                                //})
+                                .when('', function(){
+                                    //!history.pushState
+                                    //fix ie9 redirect to index
+                                    tfApp.go('/editor/');
+                                    console.log('When-go-dashboard');
+                                })
                                 // Handle bad URLs
-                                //.otherwise('/editor/error/')
+                                .otherwise('/editor/error/')
                            ;
 
 
@@ -349,8 +354,6 @@ define([
                             $http.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
                             $http.defaults.headers.post["Content-Type"] = "application/x-www-form-urlencoded";
                             $http.defaults.headers.post["SC-CSRF-TOKEN"] =  config.token;
-
-                            //$rootScope.hello = '@ZXCV@';
 
                             console.log($state);
 
@@ -405,7 +408,7 @@ define([
                                     return false;
                                 }
 
-                                console.log('$stateChangeStart to '+toState.to+'- fired when the transition begins. toState,toParams : \n',toState, toParams);
+                                console.log('$stateChangeStart to '+toState.to+'- fired when the transition begins. toState,toParams : \n', toState, toParams);
 
                                 toState.current = {
                                     module:  toParams.module,
@@ -417,27 +420,29 @@ define([
 
                             });
 
-                            $rootScope.$on('$stateChangeError',function(event, toState, toParams, fromState, fromParams){
+                            $rootScope.$on('$stateChangeError', function(event, toState, toParams, fromState, fromParams){
                                 console.log('$stateChangeError - fired when an error occurs during transition.');
                                 console.log(arguments);
                             });
 
-                            $rootScope.$on('$stateChangeSuccess',function(event, toState, toParams, fromState, fromParams){
+                            $rootScope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams){
                                 console.log('$stateChangeSuccess to '+toState.name+'- fired once the state transition is complete.');
                             });
 
-                            $rootScope.$on('$viewContentloading',function(event){
+                            $rootScope.$on('$viewContentloading', function(event){
                                 console.log('$viewContentloading - fired after dom rendered',event);
                             });
 
-                            $rootScope.$on('$stateNotFound',function(event, unfoundState, fromState, fromParams){
+                            $rootScope.$on('$stateNotFound', function(event, unfoundState, fromState, fromParams){
                                 console.log('$stateNotFound '+unfoundState.to+'  - fired when a state cannot be found by its name.');
                                 console.log(unfoundState, fromState, fromParams);
                             });
 
 
-                            $rootScope.$on('loading',function(event, value){
-                                console.log('on-loading',value)
+                            $rootScope.$on('loading', function(event, value){
+
+                                console.log('on-loading', value)
+
                                 value = typeof value === 'undefined' ? false : value;
                                 $rootScope.loading = value;
 

@@ -340,8 +340,13 @@ define(['app', 'angular', 'bootbox'],
                 applySortables();
                 bindSortable($scope);
 
-
-// console.log('events',$._data($('#grid-sat-sat_node_image').get(0), 'events'));
+                /*
+                root.find('.pagination > li > a').on('click', function(){
+                    if ($(this).not('active')) {
+                        app.message('Loading page...');
+                    }
+                });
+                */
 
             },
 

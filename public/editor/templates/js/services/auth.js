@@ -23,9 +23,9 @@ define(['app', 'angular'], function(app, angular) {
         }
 
         function logout() {
-            $http.get('/users/logout/')
+            $.get('/users/api/user/logout/?rnd=' + Math.ceil(10000*Math.random()))
                 .success(function(data){
-                    app.go('editor/users/login');
+                    location.href = '/editor/in/';
                 });
         }
 

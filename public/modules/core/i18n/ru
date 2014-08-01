@@ -24,6 +24,10 @@ edit            = Правка
 save            = Сохранить
 cancel          = Отмена
 
+reload          = Обновить
+reset           = Сбросить
+Reset content filter = Сбросить фильтр
+
 active          = Активный
 b_system        = Системный
 b_featured      = Избранный

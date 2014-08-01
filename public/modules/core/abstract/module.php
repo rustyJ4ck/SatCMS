@@ -542,6 +542,8 @@ abstract class core_module extends module_orm {
     */ 
     function on_editor() {
 
+        core::event('editor_before');
+
         core::lib('editor')->assign_module_menu(
             $this->get_editor_actions()
         );
@@ -564,6 +566,8 @@ abstract class core_module extends module_orm {
         
         // check user has access
         core::lib('editor')->on_editor($this);
+
+        $controller = null;
 
         // dispatch
 
@@ -598,6 +602,8 @@ abstract class core_module extends module_orm {
             }
             else core::dprint('[ERROR] Unable to execute ' . $controller_action_file);
         }
+
+        core::event('editor_after', $controller);
 
         /*  @return main template
         */          

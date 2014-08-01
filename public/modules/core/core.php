@@ -210,8 +210,9 @@ class core extends core_module /*module_orm*/ {
         $duagent = $this->config->get('debugger_agent', 'iamdebugger');
 
         // compare only lside of agent, because firephp or something add its stuff to end
-        if (isset($_SERVER['HTTP_USER_AGENT']) && substr($_SERVER['HTTP_USER_AGENT'], 0, strlen($duagent)) === $duagent
+        if ((isset($_SERVER['HTTP_USER_AGENT']) && substr($_SERVER['HTTP_USER_AGENT'], 0, strlen($duagent)) === $duagent)
             || !empty($params['debug'])
+            || $this->config->get('debugger')
         ) {
 
             self::set_debug(

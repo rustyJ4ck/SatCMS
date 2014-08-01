@@ -44,10 +44,19 @@ $user = core::lib('auth')->get_user();
 
 $path = @$_GET['req'];
 
+$is_redirect = false;
+
 // allow ng-redirect
 if (strpos($core->request->uri(), '/editor/redirect') === 0) {
    // die('ng-redirect');
    $path = '/editor/core/redirect/';
+   $is_redirect = true;
+} else {
+    // fix angular not bootstraping on direct hits
+    if ($core->request->uri() !== '/editor/' && !$core->request->params->embed && !loader::in_ajax()) {
+       functions::redirect('/editor/redirect/' . $path . (strpos($path, '?') === false ? '/': ''));
+       return;
+    }
 }
 
 try {
@@ -60,19 +69,31 @@ catch (controller_exception $e) {
 // parse request path
 $editor->dispatch($path, core::get_params());
 
-$module = core::get_params()->m;
+$module = $core->request->params->m;
 $module = $module ? $module : 'core';
 
-$is_main = $core->request->uri() == '/editor/' ? 1 : 0;
+if ('core' !== $module && !core::modules()->is_registered($module)) {
+    $core->ajax_answer('MOD: Модуль не зарегистрирован', 1);
+}
 
-$mod_level = $user->get_container()->get_level_by_name('mod');
+$is_main = (
+    $core->request->uri() == '/editor/'
+    || ($core->request->params->op == 'index' && $core->request->params->m == 'core')
+    )
+    ? 1 : 0;
+
+$auth_level = (int)$core->cfg('editor.auth_level', $user->get_container()->get_level_by_name('mod'));
 
 // user level too low
-if ($user->level < $mod_level) {
+if ($user->level < $auth_level) {
     $core->ajax_answer('Not allowed', 1);
 }
 // basic user levels filter
-elseif (!$is_main && $user->level == $mod_level && 'sat' != $module && $user->level < core::module($module)->cfg('editor.level', 100)) {
+elseif (!$is_main && !$is_redirect
+    //&& $user->level == $mod_level
+    //&& 'sat' != $module
+    && $user->level < core::module($module)->config->get('editor.level', 100)) {
+
     $editor->on_exception('MOD: Нет доступа к разделу');
 }
 // acls
@@ -80,6 +101,7 @@ elseif (!$is_main && !$user->is_allow('mod_' . $module)) {
     $editor->on_exception('Нет доступа к разделу');
 }
 else {
+
     try {
         if ($mod = core::module($module)) {
             $mod->on_editor();            

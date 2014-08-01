@@ -1,5 +1,5 @@
 /**
-* $Id: main.css,v 1.3.2.1.4.14 2013/10/16 08:27:55 Vova Exp $
+* main.css
 */
 
 body {
@@ -766,7 +766,12 @@ h1, h2, h3, h4, h5, h6, th { color: rgb(95, 95, 95); font-weight: 700; }
     box-shadow: 0 2px 1px -1px rgba(0, 0, 0, 0.07);
     border-bottom: 1px solid #ccc;
 
-    position: relative; width: 100%; padding: 10px 15px; -moz-box-sizing: border-box; margin-bottom: 15px; }
+    position: relative;
+    width: 100%;
+    padding: 10px 15px;
+    -moz-box-sizing: border-box;
+    margin-bottom: 15px;
+}
 .area-top .header { font-size: 14px; }
 .area-top .header i { float: left; font-size: 24px; margin-top: 4px; margin-right: 10px; }
 .area-top .header h3, .area-top .header h5 { margin: 0px; font-weight: 300; }
@@ -776,6 +781,20 @@ h1, h2, h3, h4, h5, h6, th { color: rgb(95, 95, 95); font-weight: 700; }
 
 .area-top .header > * { vertical-align: middle;
     t11ext-shadow: 0px 1px rgba(255, 255, 255,0.3); }
+
+.navbar-brand {
+    display: block;
+    height: 55px;
+    line-height: 30px;
+    padding: 15px;
+    width: 200px;
+    color:#FFF;
+}
+
+    .navbar-brand > .badge {
+        position: relative;
+        bottom:2px;
+    }
 
 .sparkline-box { margin: 10px 0px 0px; padding: 0px; }
 .sparkline-box.side .sparkline { margin-top: 5px; }
@@ -1027,8 +1046,13 @@ div.form-block .form-control {
     width:170px;
 }
 
-    .datetime > .input-group-addon {
+    .datetime > .input-group-addon,
+    .datetime > input.form-control {
         cursor: pointer;
+    }
+
+    .datetime > input.form-control {
+        background: inherit;
     }
 
 fieldset { border:1px solid #E3E3E3; }

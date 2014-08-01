@@ -20,18 +20,8 @@ define(['bootbox'], function (bootbox) {
 
     return [
 
-        {
-            name: 'dashboard',
-            title: 'Dashboard',
-            url: "dashboard",
-            template: "partials/index.html",
 
-            controller: function () {
-                console.info('Dashboard');
-            }
-        },
-
-
+        // Dashboard
         {
             name: 'index',
             title: 'Index',
@@ -90,7 +80,7 @@ define(['bootbox'], function (bootbox) {
             //templateUrl: "partials/login.html",
             //template:"<div ng-bind-html='response'></div>",
             template:"",
-            controller: 'actionController',
+            controller: 'actionController'
         },
 
 

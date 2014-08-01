@@ -1394,6 +1394,7 @@ class model_collection implements model_collection_interface, IteratorAggregate,
             , $data
             , $verified
         );
+
         $this->alloc_after($item, $class, $config, $verified);
 
         return $item;

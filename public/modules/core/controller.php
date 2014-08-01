@@ -37,11 +37,18 @@ class core_controller extends module_controller {
 
         $menu = array();
 
-        // dies on get_editor_actions
-        $menu['core'] = $this->core->get_editor_actions();
+        $modules = array_merge(array('core' => $this->core), core::modules()->as_array());
 
-        foreach (core::modules() as $module) {
-            $menu [$module->get_name()]= $module->get_editor_actions();
+        $default_module = 'sat';
+
+        foreach ($modules as $module) {
+
+            if ($this->get_user()->level >= $module->config->get('editor.level', 50)) {
+                $menu [$module->get_name()]= $module->get_editor_actions();
+                if ($module->config->get('editor.default', false)) {
+                    $default_module = $module->get_name();
+                }
+            }
         }
 
         $menuNormalized = array();
@@ -72,11 +79,18 @@ class core_controller extends module_controller {
                     ;
                 }
 
-                $menuNormalized []= array(
+                $_menuNormalized = array(
                     'id' => $key,
                     'title' => $this->core->i18n->T(array($key, '_name')),
                     'actions' => $submenuNormalized
                 );
+
+                if ($key == $default_module) {
+                    $_menuNormalized['default'] = true;
+                }
+
+                $menuNormalized []= $_menuNormalized;
+
 
             }
         }

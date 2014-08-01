@@ -176,7 +176,7 @@ class model_item extends abs_data implements model_item_interface {
 
                 // from alloc()
                 if (!empty($config['allocated'])) {
-                    $this->_is_new       = true; //from alloc
+                    $this->_is_new       = true;
                     $this->_is_allocated = true;
                 }
 
@@ -941,6 +941,9 @@ class model_item extends abs_data implements model_item_interface {
     /**
      * Save item to database
      * Does not trigger modify_before|after events
+     *
+     * @todo не умеет записывать PK при INSERT
+     *
      * @return mixed nextID|bool
      */
     function save() {
@@ -961,7 +964,7 @@ class model_item extends abs_data implements model_item_interface {
         /**
          * Update
          */
-        if (!empty($this->id) && !$this->is_allocated()) {
+        if ((!empty($this->id) /*&& !$this->_is_new*/) && !$this->is_allocated()) {
 
             $sql = "UPDATE " . ($low_priority ? 'LOW_PRIORITY ' : '') . $this->config->table . " SET";
 

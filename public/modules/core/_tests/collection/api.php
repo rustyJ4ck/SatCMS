@@ -38,7 +38,9 @@ test_assert(
 
 test_assert($item instanceof model_item, 'LOAD_ONLY_ID class');
 
-if (!$item) return;
+if (!$item) {
+    die('Item test failed');
+}
 
 test_assert($item->id === $id, 'LOAD_ONLY_ID Id');
 
@@ -81,10 +83,25 @@ if (!test_assert(($count = $collection->clear()->count_sql()) === 0, 'REMOVE-COU
     test_print($count);
 }
 
-test_except('core_exception', function(){
+test_except('collection_exception', function(){
     core::get_instance()->model('NotExist');
 }, 'exception-test');
 
+//
+// new item with ID
+//
+
+$id = $collection->create(['id' => 6667, 'title' => 'да']);
+
+/*
+// this will fail now, cant change pkID
+
+test_assert($id === 6667, 'CREATE-WITH-ID');
+
+$collection->clear();
+
+test_assert($collection->load_only_id(6667), 'CREATE-WITH-ID-LOAD');
+*/
 
 //
 // Alloc

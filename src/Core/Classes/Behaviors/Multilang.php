@@ -56,7 +56,7 @@ class Multilang extends \model_behavior {
     }
 
     function modify_after($data) {
-        dd($this->fields, $data);
+//        dd($this->fields, $data);
     }
 
     function prepare2edt_before() {

@@ -7,6 +7,7 @@
     <!-- Brand and toggle get grouped for better mobile display -->
     <div class="navbar-header">
         <a class="navbar-brand" href="" ui-sref="default">SatCMS <span class="badge alert-info">v.{$config.version}</span> </a>
+        {*<a class="navbar-brand" href="" ui-sref="default">{$config.editor_title.value} <span class="badge alert-info">v.{$config.version}</span> </a>*}
     </div>
 
     <!-- Collect the nav links, forms, and other content for toggling -->
@@ -73,7 +74,7 @@
                 <ul class="dropdown-menu">
                     <li><a href="/" target="_self">Go to site</a></li>
                     <li class="divider"></li>
-                    <li><a ng-click1="logout()" href="/users/logout/" target="_self">Logout</a></li>
+                    <li><a ng-click="logout()">Logout</a></li>
                 </ul>
             </li>
         </ul>
@@ -126,7 +127,7 @@
             </a>
 
             {*(state.params.module == item.id || (!state.params.module && item.id == 'core'))*}
-            <ul id="[[item.id]]" class="collapse" ng-class="item.id=='sat'&&'in'"> {*ng-class1="state.params.module == item.id && 'in'"*}
+            <ul id="[[item.id]]" class="collapse" ng-class="item.default&&'in'"> {*ng-class1="state.params.module == item.id && 'in'"*}
                 <li ng-repeat="subitem in item.actions" ng-class="subitem.url&&'menu-item'||'divider'" ng-if="!subitem.hidden">
                     <a ng-if="subitem.url"
 {*ng-click="actionClick(item, subitem)"*}
