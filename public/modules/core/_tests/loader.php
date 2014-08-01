@@ -96,7 +96,7 @@ function test_except($exception_class, $action = null, $title = '') {
  * @param string $title
  * @return bool|null
  */
-function test_assert($res = null, $title = '') {
+function test_assert($res = null, $title = '', $callback = null) {
 
     // closure
     if ($res instanceof Closure) {
@@ -119,6 +119,10 @@ function test_assert($res = null, $title = '') {
             , $title
             , strings::nl()
         );
+    }
+
+    if ($callback instanceOf \Closure) {
+        $callback($res);
     }
 
     return $res;

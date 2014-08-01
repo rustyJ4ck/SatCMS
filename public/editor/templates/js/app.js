@@ -2,7 +2,6 @@
  * js/app.js
  * @author     Golovkin Vladimir <r00t@skillz.ru> http://www.skillz.ru
  * @copyright  SurSoft (C) 2008
- * @version    $Id: main.js,v 1.3.2.8.2.14 2013/10/16 08:27:55 Vova Exp $
  */
 
 define([
@@ -203,7 +202,7 @@ define([
                     }
 
                     route.url = urls.toBase(route.url);
-                    console.log("..state", route.name, route);
+                    console.log("..state: " + route.name, route);
                     $provider.state(route);
 
                 });
@@ -309,12 +308,14 @@ define([
 
                             $urlRouterProvider
                                 // default index
-                                //.when('/editor/', function(){
-                                //   // $state.transitionTo('dashboard');
-                                //    console.log('When-go-dashboard');
-                                //})
+                                .when('', function(){
+                                    //!history.pushState
+                                    //fix ie9 redirect to index
+                                    tfApp.go('/editor/');
+                                    console.log('When-go-dashboard');
+                                })
                                 // Handle bad URLs
-                                //.otherwise('/editor/error/')
+                                .otherwise('/editor/error/')
                            ;
 
 
@@ -407,7 +408,7 @@ define([
                                     return false;
                                 }
 
-                                console.log('$stateChangeStart to '+toState.to+'- fired when the transition begins. toState,toParams : \n',toState, toParams);
+                                console.log('$stateChangeStart to '+toState.to+'- fired when the transition begins. toState,toParams : \n', toState, toParams);
 
                                 toState.current = {
                                     module:  toParams.module,
@@ -419,27 +420,29 @@ define([
 
                             });
 
-                            $rootScope.$on('$stateChangeError',function(event, toState, toParams, fromState, fromParams){
+                            $rootScope.$on('$stateChangeError', function(event, toState, toParams, fromState, fromParams){
                                 console.log('$stateChangeError - fired when an error occurs during transition.');
                                 console.log(arguments);
                             });
 
-                            $rootScope.$on('$stateChangeSuccess',function(event, toState, toParams, fromState, fromParams){
+                            $rootScope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams){
                                 console.log('$stateChangeSuccess to '+toState.name+'- fired once the state transition is complete.');
                             });
 
-                            $rootScope.$on('$viewContentloading',function(event){
+                            $rootScope.$on('$viewContentloading', function(event){
                                 console.log('$viewContentloading - fired after dom rendered',event);
                             });
 
-                            $rootScope.$on('$stateNotFound',function(event, unfoundState, fromState, fromParams){
+                            $rootScope.$on('$stateNotFound', function(event, unfoundState, fromState, fromParams){
                                 console.log('$stateNotFound '+unfoundState.to+'  - fired when a state cannot be found by its name.');
                                 console.log(unfoundState, fromState, fromParams);
                             });
 
 
-                            $rootScope.$on('loading',function(event, value){
-                                console.log('on-loading',value)
+                            $rootScope.$on('loading', function(event, value){
+
+                                console.log('on-loading', value)
+
                                 value = typeof value === 'undefined' ? false : value;
                                 $rootScope.loading = value;
 

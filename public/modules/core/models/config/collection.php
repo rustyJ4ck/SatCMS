@@ -44,7 +44,9 @@ class config_collection extends model_collection {
         if (empty($key)) throw new core_exception('Try insert nul config key');
         $item = $this->get_item_by_prop('name', $key);
         $id   = $item ? $item->id : false;
-        $this->modify(array('name' => $key, 'value' => $value), $id);
+
+        // default b_system: yes
+        $this->modify(array('name' => $key, 'value' => $value, 'b_system' => ($id ? $item->b_system : true)), $id);
     }
 
     /**

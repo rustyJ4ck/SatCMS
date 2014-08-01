@@ -212,9 +212,6 @@ abstract class editor_controller {
             }
         }
 
-        if ($this->request->method == 'POST') {
-            core::dprint_r([$this->grid_filters], 'grid_filters');
-        }
     }
 
     /** @return model_collection */

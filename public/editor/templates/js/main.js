@@ -2,7 +2,6 @@
  * js/main.js
  * @author     Golovkin Vladimir <r00t@skillz.ru> http://www.skillz.ru
  * @copyright  SurSoft (C) 2008
- * @version    $Id: main.js,v 1.3.2.8.2.14 2013/10/16 08:27:55 Vova Exp $
  */
 
 require.config({
@@ -56,8 +55,7 @@ require.config({
 
     waitSeconds: 0,
 
-    // + (new Date()).getTime(),
-    //urlArgs: "v=2",
+    //urlArgs: "v=2", // + (new Date()).getTime(),
     urlArgs: window.config.debug ? "v=" + (new Date()).getTime() : '',
 
     shim: {
